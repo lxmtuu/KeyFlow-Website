@@ -1,12 +1,37 @@
-# Keyflow site
+# Keyflow product site
 
-Product page for [Keyflow](https://github.com/lxmtuu/KeyFlow), published with GitHub Pages.
+The Keyflow product and download website. It is a dependency-free static site, deployed to [ymkeyflow.online](https://ymkeyflow.online/) with GitHub Pages.
 
-- `index.html`, `style.css`, `site.js`: the page (English and Tiếng Việt, switched in the page).
-- `previews/`: screenshots copied from the Keyflow repository's `docs/previews`. Refresh them after a release.
+## Local preview
 
-Preview locally (the page loads its images by relative path, so open it through a server, not as a file):
-
+```sh
+python3 tools/build.py
+python3 -m http.server 8000
 ```
-python -m http.server 8000
+
+Then open <http://localhost:8000>. The optional live preview in Arena should bind on `0.0.0.0`.
+
+## Pages
+
+- `index.html` — product landing page
+- `features/` — GPU stage, practice, sound and MIDI, recording, design, camera and hand tracking
+- `gallery.html` — app-rendered screenshots and showcase video
+- `guide.html` — setup, keyboard shortcuts, interface map, command line and product reference
+- `download.html` — release packages, checksums and system requirements
+
+English copy is in the generated HTML. Vietnamese strings are collected in the `tools/content_*.py` content modules and written to `i18n/vi/` as runtime dictionaries. `site.js` handles language switching, the responsive navigation drawer, screenshot swapping, the carousel, image viewer and latest-release links. `style.css` is the shared design system.
+
+## Build and verify
+
+No npm install or build tool is needed. After editing a content module, regenerate the HTML and language dictionaries:
+
+```sh
+python3 tools/build.py
+python3 tools/build.py --check
+python3 tools/check_site.py        # links, routes, translations, assets and JS syntax
+python3 tools/make_images.py       # only when source screenshots change
 ```
+
+The screenshot PNGs in `previews/en/` and `previews/vi/` remain the source of truth. `tools/make_images.py` creates smaller WebP variants in `previews/webp/`; pages provide the WebP first and keep PNG/JPEG fallbacks.
+
+GitHub Actions checks generated-page freshness and runs the static QA suite before publishing the pages, language dictionaries, screenshots, WebP images and showcase video.

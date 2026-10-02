@@ -25,12 +25,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Check generated pages
+        run: |
+          python3 tools/build.py --check
+          python3 tools/check_site.py
+
       - name: Assemble the site
         run: |
-          mkdir _site
-          cp index.html style.css site.js favicon.svg _site/
-          cp -r previews _site/previews
-          cp -r media _site/media
+          mkdir -p _site
+          cp index.html gallery.html guide.html download.html style.css site.js favicon.svg CNAME robots.txt sitemap.xml _site/
+          cp -r features i18n previews media _site/
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
