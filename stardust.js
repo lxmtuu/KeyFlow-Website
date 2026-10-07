@@ -22,7 +22,6 @@
   var ctx = canvas.getContext && canvas.getContext("2d");
   if (!ctx) return;
   canvas.className = "stardust";
-  ctx.imageSmoothingQuality = "high";
   canvas.setAttribute("aria-hidden", "true");
   doc.body.insertBefore(canvas, doc.body.firstChild);
 
@@ -80,6 +79,7 @@
 
   /* 2. state ------------------------------------------------------------------ */
   var w = 0, h = 0, dpr = 1;
+  var MARGIN = 60;                       // off-screen band that hides even the largest soft light
   var parts = [];
   var quality = 1;                       // shed particles when frames get slow
   var mouse = { x: -9999, y: -9999, on: false, seen: 0, glow: 0 };
@@ -99,7 +99,7 @@
     var z = type === "bokeh" ? rand(.15, .4) : rand(.25, 1);   // depth: 1 is near
     return {
       type: type,
-      x: rand(0, w), y: anywhere ? rand(0, h) : h + rand(40, 80), z: z,
+      x: rand(0, w), y: anywhere ? rand(0, h) : h + rand(MARGIN - 20, MARGIN - 1), z: z,   // new dust enters from below
       kind: type === "star" ? 0 : (type === "bokeh" ? (Math.random() < .7 ? 0 : 1) : (Math.random() < .62 ? 0 : (Math.random() < .55 ? 1 : 2))),
       size: type === "bokeh" ? rand(28, 76) : (type === "star" ? 11 + z * 17 : 3.6 + z * 6.6),
       rise: type === "bokeh" ? 2 + z * 8 : 4 + z * 11,           // px per second
@@ -124,6 +124,7 @@
     canvas.width = Math.round(w * dpr);
     canvas.height = Math.round(h * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.imageSmoothingQuality = "high";   // resizing a canvas resets its context
     reseed();
     if (still) paintStill();
   }
@@ -166,7 +167,7 @@
 
     var target = window.pageYOffset || doc.documentElement.scrollTop || 0;
     scrolled += (target - scrolled) * Math.min(1, dt * 7);
-    var span = h + 60;
+    var span = h + 2 * MARGIN;
 
     if (mouse.on && clock - mouse.seen > 3.5) mouse.glow += (0 - mouse.glow) * Math.min(1, dt * 2);
     else mouse.glow += ((mouse.on ? 1 : 0) - mouse.glow) * Math.min(1, dt * 4);
@@ -183,10 +184,10 @@
       p.y -= p.rise * dt;
       p.x += Math.sin(clock * p.swayRate + p.phase) * p.sway * dt;
       p.angle += p.spin * dt;
-      if (p.y < -30) { parts[i] = make(false); parts[i].x = rand(0, w); continue; }
+      if (p.y < -MARGIN) { parts[i] = make(false); parts[i].x = rand(0, w); continue; }
       if (p.x < -30) p.x = w + 20; else if (p.x > w + 30) p.x = -20;
 
-      var y = (((p.y + 30 - scrolled * (.04 + p.z * .3)) % span) + span) % span - 30;   // depth: near dust travels further
+      var y = (((p.y + MARGIN - scrolled * (.04 + p.z * .3)) % span) + span) % span - MARGIN;   // depth: near dust travels further
       var boost = 1;
       if (mouse.on) {
         var dx = p.x + p.ox - mouse.x, dy = y + p.oy - mouse.y, d2 = dx * dx + dy * dy;
