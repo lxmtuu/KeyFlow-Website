@@ -11,7 +11,7 @@ from pathlib import Path
 from urllib.parse import unquote, urljoin, urlsplit
 
 ROOT = Path(__file__).resolve().parent.parent
-SCRIPTS = ["site.js"]            # hand-written scripts that ship with the site
+SCRIPTS = ["site.js", "stardust.js"]   # hand-written scripts that ship with the site
 SLIDER_VARIANTS = {"spotlight", "tabs", "steps"}
 sys.path.insert(0, str(ROOT / "tools"))
 from build import PAGES  # noqa: E402
@@ -235,7 +235,7 @@ def main() -> int:
             failures.append("gallery.html: picture grids are not allowed here; use a slider")
         if scan.unlabelled_triggers:
             failures.append(f"{path}: {scan.unlabelled_triggers} zoom button(s) without an aria-label")
-        allowed_chip_classes = {"chip", "gold", "violet", "cyan"}
+        allowed_chip_classes = {"chip", "gold", "ivory", "copper"}
         for classes in scan.chip_classes:
             if not set(classes).issubset(allowed_chip_classes) or len(classes) > 2:
                 failures.append(f"{path}: unexpected chip classes: {' '.join(classes)}")
@@ -298,6 +298,29 @@ def main() -> int:
                 continue
             if target_rel in route_paths and target_rel in scans and fragment not in scans[target_rel].ids:
                 failures.append(f"{path}: missing fragment #{fragment} in {target_rel}")
+
+    # The deploy workflow copies an explicit list: anything a page points at that is missing from
+    # it would work locally and 404 on the live site.
+    workflow = (ROOT / ".github/workflows/pages.yml").read_text(encoding="utf-8")
+    shipped: set[str] = set()
+    for line in workflow.splitlines():
+        copy = re.match(r"\s*cp\s+(?:-r\s+)?(.+?)\s+_site/\s*$", line)
+        if copy:
+            shipped.update(copy.group(1).split())
+    for path, scan in scans.items():
+        for attr, ref in scan.refs:
+            target, _ = local_target(Path(path), ref)
+            if target is None or not target.exists():
+                continue
+            try:
+                top = target.relative_to(ROOT).parts[0]
+            except ValueError:
+                continue
+            if top not in shipped:
+                failures.append(f"{path}: {ref!r} is not copied into _site by .github/workflows/pages.yml (add {top!r})")
+    for script in SCRIPTS:
+        if script not in shipped:
+            failures.append(f"{script} is not copied into _site by .github/workflows/pages.yml")
 
     teaser = [ROOT / "previews/presets-teaser.jpg", ROOT / "previews/webp/presets-teaser.webp",
               ROOT / "previews/presets.jpg", ROOT / "media/showcase.mp4"]

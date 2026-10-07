@@ -255,17 +255,17 @@ def build_stage(doc) -> dict:
                 (T("Landing glow — light gathering on the key a note is about to touch, beautiful and useful for practice",
                    "Landing glow — ánh sáng tụ lại trên phím mà nốt sắp chạm, vừa đẹp vừa hữu ích khi luyện tập"), "gold"),
                 (T("Halo light pulses — three bright heads running along the hit line in the Pulse style",
-                   "Halo light pulses — ba đầu sáng chạy dọc đường chạm ở kiểu Pulse"), "violet"),
+                   "Halo light pulses — ba đầu sáng chạy dọc đường chạm ở kiểu Pulse"), "ivory"),
                 (T("Shooting stars crossing the star field behind the notes",
-                   "Sao băng lướt qua nền sao phía sau các nốt"), "violet"),
+                   "Sao băng lướt qua nền sao phía sau các nốt"), "ivory"),
                 (T("Spotlights — three soft stage lights swaying with the music",
-                   "Đèn sân khấu — ba luồng đèn mềm lảo đảo theo nhạc"), "violet"),
+                   "Đèn sân khấu — ba luồng đèn mềm lảo đảo theo nhạc"), "ivory"),
                 (T("Hold-stream particles in the family of the burst you chose: embers, water splash, fireworks, "
                    "confetti or dust",
                    "Luồng hạt khi giữ phím theo đúng họ burst bạn chọn: than hồng, nước bắn, pháo hoa, confetti "
-                   "hoặc bụi"), "cyan"),
+                   "hoặc bụi"), "copper"),
                 (T("Particle physics decoupled from the music clock, so slowing the tempo never slows the sparks",
-                   "Tốc độ vật lý của hạt tách khỏi đồng hồ nhạc, nên giảm tempo không làm tia lửa chậm lại"), "cyan"),
+                   "Tốc độ vật lý của hạt tách khỏi đồng hồ nhạc, nên giảm tempo không làm tia lửa chậm lại"), "copper"),
             ],
         ),
 

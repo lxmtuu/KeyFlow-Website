@@ -1195,7 +1195,7 @@ def render_page(pid: str, path: str, builder) -> tuple[str, dict[str, str], dict
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{_html.escape(title_en, quote=True)}" data-i18n-attr="content=ui.title">
 <meta name="twitter:description" content="{_html.escape(desc_en, quote=True)}" data-i18n-attr="content=ui.description">
-<meta name="theme-color" content="#07070c">
+<meta name="theme-color" content="#060504">
 <meta name="color-scheme" content="dark">
 <link rel="icon" href="{root}favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1219,6 +1219,7 @@ def render_page(pid: str, path: str, builder) -> tuple[str, dict[str, str], dict
 <script defer src="{root}i18n/vi/ui.js"></script>
 <script defer src="{root}i18n/vi/{pid}.js"></script>
 <script defer src="{root}site.js"></script>
+<script defer src="{root}stardust.js"></script>
 <script type="application/ld+json">{json.dumps(jsonld, ensure_ascii=False, indent=1)}</script>{bc_jsonld}
 </head>
 <body>
