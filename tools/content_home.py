@@ -318,6 +318,8 @@ def build(doc) -> dict:
 
         carousel(
             id="screens",
+            interval=6000,
+            label=T("Keyflow screenshots", "Ảnh chụp Keyflow"),
             eyebrow=T("Gallery", "Hình ảnh"),
             title=T("Rendered by the application itself", "Do chính ứng dụng render"),
             sub=T("These app screenshots are captured by Keyflow in CI with <code>--snapshot</code> — one set per language, "

@@ -3,7 +3,7 @@
    No dependencies, no build step, no trackers.  Everything degrades:
    with scripting off the pages are still complete documents in English.
 
-   1. helpers          5. carousel            8. release info from GitHub
+   1. helpers          5. sliders             8. release info from GitHub
    2. language         6. lightbox            9. video, copy buttons
    3. header & drawer  7. reveal & counters  10. boot
    4. dropdown
@@ -28,6 +28,15 @@
     left: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>',
     right: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>'
   };
+
+  /* A string from the shared UI table in the active language (English fallback). */
+  function tr(key, en) {
+    var val = currentLang === "vi" ? vi[key] : null;
+    return (val === undefined || val === null) ? en : val;
+  }
+  function fmt(tpl, map) {
+    return tpl.replace(/\{(\w+)\}/g, function (m, k) { return map[k] === undefined ? m : map[k]; });
+  }
 
   /* 2. language ------------------------------------------------------------ */
   /* English lives in the markup; the Vietnamese tables are generated into
@@ -86,15 +95,7 @@
       if (img) img.setAttribute("src", ASSET_ROOT + "previews/" + (isVi ? "vi" : "en") + "/" + shot + ".png");
     });
     langButtons.forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-lang") === lang)); });
-    $$(".dots button").forEach(function (b, i) { b.setAttribute("aria-label", (isVi ? "Ảnh " : "Picture ") + (i + 1)); });
-    var lbDialog = $(".lightbox");
-    if (lbDialog) {
-      lbDialog.setAttribute("aria-label", isVi ? "Trình xem ảnh" : "Image viewer");
-      var lbClose = $(".lb-close", lbDialog), lbPrev = $(".lb-prev", lbDialog), lbNext = $(".lb-next", lbDialog);
-      if (lbClose) lbClose.setAttribute("aria-label", isVi ? "Đóng" : "Close");
-      if (lbPrev) lbPrev.setAttribute("aria-label", isVi ? "Ảnh trước" : "Previous picture");
-      if (lbNext) lbNext.setAttribute("aria-label", isVi ? "Ảnh tiếp theo" : "Next picture");
-    }
+    sliders.forEach(function (sl) { sl.relabel(); });
     var ogLocale = $('meta[property="og:locale"]');
     if (ogLocale) ogLocale.setAttribute("content", isVi ? "vi_VN" : "en_US");
     document.querySelectorAll(".js-date").forEach(formatDate);
@@ -103,9 +104,7 @@
 
   langButtons.forEach(function (b) {
     on(b, "click", function () {
-      var lang = b.getAttribute("data-lang");
-      applyLang(lang);
-      if (carousel) carousel.refresh();
+      applyLang(b.getAttribute("data-lang"));
     });
   });
 
@@ -223,130 +222,320 @@
     });
   });
 
-  /* 5. carousel ------------------------------------------------------------ */
-  var carousel = null;
-  (function () {
-    var box = $(".carousel");
-    if (!box) return;
-    var track = $(".track", box);
-    var slides = track ? track.children : [];
-    var dots = $(".dots", box);
-    var index = 0;
+  /* 5. sliders ------------------------------------------------------------- */
+  /* Markup comes from tools/sitekit.py (render_slider).  Without this script
+     every slide is listed one after another; with it the slides stack, the
+     arrows, the pause button and the optional auto-advance come alive.
+     Auto-advance is paused for as long as the pointer is over a slider, a
+     keyboard user is inside it, the tab is hidden, the slider is off screen or
+     the lightbox is open - and it is off altogether for visitors who ask their
+     system for reduced motion. */
+  var sliders = [];
 
-    if (!track || !slides.length) return;
-    if (dots) {
-      dots.innerHTML = "";
-      for (var i = 0; i < slides.length; i++) {
-        var d = document.createElement("button");
-        d.type = "button";
-        d.setAttribute("aria-pressed", String(i === 0));
-        d.setAttribute("aria-label", "Picture " + (i + 1));
-        (function (n) { on(d, "click", function () { go(n); }); })(i);
-        dots.appendChild(d);
+  function pad2(n) { return n < 10 ? "0" + n : String(n); }
+
+  function Slider(box) {
+    var list = $(".slides", box);
+    var slides = $$(".slide", box);
+    var count = slides.length;
+    if (!list || count < 2) return null;
+    var viewport = $(".slider-viewport", box);
+    var playBtn = $(".slider-play", box);
+    var navBtns = $$(".slider-nav button", box);
+    var curEl = $("[data-count-cur]", box);
+    var bar = $(".slider-bar b", box);
+    var interval = parseInt(box.getAttribute("data-interval"), 10) || 6000;
+    var playing = box.getAttribute("data-autoplay") === "on" && !reduceMotion;
+    var stopOnInteract = box.hasAttribute("data-stop-on-interact");
+    var index = 0, elapsed = 0, last = 0, raf = 0, ignoreFocus = false, swallow = false;
+    var holds = {};
+    var self = {};
+
+    /* The arrows and the progress line are placed against the picture, not the
+       whole slide (the caption would push them off-centre), so the picture's
+       height is measured into --pic-h and kept current. */
+    var frame = $(".frame", slides[0]);
+    function measure() {
+      if (frame && frame.offsetHeight) box.style.setProperty("--pic-h", frame.offsetHeight + "px");
+    }
+    measure();
+    if (frame && "ResizeObserver" in window) new ResizeObserver(measure).observe(frame);
+    else on(window, "resize", measure);
+
+    function held() { return Object.keys(holds).some(function (k) { return holds[k]; }); }
+    function setBar(p) { if (bar) bar.style.transform = "scaleX(" + p + ")"; }
+
+    function render() {
+      slides.forEach(function (sl, i) {
+        var on = i === index;
+        sl.classList.toggle("is-active", on);
+        sl.setAttribute("aria-hidden", on ? "false" : "true");
+        if ("inert" in sl) sl.inert = !on;
+      });
+      navBtns.forEach(function (btn, i) {
+        if (i === index) btn.setAttribute("aria-current", "true"); else btn.removeAttribute("aria-current");
+        btn.classList.toggle("is-done", i < index);
+      });
+      if (curEl) curEl.textContent = pad2(index + 1);
+      keepNavInView();
+    }
+
+    /* When the page list is a row of chips that scrolls sideways (small
+       screens), keep the chosen one in the middle without moving the page. */
+    function keepNavInView() {
+      var cur = navBtns[index], nav = cur && cur.parentNode;
+      if (!nav || nav.scrollWidth <= nav.clientWidth + 1) return;
+      var left = cur.offsetLeft - (nav.clientWidth - cur.offsetWidth) / 2;
+      if (nav.scrollTo) nav.scrollTo({ left: left, behavior: reduceMotion ? "auto" : "smooth" });
+      else nav.scrollLeft = left;
+    }
+
+    function go(n, opts) {
+      opts = opts || {};
+      var next = ((n % count) + count) % count;
+      if (next === index) return;
+      var from = index;
+      box.style.setProperty("--dir", opts.dir || (n >= index ? 1 : -1));
+      slides[from].classList.add("is-leaving");
+      setTimeout(function () { slides[from].classList.remove("is-leaving"); }, 800);
+      index = next;
+      elapsed = 0;
+      setBar(0);
+      render();
+    }
+
+    /* The clock: one rAF loop that only runs while the slider is playing and
+       nothing is holding it, so a hover freezes the bar and resumes from the
+       same spot instead of restarting. */
+    function tick(ts) {
+      raf = 0;
+      if (!playing || held()) { last = 0; return; }
+      if (!last) last = ts;
+      elapsed += ts - last;
+      last = ts;
+      if (elapsed >= interval) go(index + 1, { dir: 1 });
+      setBar(Math.min(1, elapsed / interval));
+      raf = requestAnimationFrame(tick);
+    }
+    function sync() {
+      box.classList.toggle("is-playing", playing);
+      box.classList.toggle("is-held", playing && held());
+      list.setAttribute("aria-live", playing ? "off" : "polite");
+      if (playBtn) {
+        playBtn.setAttribute("aria-label", playing ? tr("ui.car.pause", "Pause slideshow") : tr("ui.car.play", "Play slideshow"));
       }
+      if (playing && !held() && !raf) { last = 0; raf = requestAnimationFrame(tick); }
+      if (!playing) setBar(0);
     }
-    function go(n) {
-      index = (n + slides.length) % slides.length;
-      track.scrollTo({ left: slides[index].offsetLeft - track.offsetLeft, behavior: reduceMotion ? "auto" : "smooth" });
-      mark();
+    function hold(reason, on) { holds[reason] = !!on; sync(); }
+    function interact() {
+      elapsed = 0;
+      setBar(0);
+      if (stopOnInteract && playing) playing = false;
+      sync();
     }
-    function mark() {
-      if (!track.clientWidth) return;
-      index = Math.max(0, Math.min(slides.length - 1, Math.round(track.scrollLeft / track.clientWidth)));
-      if (dots) $$("button", dots).forEach(function (b, n) { b.setAttribute("aria-pressed", String(n === index)); });
-      $$(".slide", track).forEach(function (s, n) { s.setAttribute("aria-label", (n + 1) + " / " + slides.length); });
+
+    function relabel() {
+      var tpl = tr("ui.car.n", "Picture {n} of {total}");
+      navBtns.forEach(function (btn, i) {
+        if (btn.hasAttribute("data-dynamic-label")) btn.setAttribute("aria-label", fmt(tpl, { n: i + 1, total: count }));
+      });
+      sync();
     }
-    on(track, "scroll", function () {
-      if (!track.clientWidth) return;
-      index = Math.max(0, Math.min(slides.length - 1, Math.round(track.scrollLeft / track.clientWidth)));
-      if (dots) $$("button", dots).forEach(function (b, n) { b.setAttribute("aria-pressed", String(n === index)); });
-    }, { passive: true });
-    on($(".car-btn.prev", box), "click", function () { go(index - 1); });
-    on($(".car-btn.next", box), "click", function () { go(index + 1); });
-    on(track, "keydown", function (e) {
-      if (e.key === "ArrowRight") { e.preventDefault(); go(index + 1); }
-      if (e.key === "ArrowLeft") { e.preventDefault(); go(index - 1); }
+
+    /* controls */
+    on($(".slider-btn.prev", box), "click", function () { interact(); go(index - 1, { dir: -1 }); });
+    on($(".slider-btn.next", box), "click", function () { interact(); go(index + 1, { dir: 1 }); });
+    navBtns.forEach(function (btn, i) {
+      on(btn, "click", function () { interact(); go(i); });
     });
-    on(window, "resize", function () {
-      track.scrollTo({ left: slides[index].offsetLeft - track.offsetLeft, behavior: "auto" });
-      mark();
+    on(playBtn, "click", function () {
+      playing = !playing;
+      if (playing) { holds.focus = false; ignoreFocus = true; }
+      elapsed = playing ? 0 : elapsed;
+      sync();
     });
-    carousel = { go: go, refresh: mark };
-    mark();
-  })();
+    on(box, "keydown", function (e) {
+      var k = e.key;
+      if (k === "ArrowRight") { e.preventDefault(); interact(); go(index + 1, { dir: 1 }); }
+      else if (k === "ArrowLeft") { e.preventDefault(); interact(); go(index - 1, { dir: -1 }); }
+      else if (k === "Home") { e.preventDefault(); interact(); go(0, { dir: -1 }); }
+      else if (k === "End") { e.preventDefault(); interact(); go(count - 1, { dir: 1 }); }
+    });
+
+    /* holds */
+    on(box, "pointerenter", function (e) { if (e.pointerType === "mouse") hold("hover", true); });
+    on(box, "pointerleave", function () { hold("hover", false); });
+    on(box, "focusin", function (e) {
+      var kb = false;
+      try { kb = e.target.matches(":focus-visible"); } catch (err) { kb = false; }
+      if (kb && !ignoreFocus) hold("focus", true);
+    });
+    on(box, "focusout", function (e) {
+      if (box.contains(e.relatedTarget)) return;
+      ignoreFocus = false;
+      hold("focus", false);
+    });
+    on(document, "visibilitychange", function () { hold("hidden", document.hidden); });
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (entries) {
+        hold("offscreen", !entries[0].isIntersecting);
+      }, { threshold: 0.2 }).observe(box);
+    }
+
+    /* swipe: vertical scrolling stays native (touch-action: pan-y in the CSS) */
+    if (viewport) {
+      var sx = 0, sy = 0, down = false;
+      on(viewport, "pointerdown", function (e) {
+        if (e.pointerType === "mouse" && e.button !== 0) return;
+        down = true; sx = e.clientX; sy = e.clientY;
+      });
+      on(viewport, "pointerup", function (e) {
+        if (!down) return;
+        down = false;
+        var dx = e.clientX - sx, dy = e.clientY - sy;
+        if (Math.abs(dx) > 44 && Math.abs(dx) > Math.abs(dy) * 1.4) {
+          interact();
+          go(index + (dx < 0 ? 1 : -1), { dir: dx < 0 ? 1 : -1 });
+          swallow = true;                          // do not also open the lightbox
+          setTimeout(function () { swallow = false; }, 350);
+        }
+      });
+      on(viewport, "pointercancel", function () { down = false; });
+      on(viewport, "dragstart", function (e) { e.preventDefault(); });
+      on(viewport, "click", function (e) {
+        if (swallow) { e.stopPropagation(); e.preventDefault(); swallow = false; }
+      }, true);
+    }
+
+    self.box = box;
+    self.go = go;
+    self.hold = hold;
+    self.relabel = relabel;
+    self.focusActive = function () {
+      var fig = $("[data-lb-item]", slides[index]);
+      if (fig && fig.focus) fig.focus();
+    };
+    box.classList.add("is-ready");
+    render();
+    relabel();
+    box._slider = self;
+    return self;
+  }
+  $$("[data-slider]").forEach(function (box) {
+    var sl = Slider(box);
+    if (sl) sliders.push(sl);
+  });
 
   /* 6. lightbox ------------------------------------------------------------ */
+  /* One viewer for every group of pictures on the page.  What it shows is read
+     from the page at the moment it opens, so it always matches the language
+     the screenshots and captions are currently in. */
   var lightbox = null;
   (function () {
-    var host = $("[data-lightbox]");
-    if (!host) return;
-    var items = $$("[data-lb-item]", host).map(function (el) {
-      var img = $("img", el) || el;
-      var cap = $(".lb-caption", el) || $("figcaption", el);
-      return { src: img.getAttribute("data-full") || img.currentSrc || img.src, alt: img.alt || "", cap: cap ? cap.textContent.trim() : "" };
-    });
-    if (!items.length) return;
+    var hosts = $$("[data-lightbox]");
+    if (!hosts.length) return;
+    var el, img, cap, counter, btnClose, btnPrev, btnNext;
+    var group = [], n = 0, opener = null, activeHost = null, sx = 0;
 
-    var el = document.createElement("div");
-    el.className = "lightbox";
-    el.setAttribute("role", "dialog");
-    el.setAttribute("aria-modal", "true");
-    el.setAttribute("aria-label", currentLang === "vi" ? "Trình xem ảnh" : "Image viewer");
-    el.innerHTML =
-      '<button type="button" class="lb-btn lb-close" aria-label="Close">' + ICON.close + "</button>" +
-      '<button type="button" class="lb-btn lb-prev" aria-label="Previous">' + ICON.left + "</button>" +
-      '<figure class="lb-figure"><img alt=""><figcaption class="lb-cap"></figcaption><div class="lb-count"></div></figure>' +
-      '<button type="button" class="lb-btn lb-next" aria-label="Next">' + ICON.right + "</button>";
-    document.body.appendChild(el);
-
-    var img = $(".lb-figure img", el), cap = $(".lb-cap", el), count = $(".lb-count", el), n = 0, opener = null;
-    function show(i) {
-      n = (i + items.length) % items.length;
-      img.src = items[n].src;
-      img.alt = items[n].alt;
-      cap.textContent = items[n].cap;
-      count.textContent = (n + 1) + " / " + items.length;
+    function build() {
+      el = document.createElement("div");
+      el.className = "lightbox";
+      el.setAttribute("role", "dialog");
+      el.setAttribute("aria-modal", "true");
+      el.innerHTML =
+        '<button type="button" class="lb-btn lb-close">' + ICON.close + "</button>" +
+        '<button type="button" class="lb-btn lb-prev">' + ICON.left + "</button>" +
+        '<figure class="lb-figure"><img alt=""><figcaption class="lb-cap"></figcaption><div class="lb-count"></div></figure>' +
+        '<button type="button" class="lb-btn lb-next">' + ICON.right + "</button>";
+      document.body.appendChild(el);
+      img = $(".lb-figure img", el); cap = $(".lb-cap", el); counter = $(".lb-count", el);
+      btnClose = $(".lb-close", el); btnPrev = $(".lb-prev", el); btnNext = $(".lb-next", el);
+      on(btnClose, "click", close);
+      on(btnPrev, "click", function () { show(n - 1); });
+      on(btnNext, "click", function () { show(n + 1); });
+      on(el, "click", function (e) { if (e.target === el) close(); });
+      on(el, "pointerdown", function (e) { sx = e.clientX; });
+      on(el, "pointerup", function (e) {
+        var dx = e.clientX - sx;
+        if (e.pointerType !== "mouse" && Math.abs(dx) > 50) show(n + (dx < 0 ? 1 : -1));
+      });
+      on(document, "keydown", function (e) {
+        if (!el.classList.contains("is-open")) return;
+        if (e.key === "Escape") { e.preventDefault(); close(); }
+        else if (e.key === "ArrowRight") { e.preventDefault(); show(n + 1); }
+        else if (e.key === "ArrowLeft") { e.preventDefault(); show(n - 1); }
+        else if (e.key === "Tab") {
+          var f = $$(".lb-btn", el), first = f[0], last = f[f.length - 1];
+          if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+          else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        }
+      });
     }
-    function open(i, from) {
+    function relabelChrome() {
+      el.setAttribute("aria-label", tr("ui.lb.label", "Image viewer"));
+      btnClose.setAttribute("aria-label", tr("ui.close", "Close"));
+      btnPrev.setAttribute("aria-label", tr("ui.car.prev", "Previous picture"));
+      btnNext.setAttribute("aria-label", tr("ui.car.next", "Next picture"));
+    }
+    function read(item) {
+      var im = $("img", item);
+      var c = $(".lb-caption", item) || $("figcaption", item);
+      return {
+        src: im ? (im.getAttribute("data-full") || im.currentSrc || im.src) : "",
+        alt: im ? im.alt : "",
+        cap: c ? c.textContent.trim() : ""
+      };
+    }
+    function show(i) {
+      n = (i + group.length) % group.length;
+      var d = read(group[n]);
+      img.src = d.src;
+      img.alt = d.alt;
+      cap.textContent = d.cap;
+      counter.textContent = (n + 1) + " / " + group.length;
+    }
+    function open(host, i, from) {
+      if (!el) build();
+      activeHost = host;
+      group = $$("[data-lb-item]", host);
       opener = from || document.activeElement;
+      relabelChrome();
       show(i);
       el.classList.add("is-open");
       document.body.style.overflow = "hidden";
-      $(".lb-close", el).focus();
+      sliders.forEach(function (sl) { sl.hold("lightbox", true); });
+      btnClose.focus();
     }
     function close() {
+      if (!el || !el.classList.contains("is-open")) return;
       el.classList.remove("is-open");
       document.body.style.overflow = "";
-      if (opener && opener.focus) opener.focus();
-    }
-    on($(".lb-close", el), "click", close);
-    on($(".lb-prev", el), "click", function () { show(n - 1); });
-    on($(".lb-next", el), "click", function () { show(n + 1); });
-    on(el, "click", function (e) { if (e.target === el) close(); });
-    on(document, "keydown", function (e) {
-      if (!el.classList.contains("is-open")) return;
-      if (e.key === "Escape") { e.preventDefault(); close(); }
-      if (e.key === "Tab") {
-        var f = $$(".lb-btn", el), first = f[0], last = f[f.length - 1];
-        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      sliders.forEach(function (sl) { sl.hold("lightbox", false); });
+      if (activeHost && activeHost._slider) {          // land the slider on the picture last viewed
+        activeHost._slider.go(n);
+        activeHost._slider.focusActive();
+      } else if (opener && opener.focus) {
+        opener.focus();
       }
-      if (e.key === "ArrowRight") { e.preventDefault(); show(n + 1); }
-      if (e.key === "ArrowLeft") { e.preventDefault(); show(n - 1); }
-    });
-    $$("[data-lb-item]", host).forEach(function (item, i) {
-      on(item, "click", function (e) {
-        if (e.target.closest("a[href]:not([data-lb-open])")) return;
-        e.preventDefault();
-        open(i, item);
+    }
+
+    hosts.forEach(function (host) {
+      $$("[data-lb-item]", host).forEach(function (item) {
+        function go() { open(host, $$("[data-lb-item]", host).indexOf(item), item); }
+        item.setAttribute("tabindex", "0");
+        item.setAttribute("role", "button");
+        on(item, "click", function (e) {
+          if (e.target.closest("a[href]:not([data-lb-open])")) return;
+          e.preventDefault();
+          go();
+        });
+        on(item, "keydown", function (e) {
+          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); }
+        });
       });
-      item.setAttribute("tabindex", "0");
-      item.setAttribute("role", "button");
-      on(item, "keydown", function (e) {
-        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(i, item); }
-      });
     });
-    lightbox = { open: open, close: close, isOpen: function () { return el.classList.contains("is-open"); } };
+    lightbox = { open: open, close: close, isOpen: function () { return !!el && el.classList.contains("is-open"); } };
   })();
 
   /* 7. reveal on scroll + counters ---------------------------------------- */

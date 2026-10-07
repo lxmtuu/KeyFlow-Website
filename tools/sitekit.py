@@ -112,6 +112,9 @@ ICONS: dict[str, str] = {
     "eye": '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3.2"/>',
     "plug": '<path d="M9 3v5M15 3v5M6.5 8h11v3a5.5 5.5 0 0 1-11 0V8ZM12 16.5V21"/>',
     "search": '<circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/>',
+    "play": '<path fill="currentColor" stroke="none" d="M8 5.2v13.6a.6.6 0 0 0 .92.5l10.6-6.8a.6.6 0 0 0 0-1L8.92 4.7a.6.6 0 0 0-.92.5Z"/>',
+    "pause": '<path fill="currentColor" stroke="none" d="M7 5h3.4v14H7zM13.6 5H17v14h-3.4z"/>',
+    "expand": '<path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/>',
     "undo": '<path d="M4 9h9.5a5.5 5.5 0 0 1 0 11H8m-4-11 4-4m-4 4 4 4"/>',
 }
 
@@ -285,7 +288,8 @@ def cta(**kw): return sec("cta", **kw)
 def shots(**kw): return sec("shots", **kw)
 def chipcloud(**kw): return sec("chips", **kw)
 def groups(**kw): return sec("groups", **kw)
-def carousel(**kw): return sec("carousel", **kw)
+def slider(**kw): return sec("slider", **kw)
+def carousel(**kw): return sec("slider", **{"variant": "spotlight", **kw})
 def pagenav(**kw): return sec("pagenav", **kw)
 def dlhero(**kw): return sec("dlhero", **kw)
 def raw(html_text: str): return sec("raw", html=html_text)
@@ -436,8 +440,8 @@ def render_section(doc: Doc, s: dict[str, Any]) -> str:  # noqa: C901 - one disp
         inner = head(doc, s) + '<div class="groups">' + "".join(cols) + "</div>"
         return wrap(doc, s, inner)
 
-    if kind == "carousel":
-        return render_carousel(doc, s)
+    if kind == "slider":
+        return render_slider(doc, s)
 
     if kind == "pagenav":
         cells = []
@@ -732,29 +736,103 @@ def render_shots(doc: Doc, s: dict[str, Any]) -> str:
     return wrap(doc, s, inner)
 
 
-def render_carousel(doc: Doc, s: dict[str, Any]) -> str:
-    slides = []
-    for i, item in enumerate(s["slides"]):
+SLIDER_VARIANTS = {"spotlight", "tabs", "steps"}
+
+
+def render_slider(doc: Doc, s: dict[str, Any]) -> str:
+    """A picture slider with arrows, a pause button and optional auto-advance.
+
+    One component, three layouts, chosen to suit the content it carries:
+
+    * ``spotlight`` - a wide cinematic frame that changes by itself.  For
+      pictures that are there to be looked at (the stage, the home page).
+    * ``tabs`` - the picture with a list of named pages beside it, manual by
+      default.  For screenshots that need reading time (the interface).
+    * ``steps`` - a numbered stepper above the picture.  For a sequence that
+      is read in order (choose a score, practise, review, record).
+
+    ``site.js`` does the behaviour.  Without it every slide is simply listed
+    one after another, so the page is still complete.
+    """
+    variant = s.get("variant", "spotlight")
+    if variant not in SLIDER_VARIANTS:
+        raise ValueError(f"unknown slider variant: {variant}")
+    items = s["slides"]
+    total = len(items)
+    if total < 2:
+        raise ValueError("a slider needs at least two slides")
+    autoplay = bool(s.get("autoplay", variant != "tabs"))
+    interval = int(s.get("interval", 6000))
+
+    slides, nav = [], []
+    for i, item in enumerate(items):
         alt = item.get("alt") or item.get("cap") or E(item["shot"])
-        pic = picture(doc, item["shot"], alt, lazy=i > 0)
+        pic = picture(doc, item["shot"], alt, lazy=True, badge=item.get("badge"))
         ck, cv = doc.key(item.get("cap") or E(""))
+        title_html = ""
+        if variant != "spotlight":
+            if not item.get("title"):
+                raise ValueError(f"slider variant {variant!r} needs a title on every slide")
+            tk, tv = doc.key(item["title"])
+            title_html = f'<p class="slide-title" data-i18n="{tk}">{tv}</p>'
+            if variant == "tabs":
+                nav.append(f'<button type="button" class="slider-tab"><span class="tab-n" aria-hidden="true">{i + 1:02d}</span>'
+                           f'<span class="tab-t" data-i18n="{tk}">{tv}</span><span class="tab-go" aria-hidden="true">{icon("right", 16)}</span></button>')
+            else:
+                nav.append(f'<button type="button" class="slider-step"><span class="step-dot" aria-hidden="true">{i + 1}</span>'
+                           f'<span class="step-t" data-i18n="{tk}">{tv}</span></button>')
+        else:
+            nav.append('<button type="button" class="slider-seg" data-dynamic-label><i></i></button>')
         slides.append(
-            f'<li class="slide" role="group" aria-roledescription="slide" aria-label="{i + 1} / {len(s["slides"])}">'
-            f'<figure data-lb-item>{pic}<figcaption class="lb-caption" data-i18n="{ck}">{cv}</figcaption></figure></li>'
+            f'<li class="slide" role="group" aria-roledescription="slide" aria-label="{i + 1} / {total}">'
+            f'<figure class="slide-fig" data-lb-item>{pic}{title_html}'
+            f'<figcaption class="slide-cap lb-caption" data-i18n="{ck}">{cv}</figcaption></figure></li>'
         )
-    pk, pv = doc.key(T("Previous picture", "Ảnh trước"))
-    nk, nv = doc.key(T("Next picture", "Ảnh sau"))
-    inner = (
-        '<div class="carousel" aria-roledescription="carousel">'
-        f'<button type="button" class="car-btn prev" data-i18n-attr="aria-label={pk}" aria-label="{_html.escape(pv, quote=True)}">{icon("left", 22)}</button>'
-        f'<ul class="track" tabindex="0" data-lightbox>{"".join(slides)}</ul>'
-        f'<button type="button" class="car-btn next" data-i18n-attr="aria-label={nk}" aria-label="{_html.escape(nv, quote=True)}">{icon("right", 22)}</button>'
-        '<div class="dots" role="group" aria-label="Choose a picture" data-i18n-attr="aria-label=ui.car.choose"></div></div>'
+
+    rk, rv = doc.key(s.get("label") or UI["ui.car.region"])
+    pk, pv = doc.key(UI["ui.car.prev"])
+    nk, nv = doc.key(UI["ui.car.next"])
+    ck_, cv_ = doc.key(UI["ui.car.choose"])
+    play_label = UI["ui.car.pause"][0] if autoplay else UI["ui.car.play"][0]
+    stop = " data-stop-on-interact" if s.get("stop_on_interact") else ""
+
+    nav_html = (f'<div class="slider-nav" role="group" data-i18n-attr="aria-label={ck_}" '
+                f'aria-label="{_html.escape(cv_, quote=True)}">{"".join(nav)}</div>')
+    # The controls sit under the picture, never on it: a screenshot of an
+    # application has its own buttons and labels and nothing should hide them.
+    rail = (
+        '<div class="slider-rail">'
+        f'<button type="button" class="slider-play" aria-label="{_html.escape(play_label, quote=True)}">'
+        f'<span class="ic-pause">{icon("pause", 18)}</span><span class="ic-play">{icon("play", 18)}</span></button>'
+        f'{nav_html if variant == "spotlight" else ""}'
+        f'<span class="slider-count" aria-hidden="true"><b data-count-cur>01</b> / {total:02d}</span>'
+        '</div>'
     )
-    body = head(doc, s) + inner
+    main = (
+        '<div class="slider-main">'
+        '<div class="slider-viewport">'
+        f'<ul class="slides">{"".join(slides)}</ul>'
+        f'<button type="button" class="slider-btn prev" data-i18n-attr="aria-label={pk}" aria-label="{_html.escape(pv, quote=True)}">{icon("left", 24)}</button>'
+        f'<button type="button" class="slider-btn next" data-i18n-attr="aria-label={nk}" aria-label="{_html.escape(nv, quote=True)}">{icon("right", 24)}</button>'
+        '<div class="slider-bar" aria-hidden="true"><b></b></div>'
+        f'</div>{rail}</div>'
+    )
+    if variant == "spotlight":
+        body_html = main
+    elif variant == "tabs":
+        body_html = main + nav_html
+    else:
+        body_html = nav_html + main
+
+    box = (
+        f'<div class="slider slider-{variant}" data-slider data-lightbox data-interval="{interval}" '
+        f'data-autoplay="{"on" if autoplay else "off"}"{stop} role="region" aria-roledescription="carousel" '
+        f'data-i18n-attr="aria-label={rk}" aria-label="{_html.escape(rv, quote=True)}">{body_html}</div>'
+    )
+    out = head(doc, s) + box
     if s.get("actions"):
-        body += buttons(doc, s["actions"]).replace('class="actions"', 'class="actions" style="margin-top:22px;justify-content:center"', 1)
-    return wrap(doc, s, body)
+        out += buttons(doc, s["actions"]).replace('class="actions"', 'class="actions" style="margin-top:26px;justify-content:center"', 1)
+    return wrap(doc, s, out, "slider-section")
 
 
 def render_dlhero(doc: Doc, s: dict[str, Any]) -> str:
@@ -823,6 +901,13 @@ UI: dict[str, tuple[str, str]] = {
     "ui.drawer.pages": T("Pages", "Trang"),
     "ui.car.dot": T("Picture", "Ảnh"),
     "ui.car.choose": T("Choose a picture", "Chọn ảnh"),
+    "ui.car.prev": T("Previous picture", "Ảnh trước"),
+    "ui.car.next": T("Next picture", "Ảnh sau"),
+    "ui.car.play": T("Play slideshow", "Phát trình chiếu"),
+    "ui.car.pause": T("Pause slideshow", "Tạm dừng trình chiếu"),
+    "ui.car.n": T("Picture {n} of {total}", "Ảnh {n} / {total}"),
+    "ui.car.region": T("Picture slideshow", "Trình chiếu ảnh"),
+    "ui.car.zoom": T("Click the picture to enlarge it", "Bấm vào ảnh để phóng to"),
 
     "page.home": T("Home", "Trang chủ"),
     "page.gallery": T("Gallery", "Hình ảnh"),

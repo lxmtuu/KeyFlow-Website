@@ -8,7 +8,7 @@ the documentation describe the same product.
 from __future__ import annotations
 
 from sitekit import (E, REPO, T, band, callout, chipcloud, cta, framed, grid, iconbox,
-                     pagehero, pagenav, shots, split, specdl, steps, table)
+                     pagehero, pagenav, slider, split, specdl, steps, table)
 
 DOWNLOAD = {"label": T("Download for Windows", "Tải cho Windows"), "href": "download.html",
             "kind": "btn-gold", "icon": "download"}
@@ -328,14 +328,18 @@ def build_stage(doc) -> dict:
             ],
         ),
 
-        shots(
+        slider(
             id="pictures",
+            variant="spotlight",
+            interval=6000,
             eyebrow=T("Pictures", "Hình ảnh"),
             title=T("The same engine, four looks", "Cùng một engine, bốn diện mạo"),
-            sub=T("Click any picture to open it full size. Every frame is rendered by Keyflow in CI.",
-                  "Bấm vào ảnh bất kỳ để xem cỡ lớn. Mọi khung hình đều do Keyflow render trong CI."),
-            cols=2,
-            items=[
+            sub=T("The pictures change by themselves; use the arrows to choose, or click a picture to open it full size. "
+                  "Every frame is rendered by Keyflow in CI.",
+                  "Ảnh tự chuyển; dùng mũi tên để chọn, hoặc bấm vào ảnh để xem cỡ lớn. "
+                  "Mọi khung hình đều do Keyflow render trong CI."),
+            label=T("The GPU stage: four looks", "Sân khấu GPU: bốn diện mạo"),
+            slides=[
                 {"shot": "stage-gpu", "cap": T("Neon Violet — the default stage", "Neon Violet — sân khấu mặc định")},
                 {"shot": "stage-gpu-galaxy", "cap": T("Galaxy Voyage — rainbow trails and a cosmic layer",
                                                       "Galaxy Voyage — vệt cầu vồng và lớp nền vũ trụ")},

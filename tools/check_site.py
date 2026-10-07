@@ -16,6 +16,10 @@ from build import PAGES  # noqa: E402
 from sitekit import SITE_URL  # noqa: E402
 
 
+SCRIPTS = ["site.js"]
+SLIDER_VARIANTS = {"spotlight", "tabs", "steps"}
+
+
 class Scan(HTMLParser):
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
@@ -28,6 +32,8 @@ class Scan(HTMLParser):
         self.translation_icons: list[tuple[str, str]] = []
         self.chip_classes: list[tuple[str, ...]] = []
         self.untranslated_drawer_links: list[str] = []
+        self.sliders: list[dict] = []
+        self.shotgrids = 0
         self._stack: list[tuple[str, str | None]] = []
         self._void = {"area", "base", "br", "col", "embed", "hr", "img", "input",
                       "link", "meta", "param", "source", "track", "wbr"}
@@ -39,6 +45,30 @@ class Scan(HTMLParser):
         classes = tuple(data.get("class", "").split())
         if "chip" in classes:
             self.chip_classes.append(classes)
+        if "shotgrid" in classes:
+            self.shotgrids += 1
+        if "data-slider" in data:
+            self.sliders.append({"id": data.get("id", ""), "variant": next((c[7:] for c in classes if c.startswith("slider-")), ""),
+                                 "interval": data.get("data-interval", ""), "role": data.get("role", ""),
+                                 "label": bool(data.get("aria-label")), "slides": 0, "items": 0, "nav": 0,
+                                 "prev": 0, "next": 0, "play": 0, "count": 0, "lightbox": "data-lightbox" in data})
+        elif self.sliders:
+            cur = self.sliders[-1]
+            if tag == "li" and "slide" in classes:
+                cur["slides"] += 1
+            if "data-lb-item" in data:
+                cur["items"] += 1
+            if tag == "button" and classes and classes[0] in ("slider-seg", "slider-tab", "slider-step"):
+                cur["nav"] += 1
+            if tag == "button" and "slider-btn" in classes:
+                if "prev" in classes:
+                    cur["prev"] += 1
+                elif "next" in classes:
+                    cur["next"] += 1
+            if tag == "button" and "slider-play" in classes:
+                cur["play"] += 1
+            if "slider-count" in classes:
+                cur["count"] += 1
         if tag == "a" and "dlink" in classes and not data.get("data-i18n"):
             self.untranslated_drawer_links.append(data.get("href", "(no href)"))
         if data.get("id"):
@@ -115,10 +145,18 @@ def main() -> int:
 
     # JavaScript syntax check where Node is available (it is required by the
     # contributor CI, but not needed to view the static pages).
-    node = subprocess.run(["node", "--check", str(ROOT / "site.js")], cwd=ROOT,
-                          text=True, capture_output=True)
-    if node.returncode:
-        failures.extend("site.js: " + line for line in node.stderr.splitlines())
+    for script in SCRIPTS:
+        node = subprocess.run(["node", "--check", str(ROOT / script)], cwd=ROOT,
+                              text=True, capture_output=True)
+        if node.returncode:
+            failures.extend(f"{script}: " + line for line in node.stderr.splitlines())
+
+    # Every shared string that site.js looks up at run time must exist in the
+    # Vietnamese UI table (otherwise the control silently stays in English).
+    site_js = (ROOT / "site.js").read_text(encoding="utf-8")
+    for key in sorted(set(re.findall(r'tr\("(ui\.[\w.]+)"', site_js))):
+        if key not in ui:
+            failures.append(f"site.js: tr() uses {key!r}, which is not in i18n/vi/ui.js")
 
     for pid, path, _ in PAGES:
         page = Path(path)
@@ -155,6 +193,25 @@ def main() -> int:
                 # Vietnamese replacement by design.
                 pass
 
+        for sl in scan.sliders:
+            name = f"{path} slider #{sl['id'] or sl['variant']}"
+            if sl["variant"] not in SLIDER_VARIANTS:
+                failures.append(f"{name}: unknown variant {sl['variant']!r}")
+            if sl["slides"] < 2:
+                failures.append(f"{name}: a slider needs at least two slides (found {sl['slides']})")
+            if sl["nav"] != sl["slides"]:
+                failures.append(f"{name}: {sl['nav']} navigation buttons for {sl['slides']} slides")
+            if sl["lightbox"] and sl["items"] != sl["slides"]:
+                failures.append(f"{name}: {sl['items']} enlargeable figures for {sl['slides']} slides")
+            if (sl["prev"], sl["next"], sl["play"], sl["count"]) != (1, 1, 1, 1):
+                failures.append(f"{name}: needs exactly one previous, next, play button and counter")
+            if sl["role"] != "region" or not sl["label"]:
+                failures.append(f"{name}: needs role=region and an aria-label")
+            if not sl["interval"].isdigit() or int(sl["interval"]) < 3000:
+                failures.append(f"{name}: data-interval must be at least 3000 ms")
+        # The gallery must never lay out many pictures at once again.
+        if path == "gallery.html" and scan.shotgrids:
+            failures.append("gallery.html: picture grids are not allowed here; use a slider")
         if scan.untranslated_drawer_links:
             failures.append(f"{path}: untranslated mobile drawer link(s): {', '.join(scan.untranslated_drawer_links)}")
         if scan.translation_icons:
@@ -236,7 +293,7 @@ def main() -> int:
             print(" - " + failure, file=sys.stderr)
         return 1
 
-    print(f"OK: {len(PAGES)} pages, screenshots, translated links, internal routes and JavaScript syntax")
+    print(f"OK: {len(PAGES)} pages, screenshots, sliders, translated links, internal routes and JavaScript syntax")
     return 0
 
 
