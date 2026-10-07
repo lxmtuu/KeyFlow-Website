@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from sitekit import (ASSETS, E, ISSUES, README_EN, RELEASES, REPO, T, buttons, framed, icon,
                      iconbox, picture)
-from sitekit import band, carousel, chipcloud, cta, faq, grid, hero, pagenav, raw, shots, split, steps
+from sitekit import band, carousel, chipcloud, cta, faq, grid, hero, pagenav, raw, split, steps
 
 PRESETS = [
     "Neon Violet", "Inferno", "Aurora Rainbow", "Ice Crystal", "Two Hands", "Classic Roll",

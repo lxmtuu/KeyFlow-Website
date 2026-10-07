@@ -330,15 +330,14 @@ def build_stage(doc) -> dict:
 
         slider(
             id="pictures",
-            variant="spotlight",
-            interval=6000,
+            variant="spotlight", autoplay=True, interval=6000,
+            label=T("The GPU stage: four looks", "Sân khấu GPU: bốn diện mạo"),
             eyebrow=T("Pictures", "Hình ảnh"),
             title=T("The same engine, four looks", "Cùng một engine, bốn diện mạo"),
             sub=T("The pictures change by themselves; use the arrows to choose, or click a picture to open it full size. "
                   "Every frame is rendered by Keyflow in CI.",
                   "Ảnh tự chuyển; dùng mũi tên để chọn, hoặc bấm vào ảnh để xem cỡ lớn. "
                   "Mọi khung hình đều do Keyflow render trong CI."),
-            label=T("The GPU stage: four looks", "Sân khấu GPU: bốn diện mạo"),
             slides=[
                 {"shot": "stage-gpu", "cap": T("Neon Violet — the default stage", "Neon Violet — sân khấu mặc định")},
                 {"shot": "stage-gpu-galaxy", "cap": T("Galaxy Voyage — rainbow trails and a cosmic layer",

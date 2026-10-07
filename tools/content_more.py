@@ -5,14 +5,16 @@ from __future__ import annotations
 from sitekit import (ASSETS, CHANGELOG, CHANGELOG_VI, DOTNET, E, FREEPATS, ISSUES, LICENSE,
                      README_EN, README_VI, RELEASES, RELEASE_PAGE, REPO, T, VORTICE, band,
                      callout, carousel, chipcloud, codeblock, cta, dlhero, faq, framed, grid,
-                     groups, iconbox, pagehero, picture, pagenav, raw, shots, slider, split, specdl,
+                     groups, iconbox, pagehero, picture, pagenav, raw, slider, split, specdl,
                      steps, table)
 
 DOWNLOAD = {"label": T("Download for Windows", "Tải cho Windows"), "href": "download.html",
             "kind": "btn-gold", "icon": "download"}
 
-# The stage screenshots the application's CI renders, per language.
+# Every screenshot the application's CI renders, per language.
 STAGE_SHOTS = ["stage-live", "stage-gpu", "stage-gpu-galaxy", "stage-gpu-storm", "background-image"]
+UI_SHOTS = ["main-menu", "design-dock", "theme-dock", "language-dock"]
+SESSION_SHOTS = ["play-dialog", "practice-dock", "history-dock", "recording-dock", "shortcuts"]
 
 
 def kbd(*keys: str) -> str:
@@ -60,8 +62,10 @@ def build_gallery(doc) -> dict:
         '<figcaption class="frame-cap" data-i18n="' + video_cap_k + '">' + video_cap_v + "</figcaption></figure>"
     )
 
-    def shot_items(names, captions):
-        return [{"shot": n, "cap": c} for n, c in zip(names, captions)]
+    def shot_items(names, captions, titles=None):
+        """Slides for ``slider``: ``titles`` are the short picker labels (tabs and steps)."""
+        titles = titles or [None] * len(names)
+        return [dict(shot=n, cap=c, **({"title": t} if t else {})) for n, c, t in zip(names, captions, titles)]
 
     body = [
         pagehero(
@@ -95,15 +99,14 @@ def build_gallery(doc) -> dict:
 
         slider(
             id="stage",
-            variant="spotlight",
-            interval=5500,
+            variant="spotlight", autoplay=True, interval=5500,
+            label=T("The GPU stage: five looks", "Sân khấu GPU: năm diện mạo"),
             eyebrow=T("The stage", "Sân khấu"),
             title=T("What the GPU engine draws", "Những gì engine GPU vẽ ra"),
             sub=T("Five looks of the same engine, changing by themselves. Use the arrow buttons, the bars below or the "
                   "left and right arrow keys to choose one, or press pause to stay on a picture.",
                   "Năm diện mạo của cùng một engine, tự chuyển cảnh. Dùng nút mũi tên, các thanh bên dưới hoặc phím "
                   "mũi tên trái/phải để chọn, hoặc bấm tạm dừng để dừng lại ở một ảnh."),
-            label=T("The GPU stage: five looks", "Sân khấu GPU: năm diện mạo"),
             slides=shot_items(STAGE_SHOTS, [
                 T("Live play: only the notes you play, the glowing hit line, sparks and the transport bar",
                   "Chơi trực tiếp: chỉ những nốt bạn chơi, đường chạm phát sáng, tia lửa và thanh transport"),
@@ -120,9 +123,8 @@ def build_gallery(doc) -> dict:
 
         slider(
             id="interface",
-            variant="tabs",
-            autoplay=False,
-            interval=8000,
+            variant="tabs", autoplay=False, interval=8000,
+            label=T("The Keyflow interface: four pages", "Giao diện Keyflow: bốn trang"),
             eyebrow=T("The interface", "Giao diện"),
             title=T("Three concert interfaces and the design dock",
                     "Ba giao diện hoà nhạc và bàn thiết kế"),
@@ -130,53 +132,51 @@ def build_gallery(doc) -> dict:
                   "the arrows. Press play if you would rather watch them go by.",
                   "Những ảnh chụp này có nhiều chữ nhỏ nên chúng đợi bạn: chọn một trang trong danh sách hoặc dùng "
                   "mũi tên. Bấm phát nếu bạn muốn xem chúng tự chạy."),
-            label=T("The Keyflow interface: four pages", "Giao diện Keyflow: bốn trang"),
-            slides=[
-                {"shot": "main-menu", "title": T("Start menu", "Menu khởi động"),
-                 "cap": T("The Concert Grand start menu, with the interface-language chips",
-                          "Menu khởi động Concert Grand, kèm chip chọn ngôn ngữ giao diện")},
-                {"shot": "design-dock", "title": T("Style page", "Trang Style"),
-                 "cap": T("The Style page: presets, quick layer switches and the share code",
-                          "Trang Style: preset, công tắc bật nhanh từng lớp và mã chia sẻ")},
-                {"shot": "theme-dock", "title": T("Theme page", "Trang Theme"),
-                 "cap": T("The Theme page: three interfaces, the theme studio and the quick looks",
-                          "Trang Theme: ba giao diện, xưởng theme và các look nhanh")},
-                {"shot": "language-dock", "title": T("General page", "Trang General"),
-                 "cap": T("The General page in Vietnamese: language, graphics engine and settings profile",
-                          "Trang General tiếng Việt: ngôn ngữ, engine đồ hoạ và hồ sơ cài đặt")},
-            ],
+            slides=shot_items(UI_SHOTS, [
+                T("The Concert Grand start menu, with the interface-language chips",
+                  "Menu khởi động Concert Grand, kèm chip chọn ngôn ngữ giao diện"),
+                T("The Style page: presets, quick layer switches and the share code",
+                  "Trang Style: preset, công tắc bật nhanh từng lớp và mã chia sẻ"),
+                T("The Theme page: three interfaces, the theme studio and the quick looks",
+                  "Trang Theme: ba giao diện, xưởng theme và các look nhanh"),
+                T("The General page in Vietnamese: language, graphics engine and settings profile",
+                  "Trang General tiếng Việt: ngôn ngữ, engine đồ hoạ và hồ sơ cài đặt"),
+            ], [
+                T("Start menu", "Menu khởi động"),
+                T("Style page", "Trang Style"),
+                T("Theme page", "Trang Theme"),
+                T("General page", "Trang General"),
+            ]),
         ),
 
         slider(
             id="session",
-            variant="steps",
-            autoplay=True,
-            interval=7000,
-            stop_on_interact=True,
+            variant="steps", autoplay=True, interval=7000, stop_on_interact=True,
+            label=T("A session in five steps", "Một phiên làm việc trong năm bước"),
             eyebrow=T("The session", "Phiên làm việc"),
             title=T("Choosing a score, practising, recording", "Chọn bài, luyện tập, ghi hình"),
             sub=T("Five steps in the order you meet them. They advance slowly on their own until you take over "
                   "with the arrows or by choosing a step.",
                   "Năm bước theo đúng thứ tự bạn gặp. Chúng tự chuyển chậm cho tới khi bạn tự điều khiển "
                   "bằng mũi tên hoặc chọn một bước."),
-            label=T("A session in five steps", "Một phiên làm việc trong năm bước"),
-            slides=[
-                {"shot": "play-dialog", "title": T("Choose", "Chọn bài"),
-                 "cap": T("The Play dialog: score chooser, per-hand presets, recent songs and the library",
-                          "Hộp thoại Play: bộ chọn bài, preset từng tay, bài gần đây và thư viện")},
-                {"shot": "practice-dock", "title": T("Practise", "Luyện tập"),
-                 "cap": T("Practice: modes, tempo and the A-B loop",
-                          "Luyện tập: chế độ tập, tempo và vòng lặp A-B")},
-                {"shot": "history-dock", "title": T("Review", "Xem lại"),
-                 "cap": T("History: every run of the open song, the chart and the ghost",
-                          "Lịch sử: từng lượt chơi của bài đang mở, biểu đồ và bóng luyện tập")},
-                {"shot": "recording-dock", "title": T("Record", "Ghi hình"),
-                 "cap": T("Recording: format, resolution, frame rate, audio and transparency",
-                          "Ghi hình: định dạng, độ phân giải, tốc độ khung hình, tiếng và nền trong suốt")},
-                {"shot": "shortcuts", "title": T("Shortcuts", "Phím tắt"),
-                 "cap": T("The F1 card: every shortcut, in three groups",
-                          "Thẻ F1: mọi phím tắt, chia ba nhóm")},
-            ],
+            slides=shot_items(SESSION_SHOTS, [
+                T("The Play dialog: score chooser, per-hand presets, recent songs and the library",
+                  "Hộp thoại Play: bộ chọn bài, preset từng tay, bài gần đây và thư viện"),
+                T("Practice: modes, tempo and the A-B loop",
+                  "Luyện tập: chế độ tập, tempo và vòng lặp A-B"),
+                T("History: every run of the open song, the chart and the ghost",
+                  "Lịch sử: từng lượt chơi của bài đang mở, biểu đồ và bóng luyện tập"),
+                T("Recording: format, resolution, frame rate, audio and transparency",
+                  "Ghi hình: định dạng, độ phân giải, tốc độ khung hình, tiếng và nền trong suốt"),
+                T("The F1 card: every shortcut, in three groups",
+                  "Thẻ F1: mọi phím tắt, chia ba nhóm"),
+            ], [
+                T("Choose a score", "Chọn bản nhạc"),
+                T("Practise", "Luyện tập"),
+                T("Review history", "Xem lịch sử"),
+                T("Record", "Ghi hình"),
+                T("Shortcuts", "Phím tắt"),
+            ]),
         ),
 
         split(

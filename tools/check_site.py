@@ -11,13 +11,11 @@ from pathlib import Path
 from urllib.parse import unquote, urljoin, urlsplit
 
 ROOT = Path(__file__).resolve().parent.parent
+SCRIPTS = ["site.js"]            # hand-written scripts that ship with the site
+SLIDER_VARIANTS = {"spotlight", "tabs", "steps"}
 sys.path.insert(0, str(ROOT / "tools"))
 from build import PAGES  # noqa: E402
 from sitekit import SITE_URL  # noqa: E402
-
-
-SCRIPTS = ["site.js"]
-SLIDER_VARIANTS = {"spotlight", "tabs", "steps"}
 
 
 class Scan(HTMLParser):
@@ -33,7 +31,10 @@ class Scan(HTMLParser):
         self.chip_classes: list[tuple[str, ...]] = []
         self.untranslated_drawer_links: list[str] = []
         self.sliders: list[dict] = []
+        self.unlabelled_triggers = 0
         self.shotgrids = 0
+        self._open: dict | None = None        # the slider whose markup we are inside
+        self._open_depth = 0
         self._stack: list[tuple[str, str | None]] = []
         self._void = {"area", "base", "br", "col", "embed", "hr", "img", "input",
                       "link", "meta", "param", "source", "track", "wbr"}
@@ -48,27 +49,32 @@ class Scan(HTMLParser):
         if "shotgrid" in classes:
             self.shotgrids += 1
         if "data-slider" in data:
-            self.sliders.append({"id": data.get("id", ""), "variant": next((c[7:] for c in classes if c.startswith("slider-")), ""),
-                                 "interval": data.get("data-interval", ""), "role": data.get("role", ""),
-                                 "label": bool(data.get("aria-label")), "slides": 0, "items": 0, "nav": 0,
-                                 "prev": 0, "next": 0, "play": 0, "count": 0, "lightbox": "data-lightbox" in data})
-        elif self.sliders:
-            cur = self.sliders[-1]
+            self._open = {"variant": next((c[7:] for c in classes if c.startswith("slider-")), ""),
+                          "interval": data.get("data-interval", ""), "role": data.get("role", ""),
+                          "label": bool(data.get("aria-label")), "lightbox": "data-lightbox" in data,
+                          "slides": 0, "items": 0, "nav": 0, "prev": 0, "next": 0, "play": 0, "count": 0,
+                          "first_button": None}
+            self._open_depth = len(self._stack)
+            self.sliders.append(self._open)
+        elif self._open is not None:
+            box = self._open
             if tag == "li" and "slide" in classes:
-                cur["slides"] += 1
+                box["slides"] += 1
             if "data-lb-item" in data:
-                cur["items"] += 1
-            if tag == "button" and classes and classes[0] in ("slider-seg", "slider-tab", "slider-step"):
-                cur["nav"] += 1
-            if tag == "button" and "slider-btn" in classes:
-                if "prev" in classes:
-                    cur["prev"] += 1
-                elif "next" in classes:
-                    cur["next"] += 1
-            if tag == "button" and "slider-play" in classes:
-                cur["play"] += 1
+                box["items"] += 1
+            if tag == "button":
+                if box["first_button"] is None:
+                    box["first_button"] = " ".join(classes)
+                if classes and classes[0] in ("seg", "tab", "step"):
+                    box["nav"] += 1
+                if "slider-btn" in classes:
+                    box["prev" if "prev" in classes else "next"] += 1
+                if "slider-play" in classes:
+                    box["play"] += 1
             if "slider-count" in classes:
-                cur["count"] += 1
+                box["count"] += 1
+        if tag == "button" and "lb-trigger" in classes and not data.get("aria-label"):
+            self.unlabelled_triggers += 1
         if tag == "a" and "dlink" in classes and not data.get("data-i18n"):
             self.untranslated_drawer_links.append(data.get("href", "(no href)"))
         if data.get("id"):
@@ -96,6 +102,8 @@ class Scan(HTMLParser):
             if self._stack[index][0] == tag:
                 self._stack = self._stack[:index]
                 break
+        if self._open is not None and len(self._stack) <= self._open_depth:
+            self._open = None
 
 
 class LinkScan(HTMLParser):
@@ -152,11 +160,11 @@ def main() -> int:
             failures.extend(f"{script}: " + line for line in node.stderr.splitlines())
 
     # Every shared string that site.js looks up at run time must exist in the
-    # Vietnamese UI table (otherwise the control silently stays in English).
+    # Vietnamese UI table, otherwise that control silently stays in English.
     site_js = (ROOT / "site.js").read_text(encoding="utf-8")
-    for key in sorted(set(re.findall(r'tr\("(ui\.[\w.]+)"', site_js))):
+    for key in sorted(set(re.findall(r'\bt\("(ui\.[\w.]+)"', site_js))):
         if key not in ui:
-            failures.append(f"site.js: tr() uses {key!r}, which is not in i18n/vi/ui.js")
+            failures.append(f"site.js: t() uses {key!r}, which is not in i18n/vi/ui.js")
 
     for pid, path, _ in PAGES:
         page = Path(path)
@@ -193,30 +201,40 @@ def main() -> int:
                 # Vietnamese replacement by design.
                 pass
 
-        for sl in scan.sliders:
-            name = f"{path} slider #{sl['id'] or sl['variant']}"
-            if sl["variant"] not in SLIDER_VARIANTS:
-                failures.append(f"{name}: unknown variant {sl['variant']!r}")
-            if sl["slides"] < 2:
-                failures.append(f"{name}: a slider needs at least two slides (found {sl['slides']})")
-            if sl["nav"] != sl["slides"]:
-                failures.append(f"{name}: {sl['nav']} navigation buttons for {sl['slides']} slides")
-            if sl["lightbox"] and sl["items"] != sl["slides"]:
-                failures.append(f"{name}: {sl['items']} enlargeable figures for {sl['slides']} slides")
-            if (sl["prev"], sl["next"], sl["play"], sl["count"]) != (1, 1, 1, 1):
-                failures.append(f"{name}: needs exactly one previous, next, play button and counter")
-            if sl["role"] != "region" or not sl["label"]:
-                failures.append(f"{name}: needs role=region and an aria-label")
-            if not sl["interval"].isdigit() or int(sl["interval"]) < 3000:
-                failures.append(f"{name}: data-interval must be at least 3000 ms")
-        # The gallery must never lay out many pictures at once again.
-        if path == "gallery.html" and scan.shotgrids:
-            failures.append("gallery.html: picture grids are not allowed here; use a slider")
         if scan.untranslated_drawer_links:
             failures.append(f"{path}: untranslated mobile drawer link(s): {', '.join(scan.untranslated_drawer_links)}")
         if scan.translation_icons:
             for tag, key in scan.translation_icons:
                 failures.append(f"{path}: translated {tag} {key} contains an SVG; move the icon outside its text span")
+        # Sliders: both arrows, one picker button per slide, a name for the region, and the
+        # pause button first in the keyboard order (rotation must be stoppable before
+        # anything else is reached).
+        for number, box in enumerate(scan.sliders, 1):
+            where = f"{path}: slider #{number} ({box['variant'] or 'no variant'})"
+            if box["variant"] not in SLIDER_VARIANTS:
+                failures.append(f"{where}: unknown variant")
+            if box["slides"] < 2:
+                failures.append(f"{where} needs at least two slides (found {box['slides']})")
+            if box["nav"] != box["slides"]:
+                failures.append(f"{where}: {box['nav']} picker buttons for {box['slides']} slides")
+            if box["lightbox"] and box["items"] != box["slides"]:
+                failures.append(f"{where}: {box['items']} enlargeable figures for {box['slides']} slides")
+            if (box["prev"], box["next"], box["play"]) != (1, 1, 1):
+                failures.append(f"{where}: needs exactly one previous, next and play/pause button")
+            if box["count"] != (1 if box["variant"] == "spotlight" else 0):
+                failures.append(f"{where}: unexpected number of counters ({box['count']})")
+            if box["role"] != "region" or not box["label"]:
+                failures.append(f"{where}: needs role=region and an aria-label")
+            if not box["interval"].isdigit() or int(box["interval"]) < 3000:
+                failures.append(f"{where}: data-interval must be at least 3000 ms")
+            if box["first_button"] != "slider-play":
+                failures.append(f"{where}: the play/pause button must be the first button in the markup "
+                                f"(found {box['first_button']!r})")
+        # The gallery must never lay out many pictures at once again.
+        if path == "gallery.html" and scan.shotgrids:
+            failures.append("gallery.html: picture grids are not allowed here; use a slider")
+        if scan.unlabelled_triggers:
+            failures.append(f"{path}: {scan.unlabelled_triggers} zoom button(s) without an aria-label")
         allowed_chip_classes = {"chip", "gold", "violet", "cyan"}
         for classes in scan.chip_classes:
             if not set(classes).issubset(allowed_chip_classes) or len(classes) > 2:
