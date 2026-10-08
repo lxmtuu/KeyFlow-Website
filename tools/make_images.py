@@ -29,9 +29,10 @@ def sources() -> list[tuple[Path, Path]]:
     for lang in ("en", "vi"):
         for png in sorted((ROOT / "previews" / lang).glob("*.png")):
             pairs.append((png, ROOT / "previews" / "webp" / lang / (png.stem + ".webp")))
-    presets = ROOT / "previews" / "presets.jpg"
-    if presets.exists():
-        pairs.append((presets, ROOT / "previews" / "webp" / "presets.webp"))
+    for name in ("presets", "presets-teaser"):          # the gallery shows the teaser and links the full sheet
+        jpg = ROOT / "previews" / (name + ".jpg")
+        if jpg.exists():
+            pairs.append((jpg, ROOT / "previews" / "webp" / (name + ".webp")))
     return pairs
 
 

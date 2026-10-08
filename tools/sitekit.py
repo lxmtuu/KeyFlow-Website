@@ -1086,9 +1086,9 @@ def render_chrome(doc: Doc, active: str, page_title: tuple[str, str]) -> tuple[s
           <a href="{ISSUES}" target="_blank" rel="noopener">{icon('alert', 17)} <span data-i18n="{gk3}">{gv3}</span></a>
         </div>
       </div>
-      <div><h4 data-i18n="{hk}">{hv}</h4>{product}</div>
-      <div><h4 data-i18n="{rk}">{rv}</h4>{resources}</div>
-      <div><h4 data-i18n="{ak2}">{av2}</h4>{about}</div>
+      <div><h3 data-i18n="{hk}">{hv}</h3>{product}</div>
+      <div><h3 data-i18n="{rk}">{rv}</h3>{resources}</div>
+      <div><h3 data-i18n="{ak2}">{av2}</h3>{about}</div>
     </div>
     <div class="credits">
       <p class="credits-label" data-i18n="{uak}">{uav}</p>

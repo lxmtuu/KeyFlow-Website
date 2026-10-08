@@ -33,6 +33,7 @@ class Scan(HTMLParser):
         self.sliders: list[dict] = []
         self.unlabelled_triggers = 0
         self.shotgrids = 0
+        self.headings: list[int] = []         # h1..h6 levels in document order
         self._open: dict | None = None        # the slider whose markup we are inside
         self._open_depth = 0
         self._stack: list[tuple[str, str | None]] = []
@@ -48,6 +49,8 @@ class Scan(HTMLParser):
             self.chip_classes.append(classes)
         if "shotgrid" in classes:
             self.shotgrids += 1
+        if len(tag) == 2 and tag[0] == "h" and tag[1] in "123456":
+            self.headings.append(int(tag[1]))
         if "data-slider" in data:
             self._open = {"variant": next((c[7:] for c in classes if c.startswith("slider-")), ""),
                           "interval": data.get("data-interval", ""), "role": data.get("role", ""),
@@ -267,6 +270,13 @@ def main() -> int:
             failures.append("gallery.html: picture grids are not allowed here; use a slider")
         if scan.unlabelled_triggers:
             failures.append(f"{path}: {scan.unlabelled_triggers} zoom button(s) without an aria-label")
+        # Headings form an outline: one h1, and a heading may only go one level deeper than the one before it.
+        if scan.headings.count(1) != 1:
+            failures.append(f"{path}: expected exactly one h1, found {scan.headings.count(1)}")
+        for before, after in zip(scan.headings, scan.headings[1:]):
+            if after > before + 1:
+                failures.append(f"{path}: heading level jumps from h{before} to h{after}")
+                break
         allowed_chip_classes = {"chip", "gold", "ivory", "copper"}
         for classes in scan.chip_classes:
             if not set(classes).issubset(allowed_chip_classes) or len(classes) > 2:
