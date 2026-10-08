@@ -715,8 +715,8 @@ def build_guide(doc) -> dict:
                    "Engine Direct3D 11 dựng trên Vortice.Windows; shader HLSL được biên dịch lúc khởi động bằng "
                    "d3dcompiler_47.dll có sẵn trong Windows.")),
                 (T("Authors", "Tác giả"),
-                 T("Copyright belongs to Yami and Neyu; Jin contributes to the project.",
-                   "Bản quyền thuộc về Yami và Neyu; Jin cộng tác vào dự án.")),
+                 T("Keyflow is made by Yami, Neyu and Jin. Copyright © 2026 Yami, Neyu, Jin.",
+                   "Keyflow do Yami, Neyu và Jin tạo ra. Bản quyền © 2026 Yami, Neyu, Jin.")),
                 (T("Reporting a problem", "Báo lỗi"),
                  T("Issues are tracked on GitHub — a screenshot, the settings profile and the verification log make "
                    "a bug report actionable.",

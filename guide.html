@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title data-i18n="ui.title">Guide, shortcuts &amp; reference · Keyflow</title>
 <meta name="description" content="The Keyflow guide: first-time setup, getting started, every keyboard shortcut, the interface map, how the two languages work, where settings live, command-line flags, the built-in verification suite, the current limitations and the licence." data-i18n-attr="content=ui.description">
+<meta name="author" content="Yami, Neyu, Jin">
+<meta name="copyright" content="© 2026 Yami, Neyu, Jin">
 <link rel="canonical" href="https://ymkeyflow.online/guide.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Keyflow">
@@ -56,6 +58,35 @@
   "name": "Keyflow",
   "url": "https://ymkeyflow.online/"
  },
+ "author": [
+  {
+   "@type": "Person",
+   "name": "Yami"
+  },
+  {
+   "@type": "Person",
+   "name": "Neyu"
+  },
+  {
+   "@type": "Person",
+   "name": "Jin"
+  }
+ ],
+ "copyrightHolder": [
+  {
+   "@type": "Person",
+   "name": "Yami"
+  },
+  {
+   "@type": "Person",
+   "name": "Neyu"
+  },
+  {
+   "@type": "Person",
+   "name": "Jin"
+  }
+ ],
+ "copyrightYear": 2026,
  "about": {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
@@ -74,14 +105,35 @@
   "downloadUrl": "https://github.com/lxmtuu/KeyFlow/releases/download/v1.0.0/Keyflow-Setup-1.0.0.exe",
   "softwareRequirements": "Direct3D 11 GPU (feature level 11_0, shader model 5.0)",
   "screenshot": "https://ymkeyflow.online/previews/en/stage-gpu-galaxy.png",
-  "author": {
-   "@type": "Organization",
-   "name": "Yami · Neyu"
-  },
-  "contributor": {
-   "@type": "Person",
-   "name": "Jin"
-  },
+  "author": [
+   {
+    "@type": "Person",
+    "name": "Yami"
+   },
+   {
+    "@type": "Person",
+    "name": "Neyu"
+   },
+   {
+    "@type": "Person",
+    "name": "Jin"
+   }
+  ],
+  "copyrightHolder": [
+   {
+    "@type": "Person",
+    "name": "Yami"
+   },
+   {
+    "@type": "Person",
+    "name": "Neyu"
+   },
+   {
+    "@type": "Person",
+    "name": "Jin"
+   }
+  ],
+  "copyrightYear": 2026,
   "featureList": [
    "Direct3D 11 GPU stage with 16-bit HDR and multi-level bloom",
    "Ray-traced 88-key keyboard (GGX, softbox penumbra, ACES tonemap)",
@@ -147,9 +199,9 @@
   --verify-log=%TEMP%\keyflow-verify.log</pre><p class="muted small" style="margin:10px 0 0" data-i18n="guide.22">Exit code 0 means pass, 1 means something failed. Every line is written as it happens, so a crash still leaves a last line saying what it was doing.</p><button type="button" class="copy-btn" style="margin-top:10px" data-copy="card-verify" data-i18n="guide.23">Copy</button></div></div></div></div></section>
 <section id="privacy" class="section"><div class="container"><div class="callout tip reveal"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 5.5v5.8c0 4.3 2.9 8.1 7 9.7 4.1-1.6 7-5.4 7-9.7V5.5L12 3Z"/><path d="m9 12 2 2 4-4"/></svg></span><div><p><b data-i18n="guide.157">Privacy, plainly</b></p><p data-i18n="guide.158">This website sets no cookies, runs no analytics and loads no third-party script. Its only external requests are the fonts from Google Fonts and one call to GitHub's releases API, which is what keeps the download buttons pointing at the newest version.</p><p data-i18n="guide.159">The application needs no account and no sign-in. Settings, presets, themes, the song library and the practice history are plain files under %LOCALAPPDATA%\Keyflow, and camera frames are read locally and drawn locally — nothing is uploaded.</p></div></div></div></section>
 <section id="limits" class="section"><div class="container"><div class="section-head"><p class="eyebrow" data-i18n="guide.175">Honest limits</p><h2 data-i18n="guide.176">What 1.0.0 does not do</h2></div><div class="table-wrap reveal"><table class="data"><thead><tr><th scope="col" data-i18n="guide.160">Area</th><th scope="col" data-i18n="guide.161">The limit</th></tr></thead><tbody><tr><td data-i18n="guide.162">Sound</td><td data-i18n="guide.163">Only uncompressed SoundFont 2; .sf3 is not read, and advanced SF2 parts — modulators, instrument filters, reverb/chorus — are not fully reproduced, so the sound can differ from a dedicated synthesizer depending on the file.</td></tr><tr><td data-i18n="guide.164">Scores</td><td data-i18n="guide.165">Advanced MusicXML is still missing: slurs, repeats and several voices joined into one beat. Plain MusicXML, including .mxl, reads fine.</td></tr><tr><td data-i18n="guide.166">Recording</td><td data-i18n="guide.167">No direct WebM/VP9 writer — the 32-bit PNG sequence is the alpha path. MP4 depends on Windows' own H.264 and AAC encoders.</td></tr><tr><td data-i18n="guide.168">Camera</td><td data-i18n="guide.169">Hand tracking is classical computer vision: with two hands, or a skin-coloured backdrop, only the biggest hand is followed, and the finger count needs a large enough hand. No 3D perspective camera — the stage is a flat piano roll with slight parallax.</td></tr><tr><td data-i18n="guide.170">Stage</td><td data-i18n="guide.171">No particle compute shader, no depth of field, no velocity-buffer motion blur and no camera keyframing yet. The staff, hand marker, camera picture, watermark and counters stay WPF vector layers over the GPU frame.</td></tr><tr><td data-i18n="guide.172">Platform</td><td data-i18n="guide.173">Windows only: the app is built on WPF and WinMM. A Windows-on-ARM package is published but has not been run on real ARM hardware yet.</td></tr></tbody></table></div><p class="table-note" data-i18n="guide.174">The full list, with the reasons, is in the documentation's “Current limitations” section.</p><div class="actions" style="margin-top:20px"><a class="btn btn-ghost" href="https://github.com/lxmtuu/KeyFlow/blob/main/README.en.md" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2 2 0 0 1 6 3.5h13v14H6a2 2 0 0 0-2 2v-14Z"/><path d="M4 19.5a2 2 0 0 1 2-2h13v3H6a2 2 0 0 1-2-1Z"/></svg> <span data-i18n="guide.177">Read the full documentation</span></a></div></div></section>
-<section id="license" class="section"><div class="container"><div class="section-head"><p class="eyebrow" data-i18n="guide.190">Licence & credits</p><h2 data-i18n="guide.191">MIT for the code, CC BY 3.0 for the piano</h2></div><dl class="spec"><div><dt data-i18n="guide.178">Application licence</dt><dd data-i18n="guide.179">MIT — LICENSE.txt travels inside every package; keep it when you pass a copy on.</dd></div><div><dt data-i18n="guide.180">Bundled SoundFont</dt><dd data-i18n="guide.181">YDP Grand Piano from FreePats, built from a Yamaha Disklavier Pro multisample, under CC BY 3.0; the credit is in Assets\ATTRIBUTION.txt.</dd></div><div><dt data-i18n="guide.182">Graphics</dt><dd data-i18n="guide.183">The Direct3D 11 engine is built on Vortice.Windows; the HLSL shaders are compiled at startup with the d3dcompiler_47.dll that ships with Windows.</dd></div><div><dt data-i18n="guide.184">Authors</dt><dd data-i18n="guide.185">Copyright belongs to Yami and Neyu; Jin contributes to the project.</dd></div><div><dt data-i18n="guide.186">Reporting a problem</dt><dd data-i18n="guide.187">Issues are tracked on GitHub — a screenshot, the settings profile and the verification log make a bug report actionable.</dd></div><div><dt data-i18n="guide.188">What changed</dt><dd data-i18n="guide.189">The changelog records everything a user can see, one entry per release.</dd></div></dl></div></section>
-<section id="faq" class="section"><div class="container"><div class="section-head"><p class="eyebrow" data-i18n="guide.206">Questions</p><h2 data-i18n="guide.207">The ones that come up most</h2></div><div class="faq"><details class="qa reveal" style="--d:0ms"><summary data-i18n="guide.192">Can I move my settings to another computer?</summary><div class="a" data-i18n="guide.193">Yes. EXPORT PROFILE… on the General page writes one Keyflow.profile.json carrying the stage settings, the language and the interface; drag it onto the window of the other machine to apply it. Presets and themes travel as their own JSON files, each preset with a rendered thumbnail, and a share code carries a whole look as one line of text.</div></details><details class="qa reveal" style="--d:50ms"><summary data-i18n="guide.194">Does it work without a graphics card?</summary><div class="a" data-i18n="guide.195">Yes. Keyflow tries your graphics card first, then WARP — Windows' software rasterizer running the same shaders, just slower — and finally the WPF renderer if Direct3D cannot start at all. General → GRAPHICS ENGINE always says which one is drawing and why.</div></details><details class="qa reveal" style="--d:100ms"><summary data-i18n="guide.196">Why is my MP4 silent, or missing entirely?</summary><div class="a" data-i18n="guide.197">MP4 is written by Windows' own encoders. Without an H.264 encoder the format cannot be written at all and you get a message with the error code; with H.264 but no AAC encoder the take keeps the picture and the dialog says why there is no sound; with no SoundFont loaded the recording is picture only. AVI always writes a WAV beside it instead.</div></details><details class="qa reveal" style="--d:150ms"><summary data-i18n="guide.198">Can I put my own video or webcam on the stage?</summary><div class="a" data-i18n="guide.199">Yes — Camera & FX has a webcam overlay that draws a live camera or a looping video file in any corner, at 15–60% of the stage width, with mirroring, opacity and a green key. Hand tracking works from the same frames and needs no model.</div></details><details class="qa reveal" style="--d:200ms"><summary data-i18n="guide.200">Is there a macOS or Linux version?</summary><div class="a" data-i18n="guide.201">Not in 1.0.0. Keyflow is built on WPF and WinMM and records through Windows' Media Foundation, so this version is Windows-only. Windows on ARM has a published package that has not been tested on real ARM hardware yet.</div></details><details class="qa reveal" style="--d:200ms"><summary data-i18n="guide.202">How do I reset everything?</summary><div class="a" data-i18n="guide.203">RESET TO DEFAULT in the dock, or delete visual-settings.json in %LOCALAPPDATA%\Keyflow. Presets, themes, the library and the practice history live in their own files, so removing them is a separate decision.</div></details><details class="qa reveal" style="--d:200ms"><summary data-i18n="guide.204">Can I help translate it?</summary><div class="a" data-i18n="guide.205">Adding a language means adding one table of strings: the renderer, the interface and the settings format need no change, and a static check plus the verification suite prove the new table covers every key. Open an issue on GitHub to start.</div></details></div></div></section>
-<section class="cta"><div class="container"><h2 data-i18n="guide.208">Everything you just read ships in one file</h2><p class="sub" data-i18n="guide.209">Keyflow 1.0.0 · Windows 10 and 11, 64-bit · MIT licensed · English and Tiếng Việt.</p><div class="actions center"><a class="btn btn-gold" href="download.html"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v11m0 0 4-4m-4 4-4-4M4 17.5V19a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1.5"/></svg> <span data-i18n="guide.210">Download for Windows</span></a><a class="btn btn-ghost" href="download.html"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v11m0 0 4-4m-4 4-4-4M4 17.5V19a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1.5"/></svg> <span data-i18n="guide.211">Downloads & requirements</span></a></div></div><div class="keys" aria-hidden="true"></div></section>
+<section id="license" class="section"><div class="container"><div class="section-head"><p class="eyebrow" data-i18n="guide.189">Licence & credits</p><h2 data-i18n="guide.190">MIT for the code, CC BY 3.0 for the piano</h2></div><dl class="spec"><div><dt data-i18n="guide.178">Application licence</dt><dd data-i18n="guide.179">MIT — LICENSE.txt travels inside every package; keep it when you pass a copy on.</dd></div><div><dt data-i18n="guide.180">Bundled SoundFont</dt><dd data-i18n="guide.181">YDP Grand Piano from FreePats, built from a Yamaha Disklavier Pro multisample, under CC BY 3.0; the credit is in Assets\ATTRIBUTION.txt.</dd></div><div><dt data-i18n="guide.182">Graphics</dt><dd data-i18n="guide.183">The Direct3D 11 engine is built on Vortice.Windows; the HLSL shaders are compiled at startup with the d3dcompiler_47.dll that ships with Windows.</dd></div><div><dt data-i18n="ui.foot.authors">Authors</dt><dd data-i18n="guide.184">Keyflow is made by Yami, Neyu and Jin. Copyright © 2026 Yami, Neyu, Jin.</dd></div><div><dt data-i18n="guide.185">Reporting a problem</dt><dd data-i18n="guide.186">Issues are tracked on GitHub — a screenshot, the settings profile and the verification log make a bug report actionable.</dd></div><div><dt data-i18n="guide.187">What changed</dt><dd data-i18n="guide.188">The changelog records everything a user can see, one entry per release.</dd></div></dl></div></section>
+<section id="faq" class="section"><div class="container"><div class="section-head"><p class="eyebrow" data-i18n="guide.205">Questions</p><h2 data-i18n="guide.206">The ones that come up most</h2></div><div class="faq"><details class="qa reveal" style="--d:0ms"><summary data-i18n="guide.191">Can I move my settings to another computer?</summary><div class="a" data-i18n="guide.192">Yes. EXPORT PROFILE… on the General page writes one Keyflow.profile.json carrying the stage settings, the language and the interface; drag it onto the window of the other machine to apply it. Presets and themes travel as their own JSON files, each preset with a rendered thumbnail, and a share code carries a whole look as one line of text.</div></details><details class="qa reveal" style="--d:50ms"><summary data-i18n="guide.193">Does it work without a graphics card?</summary><div class="a" data-i18n="guide.194">Yes. Keyflow tries your graphics card first, then WARP — Windows' software rasterizer running the same shaders, just slower — and finally the WPF renderer if Direct3D cannot start at all. General → GRAPHICS ENGINE always says which one is drawing and why.</div></details><details class="qa reveal" style="--d:100ms"><summary data-i18n="guide.195">Why is my MP4 silent, or missing entirely?</summary><div class="a" data-i18n="guide.196">MP4 is written by Windows' own encoders. Without an H.264 encoder the format cannot be written at all and you get a message with the error code; with H.264 but no AAC encoder the take keeps the picture and the dialog says why there is no sound; with no SoundFont loaded the recording is picture only. AVI always writes a WAV beside it instead.</div></details><details class="qa reveal" style="--d:150ms"><summary data-i18n="guide.197">Can I put my own video or webcam on the stage?</summary><div class="a" data-i18n="guide.198">Yes — Camera & FX has a webcam overlay that draws a live camera or a looping video file in any corner, at 15–60% of the stage width, with mirroring, opacity and a green key. Hand tracking works from the same frames and needs no model.</div></details><details class="qa reveal" style="--d:200ms"><summary data-i18n="guide.199">Is there a macOS or Linux version?</summary><div class="a" data-i18n="guide.200">Not in 1.0.0. Keyflow is built on WPF and WinMM and records through Windows' Media Foundation, so this version is Windows-only. Windows on ARM has a published package that has not been tested on real ARM hardware yet.</div></details><details class="qa reveal" style="--d:200ms"><summary data-i18n="guide.201">How do I reset everything?</summary><div class="a" data-i18n="guide.202">RESET TO DEFAULT in the dock, or delete visual-settings.json in %LOCALAPPDATA%\Keyflow. Presets, themes, the library and the practice history live in their own files, so removing them is a separate decision.</div></details><details class="qa reveal" style="--d:200ms"><summary data-i18n="guide.203">Can I help translate it?</summary><div class="a" data-i18n="guide.204">Adding a language means adding one table of strings: the renderer, the interface and the settings format need no change, and a static check plus the verification suite prove the new table covers every key. Open an issue on GitHub to start.</div></details></div></div></section>
+<section class="cta"><div class="container"><h2 data-i18n="guide.207">Everything you just read ships in one file</h2><p class="sub" data-i18n="guide.208">Keyflow 1.0.0 · Windows 10 and 11, 64-bit · MIT licensed · English and Tiếng Việt.</p><div class="actions center"><a class="btn btn-gold" href="download.html"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v11m0 0 4-4m-4 4-4-4M4 17.5V19a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1.5"/></svg> <span data-i18n="guide.209">Download for Windows</span></a><a class="btn btn-ghost" href="download.html"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v11m0 0 4-4m-4 4-4-4M4 17.5V19a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1.5"/></svg> <span data-i18n="guide.210">Downloads & requirements</span></a></div></div><div class="keys" aria-hidden="true"></div></section>
 </main>
 
 <footer class="foot">
@@ -169,8 +221,12 @@
       <div><h4 data-i18n="ui.foot.resources">Resources</h4><ul><li><a href="gallery.html" data-i18n="ui.nav.gallery">Gallery</a></li><li><a href="guide.html" data-i18n="ui.nav.guide">Guide</a></li><li><a href="download.html" data-i18n="ui.nav.download">Download</a></li><li><a href="https://github.com/lxmtuu/KeyFlow/blob/main/CHANGELOG.en.md" target="_blank" rel="noopener" data-i18n="ui.foot.changelog">Changelog</a></li><li><a href="https://github.com/lxmtuu/KeyFlow/blob/main/README.en.md" target="_blank" rel="noopener" data-i18n="ui.foot.readme">Full documentation</a></li><li><a href="https://github.com/lxmtuu/KeyFlow/releases" target="_blank" rel="noopener" data-i18n="ui.foot.releases">All releases</a></li></ul></div>
       <div><h4 data-i18n="ui.foot.about">About</h4><ul><li><a href="https://github.com/lxmtuu/KeyFlow/blob/main/LICENSE" target="_blank" rel="noopener" data-i18n="ui.foot.license">MIT licence</a></li><li><a href="https://freepats.zenvoid.org/" target="_blank" rel="noopener" data-i18n="ui.foot.soundfont">SoundFont credit (FreePats)</a></li><li><a href="https://github.com/lxmtuu/KeyFlow/issues" target="_blank" rel="noopener" data-i18n="ui.foot.issues">Report an issue</a></li><li><a href="guide.html#privacy" data-i18n="ui.foot.privacy">No trackers, no cookies</a></li></ul></div>
     </div>
+    <div class="credits">
+      <p class="credits-label" data-i18n="ui.foot.authors">Authors</p>
+      <ul class="credits-names"><li>Yami</li><li>Neyu</li><li>Jin</li></ul>
+    </div>
     <div class="foot-bottom">
-      <span data-i18n="ui.foot.credits">© 2026 Yami · Neyu. Contributor: Jin.</span>
+      <span data-i18n="ui.foot.credits">© 2026 Yami · Neyu · Jin. Keyflow is released under the MIT licence.</span>
       <span class="muted tiny" data-i18n="ui.foot.made">Site published with GitHub Pages.</span>
     </div>
   </div>

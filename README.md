@@ -35,3 +35,9 @@ python3 tools/make_images.py       # only when source screenshots change
 The screenshot PNGs in `previews/en/` and `previews/vi/` remain the source of truth. `tools/make_images.py` creates smaller WebP variants in `previews/webp/`; pages provide the WebP first and keep PNG/JPEG fallbacks.
 
 GitHub Actions checks generated-page freshness and runs the static QA suite before publishing the pages, language dictionaries, screenshots, WebP images and showcase video.
+
+## Credits and licence
+
+Keyflow is made by **Yami**, **Neyu** and **Jin**. Every page credits all three in its footer, in `<meta name="author">` and in the JSON-LD (`author`, `copyrightHolder`, `copyrightYear`). The names live in `tools/sitekit.py` (`AUTHORS`), and `tools/check_site.py` fails if one goes missing.
+
+© 2026 Yami, Neyu, Jin. The application is released under the MIT licence (see `LICENSE` in the [Keyflow repository](https://github.com/lxmtuu/KeyFlow)); the bundled YDP Grand Piano SoundFont is by FreePats under CC BY 3.0.

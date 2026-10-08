@@ -828,6 +828,23 @@ details.qa .a a { color: var(--gold); border-bottom: 1px solid rgba(242, 199, 92
   display: flex; flex-wrap: wrap; gap: 10px 24px; align-items: center; justify-content: space-between;
   padding-block: 18px 26px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px;
 }
+/* Closing credits: the authors' names, set like the end titles of a concert film. */
+.credits { --gap: clamp(30px, 6vw, 60px); display: grid; justify-items: center; gap: 14px; text-align: center; padding-block: clamp(30px, 4.5vw, 46px) clamp(26px, 4vw, 40px); border-top: 1px solid var(--line); }
+.credits-label {
+  margin: 0; display: flex; align-items: center; gap: 14px; color: var(--gold);
+  font: 700 12.5px/1 var(--font-body); letter-spacing: .26em; text-transform: uppercase;
+}
+.credits-label::before, .credits-label::after { content: ""; width: clamp(26px, 9vw, 70px); height: 1px; background: linear-gradient(90deg, transparent, var(--gold-3)); }
+.credits-label::after { transform: scaleX(-1); }
+.credits .credits-names { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px var(--gap); }
+.credits-names li {
+  position: relative; padding-bottom: .08em; font: 700 clamp(27px, 4.2vw, 42px)/1.15 var(--font-display); letter-spacing: -.01em;
+  background: linear-gradient(96deg, #fff0bd, var(--gold) 46%, #c4932b); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.credits-names li + li::before {          /* a small gold diamond between the names */
+  content: ""; position: absolute; left: calc(var(--gap) / -2 - 3.5px); top: 52%; width: 7px; height: 7px;
+  background: var(--gold-3); rotate: 45deg; translate: 0 -50%;
+}
 .social { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; }
 .social a { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13.4px; }
 .social a:hover { color: var(--text); }

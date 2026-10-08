@@ -36,6 +36,11 @@ DOTNET = "https://dotnet.microsoft.com/download/dotnet/10.0"
 FREEPATS = "https://freepats.zenvoid.org/"
 VORTICE = "https://github.com/amerkoleci/Vortice.Windows"
 
+# Credits.  All three are authors and copyright holders; none is given a role.  The names appear in the
+# footer of every page, in <meta name="author"> and in the JSON-LD, and check_site.py fails if one goes missing.
+AUTHORS = ("Yami", "Neyu", "Jin")
+COPYRIGHT_YEAR = 2026
+
 ASSETS = {
     "setup": f"{REPO}/releases/download/{RELEASE_TAG}/Keyflow-Setup-1.0.0.exe",
     "portable": f"{REPO}/releases/download/{RELEASE_TAG}/Keyflow-1.0.0-win-x64.zip",
@@ -919,7 +924,9 @@ UI: dict[str, tuple[str, str]] = {
     "ui.foot.license": T("MIT licence", "Giấy phép MIT"),
     "ui.foot.soundfont": T("SoundFont credit (FreePats)", "Ghi công SoundFont (FreePats)"),
     "ui.foot.privacy": T("No trackers, no cookies", "Không tracker, không cookie"),
-    "ui.foot.credits": T("© 2026 Yami · Neyu. Contributor: Jin.", "© 2026 Yami · Neyu. Cộng tác: Jin."),
+    "ui.foot.authors": T("Authors", "Tác giả"),
+    "ui.foot.credits": T(f"© {COPYRIGHT_YEAR} {' · '.join(AUTHORS)}. Keyflow is released under the MIT licence.",
+                         f"© {COPYRIGHT_YEAR} {' · '.join(AUTHORS)}. Keyflow được phát hành theo giấy phép MIT."),
     "ui.foot.made": T("Site published with GitHub Pages.", "Trang xuất bản bằng GitHub Pages."),
     "ui.foot.version": T("Version", "Phiên bản"),
     "ui.top": T("Back to top", "Lên đầu trang"),
@@ -1043,6 +1050,8 @@ def render_chrome(doc: Doc, active: str, page_title: tuple[str, str]) -> tuple[s
     ak2, av2 = doc.key(UI["ui.foot.about"])
     tk, tv = doc.key(UI["ui.foot.tagline"])
     ck, cv = doc.key(UI["ui.foot.credits"])
+    uak, uav = doc.key(UI["ui.foot.authors"])
+    names = "".join(f"<li>{name}</li>" for name in AUTHORS)
     mk2, mv2 = doc.key(UI["ui.foot.made"])
     topk, topv = doc.key(UI["ui.top"])
     gk3, gv3 = doc.key(UI["ui.foot.issues"])
@@ -1081,6 +1090,10 @@ def render_chrome(doc: Doc, active: str, page_title: tuple[str, str]) -> tuple[s
       <div><h4 data-i18n="{rk}">{rv}</h4>{resources}</div>
       <div><h4 data-i18n="{ak2}">{av2}</h4>{about}</div>
     </div>
+    <div class="credits">
+      <p class="credits-label" data-i18n="{uak}">{uav}</p>
+      <ul class="credits-names">{names}</ul>
+    </div>
     <div class="foot-bottom">
       <span data-i18n="{ck}">{cv}</span>
       <span class="muted tiny" data-i18n="{mk2}">{mv2}</span>
@@ -1109,8 +1122,9 @@ JSONLD = {
     "downloadUrl": ASSETS["setup"],
     "softwareRequirements": "Direct3D 11 GPU (feature level 11_0, shader model 5.0)",
     "screenshot": f"{SITE_URL}/previews/en/stage-gpu-galaxy.png",
-    "author": {"@type": "Organization", "name": "Yami · Neyu"},
-    "contributor": {"@type": "Person", "name": "Jin"},
+    "author": [{"@type": "Person", "name": name} for name in AUTHORS],
+    "copyrightHolder": [{"@type": "Person", "name": name} for name in AUTHORS],
+    "copyrightYear": COPYRIGHT_YEAR,
     "featureList": [
         "Direct3D 11 GPU stage with 16-bit HDR and multi-level bloom",
         "Ray-traced 88-key keyboard (GGX, softbox penumbra, ACES tonemap)",
@@ -1162,6 +1176,9 @@ def render_page(pid: str, path: str, builder) -> tuple[str, dict[str, str], dict
             "url": canonical,
             "inLanguage": ["en", "vi"],
             "isPartOf": {"@type": "WebSite", "name": "Keyflow", "url": f"{SITE_URL}/"},
+            "author": JSONLD["author"],
+            "copyrightHolder": JSONLD["copyrightHolder"],
+            "copyrightYear": COPYRIGHT_YEAR,
             "about": jsonld,
         }
     trail = spec.get("crumb_trail")
@@ -1183,6 +1200,8 @@ def render_page(pid: str, path: str, builder) -> tuple[str, dict[str, str], dict
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title data-i18n="ui.title">{_html.escape(title_en)}</title>
 <meta name="description" content="{_html.escape(desc_en, quote=True)}" data-i18n-attr="content=ui.description">
+<meta name="author" content="{', '.join(AUTHORS)}">
+<meta name="copyright" content="© {COPYRIGHT_YEAR} {', '.join(AUTHORS)}">
 <link rel="canonical" href="{canonical}">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Keyflow">

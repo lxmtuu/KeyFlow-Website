@@ -15,7 +15,7 @@ SCRIPTS = ["site.js", "stardust.js"]   # hand-written scripts that ship with the
 SLIDER_VARIANTS = {"spotlight", "tabs", "steps"}
 sys.path.insert(0, str(ROOT / "tools"))
 from build import PAGES  # noqa: E402
-from sitekit import SITE_URL  # noqa: E402
+from sitekit import AUTHORS, COPYRIGHT_YEAR, SITE_URL  # noqa: E402
 
 
 class Scan(HTMLParser):
@@ -159,6 +159,10 @@ def main() -> int:
         if node.returncode:
             failures.extend(f"{script}: " + line for line in node.stderr.splitlines())
 
+    credit_vi = ui.get("ui.foot.credits", "")
+    if "©" not in credit_vi or any(name not in credit_vi for name in AUTHORS):
+        failures.append("i18n/vi/ui.js: the Vietnamese footer credit must keep the © sign and all author names")
+
     # Every shared string that site.js looks up at run time must exist in the
     # Vietnamese UI table, otherwise that control silently stays in English.
     site_js = (ROOT / "site.js").read_text(encoding="utf-8")
@@ -173,8 +177,36 @@ def main() -> int:
             failures.append(f"missing page: {path}")
             continue
         scan = Scan()
-        scan.feed(source.read_text(encoding="utf-8"))
+        page_html = source.read_text(encoding="utf-8")
+        scan.feed(page_html)
         scans[path] = scan
+
+        # Credits: every page names all three authors in the footer, the meta tag and the JSON-LD, and
+        # never claims "all rights reserved" (Keyflow is MIT licensed) or demotes anyone to "contributor".
+        foot = re.search(r'<footer class="foot">.*?</footer>', page_html, re.S)
+        foot_text = re.sub(r"<[^>]+>", " ", foot.group(0)) if foot else ""
+        if not foot:
+            failures.append(f"{path}: no site footer")
+        for name in AUTHORS:
+            if not re.search(rf"\b{name}\b", foot_text):
+                failures.append(f"{path}: the footer does not credit {name}")
+        if f"© {COPYRIGHT_YEAR}" not in foot_text:
+            failures.append(f"{path}: the footer has no copyright line for {COPYRIGHT_YEAR}")
+        if re.search(r"all rights reserved|contributor", foot_text, re.I):
+            failures.append(f"{path}: the footer must not say 'all rights reserved' or 'contributor'")
+        meta_author = re.search(r'<meta name="author" content="([^"]*)"', page_html)
+        if not meta_author or [x.strip() for x in meta_author.group(1).split(",")] != list(AUTHORS):
+            failures.append(f"{path}: <meta name=\"author\"> must list {', '.join(AUTHORS)}")
+        main_ld = json.loads(re.search(r'<script type="application/ld\+json">(.*?)</script>', page_html, re.S).group(1))
+        for label, data in (("page", main_ld), ("about", main_ld.get("about"))):
+            if data is None:
+                continue
+            for field in ("author", "copyrightHolder"):
+                people = data.get(field)
+                if not isinstance(people, list) or [p.get("name") for p in people] != list(AUTHORS):
+                    failures.append(f"{path}: JSON-LD ({label}) {field} must be the persons {', '.join(AUTHORS)}")
+            if data.get("copyrightYear") != COPYRIGHT_YEAR:
+                failures.append(f"{path}: JSON-LD ({label}) copyrightYear must be {COPYRIGHT_YEAR}")
 
         duplicates = sorted({x for x in scan.ids if scan.ids.count(x) > 1})
         if duplicates:
