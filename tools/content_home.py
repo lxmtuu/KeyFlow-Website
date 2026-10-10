@@ -22,8 +22,8 @@ def _video(doc, caption: tuple[str, str], badge: tuple[str, str]) -> str:
     """The hero review video: a short branded tour of the whole product."""
     ck, cv = doc.key(caption)
     bk, bv = doc.key(badge)
-    ak, av = doc.key(T("Keyflow review video: one take of the GPU stage, bookended by the new mark",
-                       "Video review Keyflow: một lượt sân khấu GPU, mở và khép bằng logo mới"))
+    ak, av = doc.key(T("Keyflow review video: the new mark, a stage-and-dock tour and one recorded take",
+                       "Video review Keyflow: logo mới, tua nhanh sân khấu và dock, cùng một lượt quay thật"))
     root = doc.root
     return f"""<figure class="hero-media" style="margin:0">
 <div class="frame">
@@ -69,8 +69,8 @@ def build(doc) -> dict:
             ],
             media=_video(
                 doc,
-                T("The new review cut: one take of the GPU stage playing a score, bookended by the new Keyflow mark.",
-                  "Bản review mới: một lượt sân khấu GPU chơi một bản nhạc, mở và khép bằng logo Keyflow mới."),
+                T("The new review cut: the Keyflow mark, a tour of the stage and docks, and one take the app recorded itself.",
+                  "Bản review mới: logo Keyflow, tua nhanh sân khấu và các dock, cùng một lượt quay do chính ứng dụng ghi lại."),
                 T("Keyflow in motion", "Keyflow chuyển động"),
             ),
         ),
