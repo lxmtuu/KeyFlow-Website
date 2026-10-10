@@ -19,11 +19,11 @@ PRESETS = [
 
 
 def _video(doc, caption: tuple[str, str], badge: tuple[str, str]) -> str:
-    """The hero review video: a short branded tour of the whole product."""
+    """The hero showcase: one MP4 the application itself recorded."""
     ck, cv = doc.key(caption)
     bk, bv = doc.key(badge)
-    ak, av = doc.key(T("Keyflow review video: the new mark, a stage-and-dock tour and one recorded take",
-                       "Video review Keyflow: logo mới, tua nhanh sân khấu và dock, cùng một lượt quay thật"))
+    ak, av = doc.key(T("Keyflow showcase: the GPU stage playing a score",
+                       "Video giới thiệu Keyflow: sân khấu GPU đang chạy một bản nhạc"))
     root = doc.root
     return f"""<figure class="hero-media" style="margin:0">
 <div class="frame">
@@ -69,9 +69,9 @@ def build(doc) -> dict:
             ],
             media=_video(
                 doc,
-                T("The new review cut: the Keyflow mark, a tour of the stage and docks, and one take the app recorded itself.",
-                  "Bản review mới: logo Keyflow, tua nhanh sân khấu và các dock, cùng một lượt quay do chính ứng dụng ghi lại."),
-                T("Keyflow in motion", "Keyflow chuyển động"),
+                T("Recorded by Keyflow itself: the GPU stage running a score with the Galaxy Voyage preset.",
+                  "Do chính Keyflow quay lại: sân khấu GPU chạy một bản nhạc với preset Galaxy Voyage."),
+                T("Live GPU stage", "Sân khấu GPU trực tiếp"),
             ),
         ),
 
