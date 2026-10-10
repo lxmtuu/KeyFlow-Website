@@ -8,7 +8,7 @@ the documentation describe the same product.
 from __future__ import annotations
 
 from sitekit import (E, REPO, T, band, callout, chipcloud, cta, framed, grid, iconbox,
-                     pagehero, pagenav, shots, split, specdl, steps, table)
+                     pagehero, pagenav, slider, split, specdl, steps, table)
 
 DOWNLOAD = {"label": T("Download for Windows", "Tải cho Windows"), "href": "download.html",
             "kind": "btn-gold", "icon": "download"}
@@ -255,17 +255,17 @@ def build_stage(doc) -> dict:
                 (T("Landing glow — light gathering on the key a note is about to touch, beautiful and useful for practice",
                    "Landing glow — ánh sáng tụ lại trên phím mà nốt sắp chạm, vừa đẹp vừa hữu ích khi luyện tập"), "gold"),
                 (T("Halo light pulses — three bright heads running along the hit line in the Pulse style",
-                   "Halo light pulses — ba đầu sáng chạy dọc đường chạm ở kiểu Pulse"), "violet"),
+                   "Halo light pulses — ba đầu sáng chạy dọc đường chạm ở kiểu Pulse"), "ivory"),
                 (T("Shooting stars crossing the star field behind the notes",
-                   "Sao băng lướt qua nền sao phía sau các nốt"), "violet"),
+                   "Sao băng lướt qua nền sao phía sau các nốt"), "ivory"),
                 (T("Spotlights — three soft stage lights swaying with the music",
-                   "Đèn sân khấu — ba luồng đèn mềm lảo đảo theo nhạc"), "violet"),
+                   "Đèn sân khấu — ba luồng đèn mềm lảo đảo theo nhạc"), "ivory"),
                 (T("Hold-stream particles in the family of the burst you chose: embers, water splash, fireworks, "
                    "confetti or dust",
                    "Luồng hạt khi giữ phím theo đúng họ burst bạn chọn: than hồng, nước bắn, pháo hoa, confetti "
-                   "hoặc bụi"), "cyan"),
+                   "hoặc bụi"), "copper"),
                 (T("Particle physics decoupled from the music clock, so slowing the tempo never slows the sparks",
-                   "Tốc độ vật lý của hạt tách khỏi đồng hồ nhạc, nên giảm tempo không làm tia lửa chậm lại"), "cyan"),
+                   "Tốc độ vật lý của hạt tách khỏi đồng hồ nhạc, nên giảm tempo không làm tia lửa chậm lại"), "copper"),
             ],
         ),
 
@@ -328,14 +328,17 @@ def build_stage(doc) -> dict:
             ],
         ),
 
-        shots(
+        slider(
             id="pictures",
+            variant="spotlight", autoplay=True, interval=6000,
+            label=T("The GPU stage: four looks", "Sân khấu GPU: bốn diện mạo"),
             eyebrow=T("Pictures", "Hình ảnh"),
             title=T("The same engine, four looks", "Cùng một engine, bốn diện mạo"),
-            sub=T("Click any picture to open it full size. Every frame is rendered by Keyflow in CI.",
-                  "Bấm vào ảnh bất kỳ để xem cỡ lớn. Mọi khung hình đều do Keyflow render trong CI."),
-            cols=2,
-            items=[
+            sub=T("The pictures change by themselves; use the arrows to choose, or click a picture to open it full size. "
+                  "Every frame is rendered by Keyflow in CI.",
+                  "Ảnh tự chuyển; dùng mũi tên để chọn, hoặc bấm vào ảnh để xem cỡ lớn. "
+                  "Mọi khung hình đều do Keyflow render trong CI."),
+            slides=[
                 {"shot": "stage-gpu", "cap": T("Neon Violet — the default stage", "Neon Violet — sân khấu mặc định")},
                 {"shot": "stage-gpu-galaxy", "cap": T("Galaxy Voyage — rainbow trails and a cosmic layer",
                                                       "Galaxy Voyage — vệt cầu vồng và lớp nền vũ trụ")},

@@ -26,6 +26,8 @@ import content_studio  # noqa: E402
 import content_more  # noqa: E402
 from sitekit import SITE_URL, UI, render_page, write_vi_js  # noqa: E402
 
+LASTMOD = "2026-10-10"          # sitemap <lastmod>; fixed (not today's date) so `--check` stays stable. Bump it when the site changes.
+
 PAGES = [
     ("home", "index.html", content_home.build),
     ("stage", "features/stage.html", content_features.build_stage),
@@ -77,7 +79,7 @@ def main() -> int:
     urls = [f"{SITE_URL}/" if path == "index.html" else f"{SITE_URL}/{path}" for _, path, _ in PAGES]
     sitemap = ['<?xml version="1.0" encoding="UTF-8"?>',
                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
-    sitemap.extend(f"  <url><loc>{url}</loc><lastmod>2026-10-03</lastmod></url>" for url in urls)
+    sitemap.extend(f"  <url><loc>{url}</loc><lastmod>{LASTMOD}</lastmod></url>" for url in urls)
     sitemap.append("</urlset>")
     outputs[ROOT / "sitemap.xml"] = "\n".join(sitemap) + "\n"
     outputs[ROOT / "robots.txt"] = f"User-agent: *\nAllow: /\nSitemap: {SITE_URL}/sitemap.xml\n"

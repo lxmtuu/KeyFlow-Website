@@ -33,7 +33,7 @@ jobs:
       - name: Assemble the site
         run: |
           mkdir -p _site
-          cp index.html gallery.html guide.html download.html style.css site.js favicon.svg CNAME robots.txt sitemap.xml _site/
+          cp index.html gallery.html guide.html download.html style.css site.js stardust.js favicon.svg CNAME robots.txt sitemap.xml _site/
           cp -r features i18n previews media _site/
 
       - uses: actions/configure-pages@v5

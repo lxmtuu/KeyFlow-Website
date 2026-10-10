@@ -11,9 +11,11 @@ from pathlib import Path
 from urllib.parse import unquote, urljoin, urlsplit
 
 ROOT = Path(__file__).resolve().parent.parent
+SCRIPTS = ["site.js", "stardust.js"]   # hand-written scripts that ship with the site
+SLIDER_VARIANTS = {"spotlight", "tabs", "steps"}
 sys.path.insert(0, str(ROOT / "tools"))
 from build import PAGES  # noqa: E402
-from sitekit import SITE_URL  # noqa: E402
+from sitekit import AUTHORS, COPYRIGHT_YEAR, SITE_URL  # noqa: E402
 
 
 class Scan(HTMLParser):
@@ -28,6 +30,15 @@ class Scan(HTMLParser):
         self.translation_icons: list[tuple[str, str]] = []
         self.chip_classes: list[tuple[str, ...]] = []
         self.untranslated_drawer_links: list[str] = []
+        self.sliders: list[dict] = []
+        self.unlabelled_triggers = 0
+        self.shotgrids = 0
+        self.headings: list[int] = []         # h1..h6 levels in document order
+        self.stage_fx = 0                      # decorative hero lighting
+        self.decor_visible: list[str] = []     # decorative layers that are not aria-hidden
+        self._open: dict | None = None        # the slider whose markup we are inside
+        self._open_depth = 0
+        self._stage_depth: int | None = None   # stack depth of the .stage-fx we are inside
         self._stack: list[tuple[str, str | None]] = []
         self._void = {"area", "base", "br", "col", "embed", "hr", "img", "input",
                       "link", "meta", "param", "source", "track", "wbr"}
@@ -39,6 +50,44 @@ class Scan(HTMLParser):
         classes = tuple(data.get("class", "").split())
         if "chip" in classes:
             self.chip_classes.append(classes)
+        if "shotgrid" in classes:
+            self.shotgrids += 1
+        if len(tag) == 2 and tag[0] == "h" and tag[1] in "123456":
+            self.headings.append(int(tag[1]))
+        inside_stage = self._stage_depth is not None
+        if "stage-fx" in classes:
+            self.stage_fx += 1
+            self._stage_depth = len(self._stack)
+        # the stage layer must hide itself; a keyboard on its own (the call to action) must too
+        if ("stage-fx" in classes or ("keys" in classes and not inside_stage)) and data.get("aria-hidden") != "true":
+            self.decor_visible.append(" ".join(classes))
+        if "data-slider" in data:
+            self._open = {"variant": next((c[7:] for c in classes if c.startswith("slider-")), ""),
+                          "interval": data.get("data-interval", ""), "role": data.get("role", ""),
+                          "label": bool(data.get("aria-label")), "lightbox": "data-lightbox" in data,
+                          "slides": 0, "items": 0, "nav": 0, "prev": 0, "next": 0, "play": 0, "count": 0,
+                          "first_button": None}
+            self._open_depth = len(self._stack)
+            self.sliders.append(self._open)
+        elif self._open is not None:
+            box = self._open
+            if tag == "li" and "slide" in classes:
+                box["slides"] += 1
+            if "data-lb-item" in data:
+                box["items"] += 1
+            if tag == "button":
+                if box["first_button"] is None:
+                    box["first_button"] = " ".join(classes)
+                if classes and classes[0] in ("seg", "tab", "step"):
+                    box["nav"] += 1
+                if "slider-btn" in classes:
+                    box["prev" if "prev" in classes else "next"] += 1
+                if "slider-play" in classes:
+                    box["play"] += 1
+            if "slider-count" in classes:
+                box["count"] += 1
+        if tag == "button" and "lb-trigger" in classes and not data.get("aria-label"):
+            self.unlabelled_triggers += 1
         if tag == "a" and "dlink" in classes and not data.get("data-i18n"):
             self.untranslated_drawer_links.append(data.get("href", "(no href)"))
         if data.get("id"):
@@ -66,6 +115,10 @@ class Scan(HTMLParser):
             if self._stack[index][0] == tag:
                 self._stack = self._stack[:index]
                 break
+        if self._open is not None and len(self._stack) <= self._open_depth:
+            self._open = None
+        if self._stage_depth is not None and len(self._stack) <= self._stage_depth:
+            self._stage_depth = None
 
 
 class LinkScan(HTMLParser):
@@ -115,10 +168,22 @@ def main() -> int:
 
     # JavaScript syntax check where Node is available (it is required by the
     # contributor CI, but not needed to view the static pages).
-    node = subprocess.run(["node", "--check", str(ROOT / "site.js")], cwd=ROOT,
-                          text=True, capture_output=True)
-    if node.returncode:
-        failures.extend("site.js: " + line for line in node.stderr.splitlines())
+    for script in SCRIPTS:
+        node = subprocess.run(["node", "--check", str(ROOT / script)], cwd=ROOT,
+                              text=True, capture_output=True)
+        if node.returncode:
+            failures.extend(f"{script}: " + line for line in node.stderr.splitlines())
+
+    credit_vi = ui.get("ui.foot.credits", "")
+    if "©" not in credit_vi or any(name not in credit_vi for name in AUTHORS):
+        failures.append("i18n/vi/ui.js: the Vietnamese footer credit must keep the © sign and all author names")
+
+    # Every shared string that site.js looks up at run time must exist in the
+    # Vietnamese UI table, otherwise that control silently stays in English.
+    site_js = (ROOT / "site.js").read_text(encoding="utf-8")
+    for key in sorted(set(re.findall(r'\bt\("(ui\.[\w.]+)"', site_js))):
+        if key not in ui:
+            failures.append(f"site.js: t() uses {key!r}, which is not in i18n/vi/ui.js")
 
     for pid, path, _ in PAGES:
         page = Path(path)
@@ -127,8 +192,36 @@ def main() -> int:
             failures.append(f"missing page: {path}")
             continue
         scan = Scan()
-        scan.feed(source.read_text(encoding="utf-8"))
+        page_html = source.read_text(encoding="utf-8")
+        scan.feed(page_html)
         scans[path] = scan
+
+        # Credits: every page names all three authors in the footer, the meta tag and the JSON-LD, and
+        # never claims "all rights reserved" (Keyflow is MIT licensed) or demotes anyone to "contributor".
+        foot = re.search(r'<footer class="foot">.*?</footer>', page_html, re.S)
+        foot_text = re.sub(r"<[^>]+>", " ", foot.group(0)) if foot else ""
+        if not foot:
+            failures.append(f"{path}: no site footer")
+        for name in AUTHORS:
+            if not re.search(rf"\b{name}\b", foot_text):
+                failures.append(f"{path}: the footer does not credit {name}")
+        if f"© {COPYRIGHT_YEAR}" not in foot_text:
+            failures.append(f"{path}: the footer has no copyright line for {COPYRIGHT_YEAR}")
+        if re.search(r"all rights reserved|contributor", foot_text, re.I):
+            failures.append(f"{path}: the footer must not say 'all rights reserved' or 'contributor'")
+        meta_author = re.search(r'<meta name="author" content="([^"]*)"', page_html)
+        if not meta_author or [x.strip() for x in meta_author.group(1).split(",")] != list(AUTHORS):
+            failures.append(f"{path}: <meta name=\"author\"> must list {', '.join(AUTHORS)}")
+        main_ld = json.loads(re.search(r'<script type="application/ld\+json">(.*?)</script>', page_html, re.S).group(1))
+        for label, data in (("page", main_ld), ("about", main_ld.get("about"))):
+            if data is None:
+                continue
+            for field in ("author", "copyrightHolder"):
+                people = data.get(field)
+                if not isinstance(people, list) or [p.get("name") for p in people] != list(AUTHORS):
+                    failures.append(f"{path}: JSON-LD ({label}) {field} must be the persons {', '.join(AUTHORS)}")
+            if data.get("copyrightYear") != COPYRIGHT_YEAR:
+                failures.append(f"{path}: JSON-LD ({label}) copyrightYear must be {COPYRIGHT_YEAR}")
 
         duplicates = sorted({x for x in scan.ids if scan.ids.count(x) > 1})
         if duplicates:
@@ -160,7 +253,48 @@ def main() -> int:
         if scan.translation_icons:
             for tag, key in scan.translation_icons:
                 failures.append(f"{path}: translated {tag} {key} contains an SVG; move the icon outside its text span")
-        allowed_chip_classes = {"chip", "gold", "violet", "cyan"}
+        # Sliders: both arrows, one picker button per slide, a name for the region, and the
+        # pause button first in the keyboard order (rotation must be stoppable before
+        # anything else is reached).
+        for number, box in enumerate(scan.sliders, 1):
+            where = f"{path}: slider #{number} ({box['variant'] or 'no variant'})"
+            if box["variant"] not in SLIDER_VARIANTS:
+                failures.append(f"{where}: unknown variant")
+            if box["slides"] < 2:
+                failures.append(f"{where} needs at least two slides (found {box['slides']})")
+            if box["nav"] != box["slides"]:
+                failures.append(f"{where}: {box['nav']} picker buttons for {box['slides']} slides")
+            if box["lightbox"] and box["items"] != box["slides"]:
+                failures.append(f"{where}: {box['items']} enlargeable figures for {box['slides']} slides")
+            if (box["prev"], box["next"], box["play"]) != (1, 1, 1):
+                failures.append(f"{where}: needs exactly one previous, next and play/pause button")
+            if box["count"] != (1 if box["variant"] == "spotlight" else 0):
+                failures.append(f"{where}: unexpected number of counters ({box['count']})")
+            if box["role"] != "region" or not box["label"]:
+                failures.append(f"{where}: needs role=region and an aria-label")
+            if not box["interval"].isdigit() or int(box["interval"]) < 3000:
+                failures.append(f"{where}: data-interval must be at least 3000 ms")
+            if box["first_button"] != "slider-play":
+                failures.append(f"{where}: the play/pause button must be the first button in the markup "
+                                f"(found {box['first_button']!r})")
+        # The gallery must never lay out many pictures at once again.
+        if path == "gallery.html" and scan.shotgrids:
+            failures.append("gallery.html: picture grids are not allowed here; use a slider")
+        if scan.unlabelled_triggers:
+            failures.append(f"{path}: {scan.unlabelled_triggers} zoom button(s) without an aria-label")
+        # The cinematic hero lighting is decoration: exactly one per page, never read out by a screen reader.
+        if scan.stage_fx != 1:
+            failures.append(f"{path}: expected exactly one .stage-fx hero lighting layer, found {scan.stage_fx}")
+        for klass in scan.decor_visible:
+            failures.append(f"{path}: decorative .{klass} must be aria-hidden=\"true\"")
+        # Headings form an outline: one h1, and a heading may only go one level deeper than the one before it.
+        if scan.headings.count(1) != 1:
+            failures.append(f"{path}: expected exactly one h1, found {scan.headings.count(1)}")
+        for before, after in zip(scan.headings, scan.headings[1:]):
+            if after > before + 1:
+                failures.append(f"{path}: heading level jumps from h{before} to h{after}")
+                break
+        allowed_chip_classes = {"chip", "gold", "ivory", "copper"}
         for classes in scan.chip_classes:
             if not set(classes).issubset(allowed_chip_classes) or len(classes) > 2:
                 failures.append(f"{path}: unexpected chip classes: {' '.join(classes)}")
@@ -224,6 +358,29 @@ def main() -> int:
             if target_rel in route_paths and target_rel in scans and fragment not in scans[target_rel].ids:
                 failures.append(f"{path}: missing fragment #{fragment} in {target_rel}")
 
+    # The deploy workflow copies an explicit list: anything a page points at that is missing from
+    # it would work locally and 404 on the live site.
+    workflow = (ROOT / ".github/workflows/pages.yml").read_text(encoding="utf-8")
+    shipped: set[str] = set()
+    for line in workflow.splitlines():
+        copy = re.match(r"\s*cp\s+(?:-r\s+)?(.+?)\s+_site/\s*$", line)
+        if copy:
+            shipped.update(copy.group(1).split())
+    for path, scan in scans.items():
+        for attr, ref in scan.refs:
+            target, _ = local_target(Path(path), ref)
+            if target is None or not target.exists():
+                continue
+            try:
+                top = target.relative_to(ROOT).parts[0]
+            except ValueError:
+                continue
+            if top not in shipped:
+                failures.append(f"{path}: {ref!r} is not copied into _site by .github/workflows/pages.yml (add {top!r})")
+    for script in SCRIPTS:
+        if script not in shipped:
+            failures.append(f"{script} is not copied into _site by .github/workflows/pages.yml")
+
     teaser = [ROOT / "previews/presets-teaser.jpg", ROOT / "previews/webp/presets-teaser.webp",
               ROOT / "previews/presets.jpg", ROOT / "media/showcase.mp4"]
     for asset in teaser:
@@ -236,7 +393,7 @@ def main() -> int:
             print(" - " + failure, file=sys.stderr)
         return 1
 
-    print(f"OK: {len(PAGES)} pages, screenshots, translated links, internal routes and JavaScript syntax")
+    print(f"OK: {len(PAGES)} pages, screenshots, sliders, translated links, internal routes and JavaScript syntax")
     return 0
 
 

@@ -36,6 +36,11 @@ DOTNET = "https://dotnet.microsoft.com/download/dotnet/10.0"
 FREEPATS = "https://freepats.zenvoid.org/"
 VORTICE = "https://github.com/amerkoleci/Vortice.Windows"
 
+# Credits.  All three are authors and copyright holders; none is given a role.  The names appear in the
+# footer of every page, in <meta name="author"> and in the JSON-LD, and check_site.py fails if one goes missing.
+AUTHORS = ("Yami", "Neyu", "Jin")
+COPYRIGHT_YEAR = 2026
+
 ASSETS = {
     "setup": f"{REPO}/releases/download/{RELEASE_TAG}/Keyflow-Setup-1.0.0.exe",
     "portable": f"{REPO}/releases/download/{RELEASE_TAG}/Keyflow-1.0.0-win-x64.zip",
@@ -113,6 +118,9 @@ ICONS: dict[str, str] = {
     "plug": '<path d="M9 3v5M15 3v5M6.5 8h11v3a5.5 5.5 0 0 1-11 0V8ZM12 16.5V21"/>',
     "search": '<circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/>',
     "undo": '<path d="M4 9h9.5a5.5 5.5 0 0 1 0 11H8m-4-11 4-4m-4 4 4 4"/>',
+    "play": '<path d="M8 5.2v13.6a.6.6 0 0 0 .9.5l10.8-6.8a.6.6 0 0 0 0-1L8.9 4.7a.6.6 0 0 0-.9.5Z" fill="currentColor"/>',
+    "pause": '<path d="M8.5 5v14M15.5 5v14" stroke-width="3.2"/>',
+    "zoom": '<circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5M11 8.3v5.4M8.3 11h5.4"/>',
 }
 
 
@@ -186,11 +194,13 @@ class Doc:
 # ---------------------------------------------------------------------------
 def picture(doc: Doc, shot: str, alt: tuple[str, str], *, width: int = 1080, height: int = 700,
             lazy: bool = True, badge: tuple[str, str] | None = None, cls: str = "frame",
-            full: str | None = None) -> str:
+            zoom: bool = False) -> str:
     """A ``<picture>`` with the WebP copy first and the PNG as the fallback.
 
     ``data-shot`` is what ``site.js`` rewrites when the language changes: the
-    application renders one set of screenshots per language in CI.
+    application renders one set of screenshots per language in CI.  With
+    ``zoom`` a real ``<button class="lb-trigger">`` is laid over the picture; the
+    lightbox in ``site.js`` listens for it (the ``<img>`` keeps its own alt text).
     """
     key, en = doc.key(alt, "alt")
     loading = ' loading="lazy"' if lazy else ' fetchpriority="high"'
@@ -206,27 +216,33 @@ def picture(doc: Doc, shot: str, alt: tuple[str, str], *, width: int = 1080, hei
         f'<img src="{root}previews/en/{shot}.png" width="{width}" height="{height}" '
         f'data-i18n-attr="alt={key}" alt="{_html.escape(en, quote=True)}" '
         f'decoding="async"{loading}></picture>'
-        f"{badge_html}</div>"
+        f"{badge_html}{_zoom_trigger(doc) if zoom else ''}</div>"
     )
 
 
+def _zoom_trigger(doc: Doc) -> str:
+    k, v = doc.key(UI["ui.lb.enlarge"])
+    return (f'<button type="button" class="lb-trigger" data-i18n-attr="aria-label={k}" '
+            f'aria-label="{_html.escape(v, quote=True)}">{icon("zoom", 20)}</button>')
+
+
 def figure(doc: Doc, shot: str, alt: tuple[str, str], cap: tuple[str, str] | None = None, **kw) -> str:
-    inner = picture(doc, shot, alt, **kw)
+    inner = picture(doc, shot, alt, zoom=True, **kw)
     if cap:
         ckey, cen = doc.key(cap)
-        inner += f'<figcaption data-i18n="{ckey}">{cen}</figcaption>'
-    return f'<figure class="shot">{inner}</figure>'
+        inner += f'<figcaption class="lb-caption" data-i18n="{ckey}">{cen}</figcaption>'
+    return f'<figure class="shot" data-lightbox data-lb-item>{inner}</figure>'
 
 
 def framed(doc: Doc, shot: str, alt: tuple[str, str], cap: tuple[str, str] | None = None,
            badge: tuple[str, str] | None = None, lazy: bool = True,
            width: int = 1080, height: int = 700) -> str:
     """A figure with a ``<picture>``, an optional badge and a translated caption."""
-    inner = picture(doc, shot, alt, lazy=lazy, badge=badge, width=width, height=height)
-    out = f'<figure class="shot" style="margin:0">{inner}'
+    inner = picture(doc, shot, alt, lazy=lazy, badge=badge, width=width, height=height, zoom=True)
+    out = f'<figure class="shot" style="margin:0" data-lightbox data-lb-item>{inner}'
     if cap:
         ck, cv = doc.key(cap)
-        out += f'<figcaption class="frame-cap" data-i18n="{ck}">{cv}</figcaption>'
+        out += f'<figcaption class="frame-cap lb-caption" data-i18n="{ck}">{cv}</figcaption>'
     return out + "</figure>"
 
 
@@ -282,10 +298,10 @@ def callout(**kw): return sec("callout", **kw)
 def codeblock(**kw): return sec("code", **kw)
 def faq(**kw): return sec("faq", **kw)
 def cta(**kw): return sec("cta", **kw)
-def shots(**kw): return sec("shots", **kw)
+def slider(**kw): return sec("slider", **kw)
 def chipcloud(**kw): return sec("chips", **kw)
 def groups(**kw): return sec("groups", **kw)
-def carousel(**kw): return sec("carousel", **kw)
+def carousel(**kw): return sec("slider", **{"variant": "spotlight", "autoplay": True, **kw})
 def pagenav(**kw): return sec("pagenav", **kw)
 def dlhero(**kw): return sec("dlhero", **kw)
 def raw(html_text: str): return sec("raw", html=html_text)
@@ -406,8 +422,8 @@ def render_section(doc: Doc, s: dict[str, Any]) -> str:  # noqa: C901 - one disp
     if kind == "cta":
         return render_cta(doc, s)
 
-    if kind == "shots":
-        return render_shots(doc, s)
+    if kind == "slider":
+        return render_slider(doc, s)
 
     if kind == "chips":
         chips = []
@@ -436,8 +452,6 @@ def render_section(doc: Doc, s: dict[str, Any]) -> str:  # noqa: C901 - one disp
         inner = head(doc, s) + '<div class="groups">' + "".join(cols) + "</div>"
         return wrap(doc, s, inner)
 
-    if kind == "carousel":
-        return render_carousel(doc, s)
 
     if kind == "pagenav":
         cells = []
@@ -469,6 +483,14 @@ def render_section(doc: Doc, s: dict[str, Any]) -> str:  # noqa: C901 - one disp
 # ---------------------------------------------------------------------------
 # Section renderers that need more room
 # ---------------------------------------------------------------------------
+def stage_fx(kind: str) -> str:
+    """The concert-stage lighting behind a hero: light beams, a pool of light on the floor and a piano
+    keyboard along the bottom edge.  Pure CSS decoration (style.css section 15), hidden from assistive tech."""
+    return (f'<div class="stage-fx stage-fx-{kind}" aria-hidden="true">'
+            '<i class="beam b1"></i><i class="beam b2"></i><i class="beam b3"></i>'
+            '<i class="floor"></i><i class="keys"></i></div>')
+
+
 def render_hero(doc: Doc, s: dict[str, Any]) -> str:
     copy_html = ""
     if s.get("eyebrow"):
@@ -497,7 +519,7 @@ def render_hero(doc: Doc, s: dict[str, Any]) -> str:
         copy_html += '<div class="meta-chips">' + "".join(chips) + "</div>"
 
     media = s.get("media", "")
-    return (f'<section class="hero"><div class="container hero-in">'
+    return (f'<section class="hero">{stage_fx("hero")}<div class="container hero-in">'
             f'<div class="hero-copy">{copy_html}</div>'
             f'<div class="hero-media">{media}</div>'
             f'</div></section>')
@@ -537,7 +559,7 @@ def render_pagehero(doc: Doc, s: dict[str, Any]) -> str:
 
     media = s.get("media", "")
     klass = "pagehero" + (" " + s["cls"] if s.get("cls") else "")
-    return (f'<section class="{klass}"><div class="container pagehero-in">'
+    return (f'<section class="{klass}">{stage_fx("page")}<div class="container pagehero-in">'
             f'<div class="split-copy">{copy_html}</div>'
             f'<div class="split-media">{media}</div>'
             f'</div></section>')
@@ -712,49 +734,93 @@ def render_cta(doc: Doc, s: dict[str, Any]) -> str:
     return f'<section class="cta"><div class="container">{inner}</div><div class="keys" aria-hidden="true"></div></section>'
 
 
-def render_shots(doc: Doc, s: dict[str, Any]) -> str:
-    lb = ' data-lightbox' if s.get("lightbox", True) else ""
-    figs = []
-    for i, item in enumerate(s["items"]):
+SLIDER_VARIANTS = ("spotlight", "tabs", "steps")
+
+
+def render_slider(doc: Doc, s: dict[str, Any]) -> str:  # noqa: C901 - one flat template
+    """One picture at a time: arrows, a picker and an optional slideshow.
+
+    ``variant`` picks the picker that suits the content:
+
+    * ``spotlight`` - a self-playing showcase; a segmented progress bar is the picker.
+    * ``tabs`` - a list of named pages next to the picture; hold still unless asked.
+    * ``steps`` - a numbered stepper above the picture for a sequence of actions.
+
+    DOM order matters: the play/pause button comes first so it is the first Tab
+    stop inside the region, then the picker/stage in reading order.  Without
+    JavaScript the slides simply stack as a list (``.slider:not(.is-ready)``).
+    """
+    variant = s.get("variant", "spotlight")
+    if variant not in SLIDER_VARIANTS:
+        raise ValueError(f"unknown slider variant: {variant}")
+    items = s["slides"]
+    total = len(items)
+    if total < 2:
+        raise ValueError("a slider needs at least two slides")
+    auto = bool(s.get("autoplay", False))
+    esc = lambda text: _html.escape(text, quote=True)  # noqa: E731
+
+    slides, nav = [], []
+    for i, item in enumerate(items):
+        title = item.get("title")
+        alt = item.get("alt") or title or item.get("cap") or E(item["shot"])
+        pic = picture(doc, item["shot"], alt, lazy=True, badge=item.get("badge"), zoom=True)
         cap_html = ""
-        alt = item.get("alt") or item.get("cap") or E(item["shot"])
-        pic = picture(doc, item["shot"], alt, lazy=i > 0, badge=item.get("badge"))
         if item.get("cap"):
             ck, cv = doc.key(item["cap"])
             cap_html = f'<figcaption class="lb-caption" data-i18n="{ck}">{cv}</figcaption>'
-        else:
-            cap_html = '<figcaption class="lb-caption visually-hidden"></figcaption>'
-        figs.append(f'<figure class="shot" data-lb-item>{pic}{cap_html}</figure>')
-    cols = {2: " two"}.get(s.get("cols", 3), "")
-    inner = head(doc, s) + f'<div class="shotgrid{cols}"{lb}>' + "".join(figs) + "</div>"
-    if s.get("actions"):
-        inner += buttons(doc, s["actions"]).replace('class="actions"', 'class="actions" style="margin-top:22px;justify-content:center"', 1)
-    return wrap(doc, s, inner)
-
-
-def render_carousel(doc: Doc, s: dict[str, Any]) -> str:
-    slides = []
-    for i, item in enumerate(s["slides"]):
-        alt = item.get("alt") or item.get("cap") or E(item["shot"])
-        pic = picture(doc, item["shot"], alt, lazy=i > 0)
-        ck, cv = doc.key(item.get("cap") or E(""))
         slides.append(
-            f'<li class="slide" role="group" aria-roledescription="slide" aria-label="{i + 1} / {len(s["slides"])}">'
-            f'<figure data-lb-item>{pic}<figcaption class="lb-caption" data-i18n="{ck}">{cv}</figcaption></figure></li>'
+            f'<li class="slide" role="group" aria-roledescription="slide" aria-label="{i + 1} / {total}">'
+            f'<figure data-lb-item>{pic}{cap_html}</figure></li>'
         )
-    pk, pv = doc.key(T("Previous picture", "Ảnh trước"))
-    nk, nv = doc.key(T("Next picture", "Ảnh sau"))
-    inner = (
-        '<div class="carousel" aria-roledescription="carousel">'
-        f'<button type="button" class="car-btn prev" data-i18n-attr="aria-label={pk}" aria-label="{_html.escape(pv, quote=True)}">{icon("left", 22)}</button>'
-        f'<ul class="track" tabindex="0" data-lightbox>{"".join(slides)}</ul>'
-        f'<button type="button" class="car-btn next" data-i18n-attr="aria-label={nk}" aria-label="{_html.escape(nv, quote=True)}">{icon("right", 22)}</button>'
-        '<div class="dots" role="group" aria-label="Choose a picture" data-i18n-attr="aria-label=ui.car.choose"></div></div>'
+        if variant == "spotlight":
+            nav.append('<button type="button" class="seg"><i></i></button>')
+        else:
+            tk, tv = doc.key(title)
+            label = f'<span class="{"tab" if variant == "tabs" else "step"}-t" data-i18n="{tk}">{tv}</span>'
+            if variant == "tabs":
+                nav.append(f'<button type="button" class="tab"><span class="tab-n">{i + 1:02d}</span>{label}<i class="fill"></i></button>')
+            else:
+                nav.append(f'<button type="button" class="step"><span class="step-n">{i + 1}</span>{label}<i class="fill"></i></button>')
+
+    pk, pv = doc.key(UI["ui.car.prev"])
+    nk, nv = doc.key(UI["ui.car.next"])
+    ck, cv = doc.key(UI["ui.car.choose"])
+    lk, lv = doc.key(s.get("label") or UI["ui.car.region"])
+    play_label = UI["ui.car.pause" if auto else "ui.car.play"][0]
+
+    # The play/pause label is owned by site.js (it depends on the live state), so
+    # it deliberately has no data-i18n-attr.
+    play = (f'<button type="button" class="slider-play" aria-label="{esc(play_label)}">'
+            f'<span class="ic ic-pause">{icon("pause", 16)}</span><span class="ic ic-play">{icon("play", 16)}</span>'
+            f'<span class="slider-play-label">{esc(play_label)}</span></button>')
+    arrows = (
+        f'<button type="button" class="slider-btn prev" data-i18n-attr="aria-label={pk}" aria-label="{esc(pv)}">{icon("left", 22)}</button>'
+        f'<button type="button" class="slider-btn next" data-i18n-attr="aria-label={nk}" aria-label="{esc(nv)}">{icon("right", 22)}</button>'
     )
-    body = head(doc, s) + inner
+    # tabs and steps already show their numbers in the picker; the spotlight has bars only
+    count = (f'<span class="slider-count" aria-hidden="true"><b>01</b><i>/</i>{total:02d}</span>'
+             if variant == "spotlight" else "")
+    stage = (
+        '<div class="slider-stage"><div class="slider-viewport">'
+        f'{arrows}<ul class="slides" aria-live="off">{"".join(slides)}</ul>'
+        '</div></div>'
+    )
+    picker = (f'<div class="slider-nav" role="group" data-i18n-attr="aria-label={ck}" aria-label="{esc(cv)}">'
+              f'{"".join(nav)}</div>')
+    body = (picker + stage) if variant == "steps" else (stage + picker)
+
+    flags = ' data-stop-on-interact' if s.get("stop_on_interact") else ""
+    root = (
+        f'<div class="slider slider-{variant} reveal" data-slider data-lightbox '
+        f'data-autoplay="{"on" if auto else "off"}" data-interval="{int(s.get("interval", 6000))}"{flags} '
+        f'role="region" aria-roledescription="carousel" data-i18n-attr="aria-label={lk}" aria-label="{esc(lv)}">'
+        f'{play}{count}{body}</div>'
+    )
+    out = head(doc, s) + root
     if s.get("actions"):
-        body += buttons(doc, s["actions"]).replace('class="actions"', 'class="actions" style="margin-top:22px;justify-content:center"', 1)
-    return wrap(doc, s, body)
+        out += buttons(doc, s["actions"]).replace('class="actions"', 'class="actions" style="margin-top:22px;justify-content:center"', 1)
+    return wrap(doc, s, out, extra_cls="slider-section")
 
 
 def render_dlhero(doc: Doc, s: dict[str, Any]) -> str:
@@ -821,8 +887,14 @@ UI: dict[str, tuple[str, str]] = {
                       "Mọi tính năng đều nằm trong cùng một bản tải miễn phí — kèm cả English và Tiếng Việt."),
     "ui.drawer.features": T("Features", "Tính năng"),
     "ui.drawer.pages": T("Pages", "Trang"),
-    "ui.car.dot": T("Picture", "Ảnh"),
     "ui.car.choose": T("Choose a picture", "Chọn ảnh"),
+    "ui.car.region": T("Picture slideshow", "Trình chiếu hình ảnh"),
+    "ui.car.prev": T("Previous picture", "Ảnh trước"),
+    "ui.car.next": T("Next picture", "Ảnh sau"),
+    "ui.car.play": T("Play slideshow", "Phát trình chiếu"),
+    "ui.car.pause": T("Pause slideshow", "Tạm dừng trình chiếu"),
+    "ui.car.n": T("Picture {n} of {total}", "Ảnh {n} / {total}"),
+    "ui.lb.enlarge": T("Enlarge picture", "Phóng to ảnh"),
 
     "page.home": T("Home", "Trang chủ"),
     "page.gallery": T("Gallery", "Hình ảnh"),
@@ -860,7 +932,9 @@ UI: dict[str, tuple[str, str]] = {
     "ui.foot.license": T("MIT licence", "Giấy phép MIT"),
     "ui.foot.soundfont": T("SoundFont credit (FreePats)", "Ghi công SoundFont (FreePats)"),
     "ui.foot.privacy": T("No trackers, no cookies", "Không tracker, không cookie"),
-    "ui.foot.credits": T("© 2026 Yami · Neyu. Contributor: Jin.", "© 2026 Yami · Neyu. Cộng tác: Jin."),
+    "ui.foot.authors": T("Authors", "Tác giả"),
+    "ui.foot.credits": T(f"© {COPYRIGHT_YEAR} {' · '.join(AUTHORS)}. Keyflow is released under the MIT licence.",
+                         f"© {COPYRIGHT_YEAR} {' · '.join(AUTHORS)}. Keyflow được phát hành theo giấy phép MIT."),
     "ui.foot.made": T("Site published with GitHub Pages.", "Trang xuất bản bằng GitHub Pages."),
     "ui.foot.version": T("Version", "Phiên bản"),
     "ui.top": T("Back to top", "Lên đầu trang"),
@@ -984,6 +1058,8 @@ def render_chrome(doc: Doc, active: str, page_title: tuple[str, str]) -> tuple[s
     ak2, av2 = doc.key(UI["ui.foot.about"])
     tk, tv = doc.key(UI["ui.foot.tagline"])
     ck, cv = doc.key(UI["ui.foot.credits"])
+    uak, uav = doc.key(UI["ui.foot.authors"])
+    names = "".join(f"<li>{name}</li>" for name in AUTHORS)
     mk2, mv2 = doc.key(UI["ui.foot.made"])
     topk, topv = doc.key(UI["ui.top"])
     gk3, gv3 = doc.key(UI["ui.foot.issues"])
@@ -1018,9 +1094,13 @@ def render_chrome(doc: Doc, active: str, page_title: tuple[str, str]) -> tuple[s
           <a href="{ISSUES}" target="_blank" rel="noopener">{icon('alert', 17)} <span data-i18n="{gk3}">{gv3}</span></a>
         </div>
       </div>
-      <div><h4 data-i18n="{hk}">{hv}</h4>{product}</div>
-      <div><h4 data-i18n="{rk}">{rv}</h4>{resources}</div>
-      <div><h4 data-i18n="{ak2}">{av2}</h4>{about}</div>
+      <div><h3 data-i18n="{hk}">{hv}</h3>{product}</div>
+      <div><h3 data-i18n="{rk}">{rv}</h3>{resources}</div>
+      <div><h3 data-i18n="{ak2}">{av2}</h3>{about}</div>
+    </div>
+    <div class="credits">
+      <p class="credits-label" data-i18n="{uak}">{uav}</p>
+      <ul class="credits-names">{names}</ul>
     </div>
     <div class="foot-bottom">
       <span data-i18n="{ck}">{cv}</span>
@@ -1050,8 +1130,9 @@ JSONLD = {
     "downloadUrl": ASSETS["setup"],
     "softwareRequirements": "Direct3D 11 GPU (feature level 11_0, shader model 5.0)",
     "screenshot": f"{SITE_URL}/previews/en/stage-gpu-galaxy.png",
-    "author": {"@type": "Organization", "name": "Yami · Neyu"},
-    "contributor": {"@type": "Person", "name": "Jin"},
+    "author": [{"@type": "Person", "name": name} for name in AUTHORS],
+    "copyrightHolder": [{"@type": "Person", "name": name} for name in AUTHORS],
+    "copyrightYear": COPYRIGHT_YEAR,
     "featureList": [
         "Direct3D 11 GPU stage with 16-bit HDR and multi-level bloom",
         "Ray-traced 88-key keyboard (GGX, softbox penumbra, ACES tonemap)",
@@ -1103,6 +1184,9 @@ def render_page(pid: str, path: str, builder) -> tuple[str, dict[str, str], dict
             "url": canonical,
             "inLanguage": ["en", "vi"],
             "isPartOf": {"@type": "WebSite", "name": "Keyflow", "url": f"{SITE_URL}/"},
+            "author": JSONLD["author"],
+            "copyrightHolder": JSONLD["copyrightHolder"],
+            "copyrightYear": COPYRIGHT_YEAR,
             "about": jsonld,
         }
     trail = spec.get("crumb_trail")
@@ -1124,6 +1208,8 @@ def render_page(pid: str, path: str, builder) -> tuple[str, dict[str, str], dict
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title data-i18n="ui.title">{_html.escape(title_en)}</title>
 <meta name="description" content="{_html.escape(desc_en, quote=True)}" data-i18n-attr="content=ui.description">
+<meta name="author" content="{', '.join(AUTHORS)}">
+<meta name="copyright" content="© {COPYRIGHT_YEAR} {', '.join(AUTHORS)}">
 <link rel="canonical" href="{canonical}">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Keyflow">
@@ -1136,7 +1222,7 @@ def render_page(pid: str, path: str, builder) -> tuple[str, dict[str, str], dict
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{_html.escape(title_en, quote=True)}" data-i18n-attr="content=ui.title">
 <meta name="twitter:description" content="{_html.escape(desc_en, quote=True)}" data-i18n-attr="content=ui.description">
-<meta name="theme-color" content="#07070c">
+<meta name="theme-color" content="#060504">
 <meta name="color-scheme" content="dark">
 <link rel="icon" href="{root}favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1160,6 +1246,7 @@ def render_page(pid: str, path: str, builder) -> tuple[str, dict[str, str], dict
 <script defer src="{root}i18n/vi/ui.js"></script>
 <script defer src="{root}i18n/vi/{pid}.js"></script>
 <script defer src="{root}site.js"></script>
+<script defer src="{root}stardust.js"></script>
 <script type="application/ld+json">{json.dumps(jsonld, ensure_ascii=False, indent=1)}</script>{bc_jsonld}
 </head>
 <body>

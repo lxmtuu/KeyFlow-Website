@@ -5,7 +5,7 @@ from __future__ import annotations
 from sitekit import (ASSETS, CHANGELOG, CHANGELOG_VI, DOTNET, E, FREEPATS, ISSUES, LICENSE,
                      README_EN, README_VI, RELEASES, RELEASE_PAGE, REPO, T, VORTICE, band,
                      callout, carousel, chipcloud, codeblock, cta, dlhero, faq, framed, grid,
-                     groups, iconbox, pagehero, picture, pagenav, raw, shots, split, specdl,
+                     groups, iconbox, pagehero, picture, pagenav, raw, slider, split, specdl,
                      steps, table)
 
 DOWNLOAD = {"label": T("Download for Windows", "Tải cho Windows"), "href": "download.html",
@@ -62,8 +62,10 @@ def build_gallery(doc) -> dict:
         '<figcaption class="frame-cap" data-i18n="' + video_cap_k + '">' + video_cap_v + "</figcaption></figure>"
     )
 
-    def shot_items(names, captions):
-        return [{"shot": n, "cap": c} for n, c in zip(names, captions)]
+    def shot_items(names, captions, titles=None):
+        """Slides for ``slider``: ``titles`` are the short picker labels (tabs and steps)."""
+        titles = titles or [None] * len(names)
+        return [dict(shot=n, cap=c, **({"title": t} if t else {})) for n, c, t in zip(names, captions, titles)]
 
     body = [
         pagehero(
@@ -95,12 +97,17 @@ def build_gallery(doc) -> dict:
                          badge=T("GPU stage", "Sân khấu GPU"), lazy=False),
         ),
 
-        shots(
+        slider(
             id="stage",
+            variant="spotlight", autoplay=True, interval=5500,
+            label=T("The GPU stage: five looks", "Sân khấu GPU: năm diện mạo"),
             eyebrow=T("The stage", "Sân khấu"),
             title=T("What the GPU engine draws", "Những gì engine GPU vẽ ra"),
-            cols=2,
-            items=shot_items(STAGE_SHOTS, [
+            sub=T("Five looks of the same engine, changing by themselves. Use the arrow buttons, the bars below or the "
+                  "left and right arrow keys to choose one, or press pause to stay on a picture.",
+                  "Năm diện mạo của cùng một engine, tự chuyển cảnh. Dùng nút mũi tên, các thanh bên dưới hoặc phím "
+                  "mũi tên trái/phải để chọn, hoặc bấm tạm dừng để dừng lại ở một ảnh."),
+            slides=shot_items(STAGE_SHOTS, [
                 T("Live play: only the notes you play, the glowing hit line, sparks and the transport bar",
                   "Chơi trực tiếp: chỉ những nốt bạn chơi, đường chạm phát sáng, tia lửa và thanh transport"),
                 T("Neon Violet, the default look, with a chord being held",
@@ -114,13 +121,18 @@ def build_gallery(doc) -> dict:
             ]),
         ),
 
-        shots(
+        slider(
             id="interface",
+            variant="tabs", autoplay=False, interval=8000,
+            label=T("The Keyflow interface: four pages", "Giao diện Keyflow: bốn trang"),
             eyebrow=T("The interface", "Giao diện"),
             title=T("Three concert interfaces and the design dock",
                     "Ba giao diện hoà nhạc và bàn thiết kế"),
-            cols=2,
-            items=shot_items(UI_SHOTS, [
+            sub=T("These screenshots are full of small print, so they wait for you: pick a page from the list or use "
+                  "the arrows. Press play if you would rather watch them go by.",
+                  "Những ảnh chụp này có nhiều chữ nhỏ nên chúng đợi bạn: chọn một trang trong danh sách hoặc dùng "
+                  "mũi tên. Bấm phát nếu bạn muốn xem chúng tự chạy."),
+            slides=shot_items(UI_SHOTS, [
                 T("The Concert Grand start menu, with the interface-language chips",
                   "Menu khởi động Concert Grand, kèm chip chọn ngôn ngữ giao diện"),
                 T("The Style page: presets, quick layer switches and the share code",
@@ -129,15 +141,25 @@ def build_gallery(doc) -> dict:
                   "Trang Theme: ba giao diện, xưởng theme và các look nhanh"),
                 T("The General page in Vietnamese: language, graphics engine and settings profile",
                   "Trang General tiếng Việt: ngôn ngữ, engine đồ hoạ và hồ sơ cài đặt"),
+            ], [
+                T("Start menu", "Menu khởi động"),
+                T("Style page", "Trang Style"),
+                T("Theme page", "Trang Theme"),
+                T("General page", "Trang General"),
             ]),
         ),
 
-        shots(
+        slider(
             id="session",
+            variant="steps", autoplay=True, interval=7000, stop_on_interact=True,
+            label=T("A session in five steps", "Một phiên làm việc trong năm bước"),
             eyebrow=T("The session", "Phiên làm việc"),
             title=T("Choosing a score, practising, recording", "Chọn bài, luyện tập, ghi hình"),
-            cols=3,
-            items=shot_items(SESSION_SHOTS, [
+            sub=T("Five steps in the order you meet them. They advance slowly on their own until you take over "
+                  "with the arrows or by choosing a step.",
+                  "Năm bước theo đúng thứ tự bạn gặp. Chúng tự chuyển chậm cho tới khi bạn tự điều khiển "
+                  "bằng mũi tên hoặc chọn một bước."),
+            slides=shot_items(SESSION_SHOTS, [
                 T("The Play dialog: score chooser, per-hand presets, recent songs and the library",
                   "Hộp thoại Play: bộ chọn bài, preset từng tay, bài gần đây và thư viện"),
                 T("Practice: modes, tempo and the A-B loop",
@@ -148,6 +170,12 @@ def build_gallery(doc) -> dict:
                   "Ghi hình: định dạng, độ phân giải, tốc độ khung hình, tiếng và nền trong suốt"),
                 T("The F1 card: every shortcut, in three groups",
                   "Thẻ F1: mọi phím tắt, chia ba nhóm"),
+            ], [
+                T("Choose a score", "Chọn bản nhạc"),
+                T("Practise", "Luyện tập"),
+                T("Review history", "Xem lịch sử"),
+                T("Record", "Ghi hình"),
+                T("Shortcuts", "Phím tắt"),
             ]),
         ),
 
@@ -687,8 +715,8 @@ def build_guide(doc) -> dict:
                    "Engine Direct3D 11 dựng trên Vortice.Windows; shader HLSL được biên dịch lúc khởi động bằng "
                    "d3dcompiler_47.dll có sẵn trong Windows.")),
                 (T("Authors", "Tác giả"),
-                 T("Copyright belongs to Yami and Neyu; Jin contributes to the project.",
-                   "Bản quyền thuộc về Yami và Neyu; Jin cộng tác vào dự án.")),
+                 T("Keyflow is made by Yami, Neyu and Jin. Copyright © 2026 Yami, Neyu, Jin.",
+                   "Keyflow do Yami, Neyu và Jin tạo ra. Bản quyền © 2026 Yami, Neyu, Jin.")),
                 (T("Reporting a problem", "Báo lỗi"),
                  T("Issues are tracked on GitHub — a screenshot, the settings profile and the verification log make "
                    "a bug report actionable.",

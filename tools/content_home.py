@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from sitekit import (ASSETS, E, ISSUES, README_EN, RELEASES, REPO, T, buttons, framed, icon,
                      iconbox, picture)
-from sitekit import band, carousel, chipcloud, cta, faq, grid, hero, pagenav, raw, shots, split, steps
+from sitekit import band, carousel, chipcloud, cta, faq, grid, hero, pagenav, raw, split, steps
 
 PRESETS = [
     "Neon Violet", "Inferno", "Aurora Rainbow", "Ice Crystal", "Two Hands", "Classic Roll",
@@ -318,6 +318,8 @@ def build(doc) -> dict:
 
         carousel(
             id="screens",
+            interval=6000,
+            label=T("Keyflow screenshots", "Ảnh chụp Keyflow"),
             eyebrow=T("Gallery", "Hình ảnh"),
             title=T("Rendered by the application itself", "Do chính ứng dụng render"),
             sub=T("These app screenshots are captured by Keyflow in CI with <code>--snapshot</code> — one set per language, "
