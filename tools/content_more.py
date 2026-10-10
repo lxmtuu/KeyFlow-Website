@@ -49,11 +49,11 @@ def build_gallery(doc) -> dict:
     )
 
     video_cap_k, video_cap_v = doc.key(T(
-        "The review clip at the top of this site: the new Keyflow mark, the GPU stage and the dock pages, cut into one short tour.",
-        "Đoạn video review ở đầu trang: logo Keyflow mới, sân khấu GPU và các trang dock, dựng thành một tua ngắn."))
+        "The review clip at the top of this site: the new Keyflow mark around one take of the GPU stage playing a score, recorded by the app itself.",
+        "Đoạn video review ở đầu trang: logo Keyflow mới ôm trọn một lượt sân khấu GPU chơi một bản nhạc, do chính ứng dụng quay lại."))
     video_label_k, video_label_v = doc.key(T(
-        "Keyflow review video: the stage, the docks and the presets in motion",
-        "Video review Keyflow: sân khấu, các dock và preset chuyển động"))
+        "Keyflow review video: one take of the GPU stage playing a score",
+        "Video review Keyflow: một lượt sân khấu GPU chơi một bản nhạc"))
     video_html = (
         '<figure class="shot" style="margin:0"><div class="frame">'
         '<video controls muted loop playsinline preload="metadata" width="1080" height="608" poster="' + root + 'previews/en/stage-gpu-galaxy.png" data-poster-shot="stage-gpu-galaxy" '
@@ -218,8 +218,8 @@ def build_gallery(doc) -> dict:
         raw('<section class="section" id="video"><div class="container">'
             + '<div class="section-head"><p class="eyebrow" data-i18n="'
             + doc.key(T("In motion", "Chuyển động"))[0] + '">' + doc.key(T("In motion", "Chuyển động"))[1] + "</p>"
-            + '<h2 data-i18n="' + doc.key(T("The whole product, in motion", "Trọn sản phẩm trong chuyển động"))[0] + '">'
-            + doc.key(T("The whole product, in motion", "Trọn sản phẩm trong chuyển động"))[1] + "</h2></div>"
+            + '<h2 data-i18n="' + doc.key(T("One take of the stage, in motion", "Một lượt sân khấu, trong chuyển động"))[0] + '">'
+            + doc.key(T("One take of the stage, in motion", "Một lượt sân khấu, trong chuyển động"))[1] + "</h2></div>"
             + video_html + "</div></section>"),
 
         callout(
