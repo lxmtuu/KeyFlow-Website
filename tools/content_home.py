@@ -48,8 +48,8 @@ def build(doc) -> dict:
 
     body = [
         hero(
-            eyebrow=T("Piano performance & concert VFX studio",
-                      "Studio biểu diễn piano & hiệu ứng sân khấu"),
+            eyebrow=T("Piano visualizer & concert VFX studio",
+                      "Studio trực quan hoá piano & hiệu ứng sân khấu"),
             title=T('Your MIDI, on a <em class="gold-text">concert stage</em>.',
                     'MIDI của bạn, trên một <em class="gold-text">sân khấu hoà nhạc</em>.'),
             lead=T("Keyflow plays, practises and records piano video from MIDI at production quality. "
@@ -465,8 +465,8 @@ def build(doc) -> dict:
     ]
 
     return {
-        "title": T("Keyflow · Piano Performance & Concert VFX Studio for Windows",
-                   "Keyflow · Studio biểu diễn piano & hiệu ứng sân khấu cho Windows"),
+        "title": T("Keyflow · Piano Visualizer & Concert VFX Studio for Windows",
+                   "Keyflow · Studio trực quan hoá piano & hiệu ứng sân khấu cho Windows"),
         "description": T(
             "Keyflow turns MIDI into concert-grade piano performances and videos: a Direct3D 11 GPU stage, "
             "a ray-traced 88-key keyboard, practice modes and one-click MP4 recording. Free for Windows 10 and 11, "

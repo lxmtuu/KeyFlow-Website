@@ -923,8 +923,8 @@ UI: dict[str, tuple[str, str]] = {
     "ui.foot.product": T("Product", "Sản phẩm"),
     "ui.foot.resources": T("Resources", "Tài nguyên"),
     "ui.foot.about": T("About", "Giới thiệu"),
-    "ui.foot.tagline": T("Piano performance and concert VFX studio for Windows. Play, practise and record from MIDI — free, open documentation, two languages.",
-                         "Studio biểu diễn piano và hiệu ứng sân khấu cho Windows. Chơi, luyện tập và quay video từ MIDI — miễn phí, tài liệu mở, hai ngôn ngữ."),
+    "ui.foot.tagline": T("Piano visualizer and concert VFX studio for Windows. Play, practise and record from MIDI — free, open documentation, two languages.",
+                         "Studio trực quan hoá piano và hiệu ứng sân khấu cho Windows. Chơi, luyện tập và quay video từ MIDI — miễn phí, tài liệu mở, hai ngôn ngữ."),
     "ui.foot.changelog": T("Changelog", "Nhật ký thay đổi"),
     "ui.foot.issues": T("Report an issue", "Báo lỗi"),
     "ui.foot.readme": T("Full documentation", "Tài liệu đầy đủ"),
@@ -984,7 +984,7 @@ def render_chrome(doc: Doc, active: str, page_title: tuple[str, str]) -> tuple[s
 <header class="nav">
   <div class="nav-in">
     <a class="brand" href="{doc.url('index.html')}">
-      <img src="{doc.root}favicon.svg" width="30" height="30" alt="" decoding="async">
+      <img src="{doc.root}logo.png" width="30" height="30" alt="" decoding="async">
       <span>Keyflow</span><span class="ver">v<span data-release-tag>1.0.0</span></span>
     </a>
     <nav class="nav-links" aria-label="{_html.escape(nav_label_en, quote=True)}" data-i18n-attr="aria-label={nav_label_key}">
@@ -1020,7 +1020,7 @@ def render_chrome(doc: Doc, active: str, page_title: tuple[str, str]) -> tuple[s
     drawer_key, drawer_label = doc.key(UI["ui.drawer.label"])
     dl = [f'<div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="{_html.escape(drawer_label, quote=True)}" data-i18n-attr="aria-label={drawer_key}"><div class="drawer-panel">',
           '<div class="drawer-top"><a class="brand" href="' + doc.url("index.html") + '">',
-          f'<img src="{doc.root}favicon.svg" width="28" height="28" alt=""><span>Keyflow</span></a>',
+          f'<img src="{doc.root}logo.png" width="28" height="28" alt=""><span>Keyflow</span></a>',
           f'<button type="button" class="drawer-close" data-i18n-attr="aria-label={cls_k}" '
           f'aria-label="{_html.escape(cls_v, quote=True)}">{icon("close", 18)}</button></div>']
     gk2, gv2 = doc.key(UI["ui.drawer.features"])
@@ -1086,7 +1086,7 @@ def render_chrome(doc: Doc, active: str, page_title: tuple[str, str]) -> tuple[s
     <div class="foot-in">
       <div class="foot-brand">
         <a class="brand" href="{doc.url('index.html')}">
-          <img src="{doc.root}favicon.svg" width="30" height="30" alt="" decoding="async"><span>Keyflow</span>
+          <img src="{doc.root}logo.png" width="30" height="30" alt="" decoding="async"><span>Keyflow</span>
         </a>
         <p data-i18n="{tk}">{tv}</p>
         <div class="social">
@@ -1121,7 +1121,7 @@ JSONLD = {
     "name": "Keyflow",
     "alternateName": "Keyflow · Piano Performance & Concert VFX Studio",
     "applicationCategory": "MultimediaApplication",
-    "applicationSubCategory": "Piano performance, practice and video production",
+    "applicationSubCategory": "Piano visualization, practice and video production",
     "operatingSystem": "Windows 10 (22H2) or Windows 11, 64-bit",
     "softwareVersion": "1.0.0",
     "inLanguage": ["en", "vi"],
@@ -1224,10 +1224,11 @@ def render_page(pid: str, path: str, builder) -> tuple[str, dict[str, str], dict
 <meta name="twitter:description" content="{_html.escape(desc_en, quote=True)}" data-i18n-attr="content=ui.description">
 <meta name="theme-color" content="#060504">
 <meta name="color-scheme" content="dark">
-<link rel="icon" href="{root}favicon.svg" type="image/svg+xml">
+<link rel="icon" href="{root}logo.png" type="image/png">
+<link rel="apple-touch-icon" href="{root}logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{root}style.css">
 <script>/* Choose the language before the first paint; a timer lifts the veil if
         the dictionaries or site.js never arrive. */
