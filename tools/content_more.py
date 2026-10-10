@@ -49,11 +49,11 @@ def build_gallery(doc) -> dict:
     )
 
     video_cap_k, video_cap_v = doc.key(T(
-        "The showcase clip at the top of this site: one take of the GPU stage playing a score, recorded by Keyflow.",
-        "Đoạn video giới thiệu ở đầu trang: một lượt sân khấu GPU chơi một bản nhạc, do chính Keyflow ghi lại."))
+        "The review clip at the top of this site: the new Keyflow mark, the GPU stage and the dock pages, cut into one short tour.",
+        "Đoạn video review ở đầu trang: logo Keyflow mới, sân khấu GPU và các trang dock, dựng thành một tua ngắn."))
     video_label_k, video_label_v = doc.key(T(
-        "Keyflow showcase video: the GPU stage playing a score",
-        "Video giới thiệu Keyflow: sân khấu GPU đang chơi một bản nhạc"))
+        "Keyflow review video: the stage, the docks and the presets in motion",
+        "Video review Keyflow: sân khấu, các dock và preset chuyển động"))
     video_html = (
         '<figure class="shot" style="margin:0"><div class="frame">'
         '<video controls muted loop playsinline preload="metadata" width="1080" height="608" poster="' + root + 'previews/en/stage-gpu-galaxy.png" data-poster-shot="stage-gpu-galaxy" '
@@ -82,7 +82,7 @@ def build_gallery(doc) -> dict:
                    "ảnh tĩnh có nhãn tiếng Anh."),
             chips=[
                 T("14 screenshots × 2 languages", "14 ảnh chụp × 2 ngôn ngữ"),
-                T("1 showcase video", "1 video giới thiệu"),
+                T("1 review video", "1 video review"),
                 T("14 presets, both engines", "14 preset, cả hai engine"),
                 T("Click any picture to enlarge", "Bấm vào ảnh bất kỳ để phóng to"),
             ],
@@ -218,8 +218,8 @@ def build_gallery(doc) -> dict:
         raw('<section class="section" id="video"><div class="container">'
             + '<div class="section-head"><p class="eyebrow" data-i18n="'
             + doc.key(T("In motion", "Chuyển động"))[0] + '">' + doc.key(T("In motion", "Chuyển động"))[1] + "</p>"
-            + '<h2 data-i18n="' + doc.key(T("One take, no editing", "Một lượt quay, không dựng"))[0] + '">'
-            + doc.key(T("One take, no editing", "Một lượt quay, không dựng"))[1] + "</h2></div>"
+            + '<h2 data-i18n="' + doc.key(T("The whole product, in motion", "Trọn sản phẩm trong chuyển động"))[0] + '">'
+            + doc.key(T("The whole product, in motion", "Trọn sản phẩm trong chuyển động"))[1] + "</h2></div>"
             + video_html + "</div></section>"),
 
         callout(
@@ -256,9 +256,9 @@ def build_gallery(doc) -> dict:
         "title": T("Gallery: real Keyflow screenshots & video",
                    "Thư viện ảnh: ảnh chụp & video thực tế từ Keyflow"),
         "description": T(
-            "Explore app-rendered screenshots in English and Tiếng Việt, the Keyflow showcase video, and a side-by-side "
+            "Explore app-rendered screenshots in English and Tiếng Việt, the Keyflow review video, and a side-by-side "
             "comparison of all fourteen presets across its software and GPU renderers.",
-            "Khám phá ảnh chụp ứng dụng bằng English và Tiếng Việt, video giới thiệu Keyflow, cùng ảnh so sánh cả "
+            "Khám phá ảnh chụp ứng dụng bằng English và Tiếng Việt, video review Keyflow, cùng ảnh so sánh cả "
             "mười bốn preset giữa bộ dựng hình phần mềm và GPU."),
         "og_image": "previews/en/stage-gpu-storm.png",
         "body": body,
