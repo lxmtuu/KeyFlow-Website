@@ -48,7 +48,7 @@
   --glow-gold: 0 10px 34px -12px rgba(242, 199, 92, .6);
   --ease: cubic-bezier(.22, .61, .36, 1);
   --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-display: "Playfair Display", "Times New Roman", Georgia, serif;
+  --font-display: "Plus Jakarta Sans", "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-mono: ui-monospace, "Cascadia Mono", "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
 }
 
@@ -106,8 +106,10 @@ body::after {
 img, video { max-width: 100%; height: auto; display: block; }
 a { color: inherit; text-decoration: none; }
 a:hover { color: var(--gold); }
-h1, h2, h3, h4 { margin: 0; line-height: 1.14; font-weight: 700; letter-spacing: -.015em; }
+h1, h2, h3, h4 { margin: 0; line-height: 1.12; font-weight: 700; letter-spacing: -.015em; }
 h1, h2 { font-family: var(--font-display); }
+h1 { font-weight: 800; letter-spacing: -.022em; }
+h2 { letter-spacing: -.018em; }
 h3, h4 { font-family: var(--font-body); letter-spacing: -.01em; }
 p { margin: 0 0 1em; }
 h1, h2, h3, figcaption { text-wrap: balance; }
@@ -240,7 +242,7 @@ em { font-style: normal; }
   display: flex; align-items: center; gap: 18px;
   height: var(--head-h); max-width: var(--max); margin-inline: auto; padding-inline: var(--gutter);
 }
-.brand { display: flex; align-items: center; gap: 10px; min-height: 44px; font: 600 18px/1 var(--font-body); letter-spacing: -.01em; }
+.brand { display: flex; align-items: center; gap: 10px; min-height: 44px; font: 700 18px/1 var(--font-display); letter-spacing: -.02em; }
 .brand img { width: 30px; height: 30px; border-radius: 9px; box-shadow: 0 4px 14px -6px rgba(242, 199, 92, .8); }
 .brand:hover { color: var(--text); }
 .brand .ver {
@@ -406,7 +408,7 @@ picture.frame { width: 100%; }
 .stats { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1px; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--line); }
 .stat { padding: 22px 14px; text-align: center; background: linear-gradient(180deg, var(--bg-2), var(--surface)); transition: background .25s; }
 .stat:hover { background: linear-gradient(180deg, var(--card-2), var(--surface)); }
-.stat b { display: block; font: 700 clamp(22px, 2.4vw, 31px)/1.1 var(--font-display); color: var(--gold); letter-spacing: -.01em; }
+.stat b { display: block; font: 800 clamp(22px, 2.4vw, 31px)/1.1 var(--font-display); color: var(--gold); letter-spacing: -.02em; }
 .stat span { display: block; margin-top: 6px; color: var(--muted); font-size: var(--fs-small); line-height: 1.35; }
 .stats.four { grid-template-columns: repeat(4, 1fr); }
 

@@ -923,8 +923,8 @@ UI: dict[str, tuple[str, str]] = {
     "ui.foot.product": T("Product", "Sản phẩm"),
     "ui.foot.resources": T("Resources", "Tài nguyên"),
     "ui.foot.about": T("About", "Giới thiệu"),
-    "ui.foot.tagline": T("Piano performance and concert VFX studio for Windows. Play, practise and record from MIDI — free, open documentation, two languages.",
-                         "Studio biểu diễn piano và hiệu ứng sân khấu cho Windows. Chơi, luyện tập và quay video từ MIDI — miễn phí, tài liệu mở, hai ngôn ngữ."),
+    "ui.foot.tagline": T("Piano visualizer and concert VFX studio for Windows. Play, practise and record from MIDI — free, open documentation, two languages.",
+                         "Studio trực quan hoá piano và hiệu ứng sân khấu cho Windows. Chơi, luyện tập và quay video từ MIDI — miễn phí, tài liệu mở, hai ngôn ngữ."),
     "ui.foot.changelog": T("Changelog", "Nhật ký thay đổi"),
     "ui.foot.issues": T("Report an issue", "Báo lỗi"),
     "ui.foot.readme": T("Full documentation", "Tài liệu đầy đủ"),
@@ -1121,7 +1121,7 @@ JSONLD = {
     "name": "Keyflow",
     "alternateName": "Keyflow · Piano Performance & Concert VFX Studio",
     "applicationCategory": "MultimediaApplication",
-    "applicationSubCategory": "Piano performance, practice and video production",
+    "applicationSubCategory": "Piano visualization, practice and video production",
     "operatingSystem": "Windows 10 (22H2) or Windows 11, 64-bit",
     "softwareVersion": "1.0.0",
     "inLanguage": ["en", "vi"],
@@ -1228,7 +1228,7 @@ def render_page(pid: str, path: str, builder) -> tuple[str, dict[str, str], dict
 <link rel="apple-touch-icon" href="{root}logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{root}style.css">
 <script>/* Choose the language before the first paint; a timer lifts the veil if
         the dictionaries or site.js never arrive. */

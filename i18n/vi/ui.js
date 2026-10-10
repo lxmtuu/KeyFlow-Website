@@ -42,7 +42,7 @@ window.KEYFLOW_VI = Object.assign(window.KEYFLOW_VI || {}, {
 "ui.foot.releases": "Tất cả bản phát hành",
 "ui.foot.resources": "Tài nguyên",
 "ui.foot.soundfont": "Ghi công SoundFont (FreePats)",
-"ui.foot.tagline": "Studio biểu diễn piano và hiệu ứng sân khấu cho Windows. Chơi, luyện tập và quay video từ MIDI — miễn phí, tài liệu mở, hai ngôn ngữ.",
+"ui.foot.tagline": "Studio trực quan hoá piano và hiệu ứng sân khấu cho Windows. Chơi, luyện tập và quay video từ MIDI — miễn phí, tài liệu mở, hai ngôn ngữ.",
 "ui.foot.version": "Phiên bản",
 "ui.github": "Keyflow trên GitHub",
 "ui.home": "Trang chủ",

@@ -70,7 +70,7 @@ window.KEYFLOW_VI = Object.assign(window.KEYFLOW_VI || {}, {
 "home.173": "Xem trên GitHub",
 "home.174": "Đọc hướng dẫn",
 "home.18": "Trang General tiếng Việt: ngôn ngữ, engine đồ hoạ và hồ sơ cài đặt",
-"home.19": "Studio biểu diễn piano & hiệu ứng sân khấu",
+"home.19": "Studio trực quan hoá piano & hiệu ứng sân khấu",
 "home.2": "Keyflow chuyển động",
 "home.20": "MIDI của bạn, trên một <em class=\"gold-text\">sân khấu hoà nhạc</em>.",
 "home.21": "Keyflow chơi, luyện tập và quay video piano từ MIDI với chất lượng sản xuất. Nốt nhạc rơi đúng nhịp, tia lửa nóng sáng rồi nguội dần, bàn phím 88 phím được chiếu sáng bằng shader ray-tracing — tất cả do engine Direct3D 11 vẽ trên luồng riêng, nên một khung hình nặng chỉ làm giảm FPS chứ không bao giờ làm trễ MIDI.",
@@ -154,5 +154,5 @@ window.KEYFLOW_VI = Object.assign(window.KEYFLOW_VI || {}, {
 "home.98": "Chuỗi PNG 32-bit trong suốt thật, để ghép hậu kỳ trong Premiere, Resolve hoặc OBS",
 "home.99": "Theo cửa sổ, 720p hoặc 1080p ở 15–60 fps, lấy từ khung off-screen đúng kích thước bản ghi",
 "ui.description": "Keyflow biến MIDI thành buổi biểu diễn và video piano chất lượng hoà nhạc: sân khấu GPU Direct3D 11, bàn phím 88 phím ray-tracing, các chế độ luyện tập và quay MP4 một chạm. Miễn phí cho Windows 10 và 11, có English và Tiếng Việt.",
-"ui.title": "Keyflow · Studio biểu diễn piano & hiệu ứng sân khấu cho Windows"
+"ui.title": "Keyflow · Studio trực quan hoá piano & hiệu ứng sân khấu cho Windows"
 });
