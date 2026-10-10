@@ -5,7 +5,7 @@
 
    1. helpers          5. sliders             8. release info from GitHub
    2. language         6. lightbox            9. video, copy buttons
-   3. header & drawer  7. reveal & counters  10. boot
+   3. header & drawer  7. reveal, counters, pointer glow  10. boot
    4. dropdown
    ========================================================================== */
 (function () {
@@ -580,6 +580,25 @@
     var r = el.getBoundingClientRect();
     if (r.top < window.innerHeight && r.bottom > 0) countUp(el);
   });
+
+  /* 7b. pointer glow: panels light up under the cursor (--mx / --my feed style.css section 15) -------- */
+  (function () {
+    if (!window.matchMedia || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    var SELECTOR = ".card, .group, .dl-mini, .dl-card, .pagenav a, .steps li";
+    var frame = 0, panel = null, px = 0, py = 0;
+    function paint() {
+      frame = 0;
+      var r = panel.getBoundingClientRect();
+      panel.style.setProperty("--mx", (px - r.left).toFixed(1) + "px");
+      panel.style.setProperty("--my", (py - r.top).toFixed(1) + "px");
+    }
+    on(document, "pointermove", function (e) {
+      var hit = e.target && e.target.closest ? e.target.closest(SELECTOR) : null;
+      if (!hit) return;
+      panel = hit; px = e.clientX; py = e.clientY;
+      if (!frame) frame = requestAnimationFrame(paint);
+    }, { passive: true });
+  })();
 
   /* 8. release info straight from GitHub ---------------------------------- */
   /* The links in the markup are pinned to v1.0.0 so the page works offline;

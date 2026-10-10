@@ -34,8 +34,11 @@ class Scan(HTMLParser):
         self.unlabelled_triggers = 0
         self.shotgrids = 0
         self.headings: list[int] = []         # h1..h6 levels in document order
+        self.stage_fx = 0                      # decorative hero lighting
+        self.decor_visible: list[str] = []     # decorative layers that are not aria-hidden
         self._open: dict | None = None        # the slider whose markup we are inside
         self._open_depth = 0
+        self._stage_depth: int | None = None   # stack depth of the .stage-fx we are inside
         self._stack: list[tuple[str, str | None]] = []
         self._void = {"area", "base", "br", "col", "embed", "hr", "img", "input",
                       "link", "meta", "param", "source", "track", "wbr"}
@@ -51,6 +54,13 @@ class Scan(HTMLParser):
             self.shotgrids += 1
         if len(tag) == 2 and tag[0] == "h" and tag[1] in "123456":
             self.headings.append(int(tag[1]))
+        inside_stage = self._stage_depth is not None
+        if "stage-fx" in classes:
+            self.stage_fx += 1
+            self._stage_depth = len(self._stack)
+        # the stage layer must hide itself; a keyboard on its own (the call to action) must too
+        if ("stage-fx" in classes or ("keys" in classes and not inside_stage)) and data.get("aria-hidden") != "true":
+            self.decor_visible.append(" ".join(classes))
         if "data-slider" in data:
             self._open = {"variant": next((c[7:] for c in classes if c.startswith("slider-")), ""),
                           "interval": data.get("data-interval", ""), "role": data.get("role", ""),
@@ -107,6 +117,8 @@ class Scan(HTMLParser):
                 break
         if self._open is not None and len(self._stack) <= self._open_depth:
             self._open = None
+        if self._stage_depth is not None and len(self._stack) <= self._stage_depth:
+            self._stage_depth = None
 
 
 class LinkScan(HTMLParser):
@@ -270,6 +282,11 @@ def main() -> int:
             failures.append("gallery.html: picture grids are not allowed here; use a slider")
         if scan.unlabelled_triggers:
             failures.append(f"{path}: {scan.unlabelled_triggers} zoom button(s) without an aria-label")
+        # The cinematic hero lighting is decoration: exactly one per page, never read out by a screen reader.
+        if scan.stage_fx != 1:
+            failures.append(f"{path}: expected exactly one .stage-fx hero lighting layer, found {scan.stage_fx}")
+        for klass in scan.decor_visible:
+            failures.append(f"{path}: decorative .{klass} must be aria-hidden=\"true\"")
         # Headings form an outline: one h1, and a heading may only go one level deeper than the one before it.
         if scan.headings.count(1) != 1:
             failures.append(f"{path}: expected exactly one h1, found {scan.headings.count(1)}")

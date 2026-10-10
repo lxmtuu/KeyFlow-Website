@@ -5,7 +5,8 @@
    2. base            7. hero              12. faq / callouts
    3. utilities       8. sections          13. sliders & lightbox
    4. buttons         9. cards & splits    14. footer
-   5. header          10. steps & stats    15. responsive & motion
+   5. header          10. steps & stats    15. stage lighting & polish
+                                           16. responsive & motion
    ========================================================================== */
 
 /* 1. tokens ---------------------------------------------------------------- */
@@ -129,9 +130,14 @@ kbd {
 }
 em { font-style: normal; }
 .gold-text {
-  background: linear-gradient(96deg, #fff0bd, var(--gold) 42%, #c4932b);
+  background:
+    linear-gradient(104deg, transparent 38%, rgba(255, 255, 255, .9) 50%, transparent 62%) 100% 0 / 260% 100% no-repeat,
+    linear-gradient(96deg, #fff0bd, var(--gold) 42%, #c4932b);
   -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: foil 8s ease-in-out 1.8s infinite;
 }
+/* a glint of light crosses the gold lettering, rests, and crosses again; the last frame is the resting state */
+@keyframes foil { 0%, 58% { background-position: 100% 0, 0 0; } 92%, 100% { background-position: 0% 0, 0 0; } }
 ::selection { background: rgba(242, 199, 92, .28); color: #fff; }
 :focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 4px; }
 
@@ -337,7 +343,7 @@ em { font-style: normal; }
 .drawer-foot { margin-top: auto; padding-top: 18px; display: grid; gap: 10px; }
 
 /* 6. hero ------------------------------------------------------------------ */
-.hero { position: relative; padding-block: clamp(40px, 6vw, 78px) clamp(34px, 5vw, 62px); }
+.hero { position: relative; padding-block: clamp(40px, 6vw, 78px) clamp(88px, 9vw, 130px); }
 .hero-in { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr); gap: clamp(28px, 5vw, 62px); align-items: center; }
 .hero h1 { font-size: clamp(38px, 5.6vw, 68px); letter-spacing: -.025em; }
 .hero .lead { margin: 20px 0 28px; color: var(--text-2); font-size: clamp(1.04rem, .94rem + .5vw, 1.2rem); line-height: 1.62; max-width: 56ch; }
@@ -373,7 +379,7 @@ picture.frame { width: 100%; }
 .frame-badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 10px var(--gold); }
 
 /* Page hero (subpages) */
-.pagehero { padding-block: clamp(34px, 5vw, 60px) clamp(26px, 4vw, 46px); }
+.pagehero { position: relative; padding-block: clamp(34px, 5vw, 60px) clamp(58px, 6vw, 84px); }
 .pagehero-in { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: clamp(26px, 4vw, 54px); align-items: center; }
 .pagehero h1 { font-size: clamp(31px, 4.2vw, 50px); letter-spacing: -.02em; }
 .pagehero .lead { margin: 16px 0 24px; color: var(--text-2); font-size: clamp(1.02rem, .95rem + .35vw, 1.12rem); max-width: 58ch; }
@@ -417,7 +423,7 @@ picture.frame { width: 100%; }
 }
 .card::before {
   content: ""; position: absolute; inset: -1px; border-radius: inherit; pointer-events: none; opacity: 0;
-  background: radial-gradient(24rem 12rem at 20% 0%, rgba(242, 199, 92, .13), transparent 70%);
+  background: radial-gradient(22rem circle at var(--mx, 20%) var(--my, 0%), rgba(242, 199, 92, .15), transparent 68%);
   transition: opacity .25s;
 }
 .card:hover { transform: translateY(-3px); border-color: rgba(242, 199, 92, .3); box-shadow: var(--shadow-2); }
@@ -825,19 +831,19 @@ details.qa .a a { color: var(--gold); border-bottom: 1px solid rgba(242, 199, 92
 
 /* CTA band */
 .cta {
+  --keys-h: clamp(64px, 8vw, 104px);
   position: relative; overflow: hidden; text-align: center;
-  padding-block: clamp(52px, 7vw, 92px); border-top: 1px solid var(--line);
+  padding-block: clamp(52px, 7vw, 92px) calc(var(--keys-h) + 32px); border-top: 1px solid var(--line);
   background:
     radial-gradient(60% 130% at 50% 0%, rgba(242, 199, 92, .13), transparent 70%),
     radial-gradient(50% 120% at 12% 100%, rgba(217, 138, 78, .12), transparent 70%);
 }
 .cta h2 { font-size: clamp(28px, 4vw, 46px); }
 .cta .sub { margin: 16px auto 28px; max-width: 62ch; color: var(--text-2); font-size: clamp(1rem, .94rem + .35vw, 1.1rem); }
-.cta .keys {
-  position: absolute; inset: auto 0 -30px 0; height: 90px; opacity: .16; pointer-events: none;
-  background: repeating-linear-gradient(90deg, #fff 0 16px, transparent 16px 34px);
-  -webkit-mask-image: linear-gradient(180deg, transparent, #000);
-  mask-image: linear-gradient(180deg, transparent, #000);
+.cta .container { position: relative; z-index: 1; }
+.cta::after {                       /* front edge of the key bed, as under the heroes */
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(154, 116, 32, .5) 12%, rgba(242, 199, 92, .8) 50%, rgba(154, 116, 32, .5) 88%, transparent);
 }
 
 /* 14. footer --------------------------------------------------------------- */
@@ -863,8 +869,13 @@ details.qa .a a { color: var(--gold); border-bottom: 1px solid rgba(242, 199, 92
 .credits .credits-names { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px var(--gap); }
 .credits-names li {
   position: relative; padding-bottom: .08em; font: 700 clamp(27px, 4.2vw, 42px)/1.15 var(--font-display); letter-spacing: -.01em;
-  background: linear-gradient(96deg, #fff0bd, var(--gold) 46%, #c4932b); -webkit-background-clip: text; background-clip: text; color: transparent;
+  background:
+    linear-gradient(104deg, transparent 38%, rgba(255, 255, 255, .85) 50%, transparent 62%) 100% 0 / 260% 100% no-repeat,
+    linear-gradient(96deg, #fff0bd, var(--gold) 46%, #c4932b);
+  -webkit-background-clip: text; background-clip: text; color: transparent; animation: foil 9s ease-in-out infinite;
 }
+.credits-names li:nth-child(2) { animation-delay: 1.6s; }
+.credits-names li:nth-child(3) { animation-delay: 3.2s; }
 .credits-names li + li::before {          /* a small gold diamond between the names */
   content: ""; position: absolute; left: calc(var(--gap) / -2 - 3.5px); top: 52%; width: 7px; height: 7px;
   background: var(--gold-3); rotate: 45deg; translate: 0 -50%;
@@ -890,7 +901,120 @@ details.qa .a a { color: var(--gold); border-bottom: 1px solid rgba(242, 199, 92
 .err h1 { font-size: clamp(24px, 3.4vw, 38px); margin-top: 6px; }
 .err p { color: var(--muted); max-width: 52ch; margin: 8px auto 24px; }
 
-/* 15. responsive & motion -------------------------------------------------- */
+/* 15. stage lighting & polish ---------------------------------------------- */
+/* Every hero is a concert stage: soft beams fall from above, a pool of light lies on the floor and a piano
+   keyboard runs along the bottom edge (the closing call-to-action ends on the same keyboard).  The markup is
+   tools/sitekit.py stage_fx().  It is decoration only: aria-hidden, no pointer events, painted behind the dust
+   (z -2) and above the fixed ambient light (z -3).  Reduced motion freezes all of it (section 16). */
+:root {
+  --keys-face: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='168' height='84' viewBox='0 0 168 84'%3E%3Cdefs%3E%3ClinearGradient id='w' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23fff4d6'/%3E%3Cstop offset='1' stop-color='%23cdbd96'/%3E%3C/linearGradient%3E%3ClinearGradient id='k' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%232e281c'/%3E%3Cstop offset='1' stop-color='%23080705'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg fill='url(%23w)'%3E%3Crect x='1' y='-8' width='22' height='92' rx='4'/%3E%3Crect x='25' y='-8' width='22' height='92' rx='4'/%3E%3Crect x='49' y='-8' width='22' height='92' rx='4'/%3E%3Crect x='73' y='-8' width='22' height='92' rx='4'/%3E%3Crect x='97' y='-8' width='22' height='92' rx='4'/%3E%3Crect x='121' y='-8' width='22' height='92' rx='4'/%3E%3Crect x='145' y='-8' width='22' height='92' rx='4'/%3E%3C/g%3E%3Cg fill='url(%23k)' stroke='%235a4e36' stroke-width='.6'%3E%3Crect x='17' y='-4' width='14' height='54' rx='2.5'/%3E%3Crect x='41' y='-4' width='14' height='54' rx='2.5'/%3E%3Crect x='89' y='-4' width='14' height='54' rx='2.5'/%3E%3Crect x='113' y='-4' width='14' height='54' rx='2.5'/%3E%3Crect x='137' y='-4' width='14' height='54' rx='2.5'/%3E%3C/g%3E%3C/svg%3E");    /* one octave: ivory and ebony keys */
+  --keys-shape: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='168' height='84' viewBox='0 0 168 84'%3E%3Cg fill='%23000'%3E%3Crect x='1' y='-8' width='22' height='92' rx='4'/%3E%3Crect x='25' y='-8' width='22' height='92' rx='4'/%3E%3Crect x='49' y='-8' width='22' height='92' rx='4'/%3E%3Crect x='73' y='-8' width='22' height='92' rx='4'/%3E%3Crect x='97' y='-8' width='22' height='92' rx='4'/%3E%3Crect x='121' y='-8' width='22' height='92' rx='4'/%3E%3Crect x='145' y='-8' width='22' height='92' rx='4'/%3E%3C/g%3E%3Cg fill='%23000'%3E%3Crect x='17' y='-4' width='14' height='54' rx='2.5'/%3E%3Crect x='41' y='-4' width='14' height='54' rx='2.5'/%3E%3Crect x='89' y='-4' width='14' height='54' rx='2.5'/%3E%3Crect x='113' y='-4' width='14' height='54' rx='2.5'/%3E%3Crect x='137' y='-4' width='14' height='54' rx='2.5'/%3E%3C/g%3E%3C/svg%3E");  /* the same octave as a mask, so a glint only lights the keys */
+}
+.stage-fx { position: absolute; inset: 0; z-index: -3; overflow: hidden; pointer-events: none; }
+.stage-fx::after {                  /* the front edge of the key bed */
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(154, 116, 32, .5) 12%, rgba(242, 199, 92, .8) 50%, rgba(154, 116, 32, .5) 88%, transparent);
+}
+
+/* light beams: a soft wedge hinged at the top edge, swaying slowly */
+.beam {
+  position: absolute; top: -26%; left: var(--x, 50%); width: min(640px, 150vw); height: 150%;
+  margin-left: calc(min(640px, 150vw) / -2);
+  transform-origin: 50% 0; rotate: var(--tilt, 0deg); will-change: rotate, opacity;
+  background: conic-gradient(from 171deg at 50% 0, transparent 0, rgba(255, 226, 150, .04) 2deg, rgba(255, 226, 150, .12) 5deg,
+    rgba(255, 233, 172, .26) 9deg, rgba(255, 226, 150, .12) 13deg, rgba(255, 226, 150, .04) 16deg, transparent 18deg 360deg);
+  -webkit-mask-image: linear-gradient(180deg, #000 12%, transparent 88%); mask-image: linear-gradient(180deg, #000 12%, transparent 88%);
+  animation: beam-in 2.4s ease-out both, beam-sway var(--t, 18s) ease-in-out var(--d, 0s) infinite alternate;
+}
+.beam.b1 { --x: 14%; --tilt: -8deg; --t: 19s; --d: -3s; }
+.beam.b2 { --x: 57%; --tilt: 4deg;  --t: 23s; --d: -9s; }
+.beam.b3 { --x: 91%; --tilt: 14deg; --t: 21s; --d: -6s; }
+@keyframes beam-in { from { opacity: 0; } to { opacity: var(--beam-o, 1); } }
+@keyframes beam-sway { from { rotate: calc(var(--tilt, 0deg) - 3.5deg); } to { rotate: calc(var(--tilt, 0deg) + 3.5deg); } }
+
+/* the pool of light on the stage floor */
+.floor {
+  position: absolute; left: 50%; bottom: -16%; width: min(1240px, 98%); height: 52%; translate: -50% 0;
+  background: radial-gradient(closest-side, rgba(242, 199, 92, .27), rgba(217, 138, 78, .09) 56%, transparent 76%);
+  animation: floor-breathe 7s ease-in-out infinite alternate;
+}
+@keyframes floor-breathe { from { opacity: .7; } to { opacity: 1; } }
+
+/* the keyboard: ivory and ebony keys fade up out of the dark; a gold glint travels across and lights them */
+.keys {
+  position: absolute; inset: auto 0 0 0; height: var(--keys-h, clamp(56px, 7vw, 92px)); pointer-events: none;
+  -webkit-mask-image: linear-gradient(180deg, transparent, rgba(0, 0, 0, .5) 40%, #000 82%);
+  mask-image: linear-gradient(180deg, transparent, rgba(0, 0, 0, .5) 40%, #000 82%);
+}
+.keys::before, .keys::after { content: ""; position: absolute; inset: 0; }
+.keys::before { background: var(--keys-face) 0 100% / auto 100% repeat-x; opacity: .36; }
+.keys::after {
+  background: linear-gradient(100deg, transparent 0 40%, rgba(255, 226, 140, .95) 50%, transparent 60%) 0 0 / 260% 100% no-repeat;
+  -webkit-mask: var(--keys-shape) 0 100% / auto 100% repeat-x; mask: var(--keys-shape) 0 100% / auto 100% repeat-x;
+  opacity: .8; animation: keys-glint 12s cubic-bezier(.45, .05, .4, .95) 1.2s infinite;
+}
+/* the glint moves right to left across the strip, rests, and returns; the last frame is unlit */
+@keyframes keys-glint { 0%, 8% { background-position: 0% 0; } 70%, 100% { background-position: 100% 0; } }
+
+/* sub-pages: a lighter version of the same stage */
+.stage-fx-page .b3 { display: none; }
+.stage-fx-page .beam { --beam-o: .8; }
+.stage-fx-page .keys { --keys-h: clamp(40px, 4.4vw, 58px); }
+.stage-fx-page .floor { height: 40%; }
+
+/* entrance: the hero copy rises line by line, the picture lights up */
+@keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes ignite { from { opacity: 0; transform: translateY(26px) scale(.965); filter: brightness(.5) saturate(.8); } to { opacity: 1; transform: none; filter: none; } }
+.hero-copy > *, .pagehero .split-copy > * { animation: rise .95s var(--ease) both; }
+.hero-copy > :nth-child(2), .pagehero .split-copy > :nth-child(2) { animation-delay: .08s; }
+.hero-copy > :nth-child(3), .pagehero .split-copy > :nth-child(3) { animation-delay: .16s; }
+.hero-copy > :nth-child(4), .pagehero .split-copy > :nth-child(4) { animation-delay: .24s; }
+.hero-copy > :nth-child(5), .pagehero .split-copy > :nth-child(5) { animation-delay: .32s; }
+.hero-copy > :nth-child(n+6), .pagehero .split-copy > :nth-child(n+6) { animation-delay: .4s; }
+.hero-media, .pagehero .split-media { animation: ignite 1.3s var(--ease) .14s both; }
+
+/* sections are separated by a gilded hairline with a small diamond, not a hard rule */
+.section + .section { border-top: 0; }
+.section + .section::before {
+  content: ""; position: absolute; top: 0; left: 50%; translate: -50% 0; height: 1px; pointer-events: none;
+  width: min(calc(var(--max) - 2 * var(--gutter)), calc(100% - 2 * var(--gutter)));
+  background: linear-gradient(90deg, transparent, rgba(154, 116, 32, .5) 14%, rgba(242, 199, 92, .75) 50%, rgba(154, 116, 32, .5) 86%, transparent);
+}
+.section + .section::after {
+  content: ""; position: absolute; top: -4px; left: 50%; width: 9px; height: 9px; translate: -50% 0; rotate: 45deg; pointer-events: none;
+  background: linear-gradient(135deg, #ffe9a8, var(--gold-2)); box-shadow: 0 0 14px 1px rgba(242, 199, 92, .6);
+}
+
+/* the gold button catches the light when you reach for it */
+.btn-gold { overflow: hidden; }
+.btn-gold::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: linear-gradient(110deg, transparent 32%, rgba(255, 255, 255, .6) 50%, transparent 68%);
+  transform: translateX(-130%); transition: transform .8s var(--ease);
+}
+.btn-gold:hover::after, .btn-gold:focus-visible::after { transform: translateX(130%); }
+
+/* panels glow along their edge where the pointer is (site.js sets --mx / --my) */
+.group, .dl-mini, .pagenav a { position: relative; }
+@media (hover: hover) and (pointer: fine) {
+  .card::after, .group::after, .dl-mini::after, .dl-card::after, .pagenav a::after, .steps li::after {
+    content: ""; position: absolute; inset: 0; padding: 1px; border-radius: inherit; pointer-events: none; opacity: 0;
+    background: radial-gradient(15rem circle at var(--mx, 50%) var(--my, 0%), rgba(255, 228, 150, .85), rgba(242, 199, 92, .25) 45%, transparent 70%);
+    -webkit-mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0); -webkit-mask-clip: content-box, border-box; -webkit-mask-composite: xor;
+    mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0); mask-clip: content-box, border-box; mask-composite: exclude;
+    transition: opacity .3s;
+  }
+  .card:hover::after, .group:hover::after, .dl-mini:hover::after, .dl-card:hover::after, .pagenav a:hover::after, .steps li:hover::after { opacity: 1; }
+}
+
+@media (max-width: 760px) {        /* copy runs the full width of a phone, so the shafts are dimmer there */
+  .beam { --beam-o: .6; }
+  .stage-fx-page .beam { --beam-o: .5; }
+  .beam.b3 { display: none; }
+  .floor { height: 38%; }
+}
+
+/* 16. responsive & motion -------------------------------------------------- */
 @media (max-width: 1080px) {
   .grid.four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .stats { grid-template-columns: repeat(3, 1fr); }
@@ -986,7 +1110,7 @@ html[data-lang-pref="vi"] [data-i18n],
 html[data-lang-pref="vi"] [data-i18n-html] { visibility: hidden; }
 
 @media print {
-  .stardust, .nav, .drawer, .totop, .progress, .cta .keys, .slider-btn, .slider-play, .slider-nav, .slider-count, .lb-trigger { display: none !important; }
+  .stardust, .nav, .drawer, .totop, .progress, .keys, .stage-fx, .slider-btn, .slider-play, .slider-nav, .slider-count, .lb-trigger { display: none !important; }
   .slider.is-ready .slide { opacity: 1; visibility: visible; grid-area: auto; margin-bottom: 18px; break-inside: avoid; }
   body { background: #fff; color: #000; }
   body::before, body::after { display: none; }

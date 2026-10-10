@@ -483,6 +483,14 @@ def render_section(doc: Doc, s: dict[str, Any]) -> str:  # noqa: C901 - one disp
 # ---------------------------------------------------------------------------
 # Section renderers that need more room
 # ---------------------------------------------------------------------------
+def stage_fx(kind: str) -> str:
+    """The concert-stage lighting behind a hero: light beams, a pool of light on the floor and a piano
+    keyboard along the bottom edge.  Pure CSS decoration (style.css section 15), hidden from assistive tech."""
+    return (f'<div class="stage-fx stage-fx-{kind}" aria-hidden="true">'
+            '<i class="beam b1"></i><i class="beam b2"></i><i class="beam b3"></i>'
+            '<i class="floor"></i><i class="keys"></i></div>')
+
+
 def render_hero(doc: Doc, s: dict[str, Any]) -> str:
     copy_html = ""
     if s.get("eyebrow"):
@@ -511,7 +519,7 @@ def render_hero(doc: Doc, s: dict[str, Any]) -> str:
         copy_html += '<div class="meta-chips">' + "".join(chips) + "</div>"
 
     media = s.get("media", "")
-    return (f'<section class="hero"><div class="container hero-in">'
+    return (f'<section class="hero">{stage_fx("hero")}<div class="container hero-in">'
             f'<div class="hero-copy">{copy_html}</div>'
             f'<div class="hero-media">{media}</div>'
             f'</div></section>')
@@ -551,7 +559,7 @@ def render_pagehero(doc: Doc, s: dict[str, Any]) -> str:
 
     media = s.get("media", "")
     klass = "pagehero" + (" " + s["cls"] if s.get("cls") else "")
-    return (f'<section class="{klass}"><div class="container pagehero-in">'
+    return (f'<section class="{klass}">{stage_fx("page")}<div class="container pagehero-in">'
             f'<div class="split-copy">{copy_html}</div>'
             f'<div class="split-media">{media}</div>'
             f'</div></section>')
