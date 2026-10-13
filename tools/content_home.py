@@ -7,13 +7,15 @@ and the documentation cannot drift apart.
 """
 from __future__ import annotations
 
-from sitekit import (ASSETS, E, ISSUES, README_EN, RELEASES, REPO, T, buttons, framed, icon,
-                     iconbox, picture)
+from sitekit import (ASSETS, E, ISSUES, PIANO_CREDIT, PIANO_LICENSE, PIANO_NAME, PIANO_SIZE,
+                     README_EN, RELEASES, REPO, RELEASE_DATE_EN, RELEASE_DATE_VI, RELEASE_VERSION,
+                     SALAMANDER, SIZE, T, buttons, framed, icon, iconbox, picture)
 from sitekit import band, carousel, chipcloud, cta, faq, grid, hero, pagenav, raw, split, steps
 
+# Concert Gold is the preset the app opens on; the rest follow it.
 PRESETS = [
-    "Neon Violet", "Inferno", "Aurora Rainbow", "Ice Crystal", "Two Hands", "Classic Roll",
-    "Green Screen", "Sakura Nocturne", "Concert Gold", "Moonlight Sonata", "Galaxy Voyage",
+    "Concert Gold", "Neon Violet", "Inferno", "Aurora Rainbow", "Ice Crystal", "Two Hands",
+    "Classic Roll", "Green Screen", "Sakura Nocturne", "Moonlight Sonata", "Galaxy Voyage",
     "Electric Storm", "Ocean Depths", "Retro Arcade",
 ]
 
@@ -53,24 +55,25 @@ def build(doc) -> dict:
             title=T('Your MIDI, on a <em class="gold-text">concert stage</em>.',
                     'MIDI của bạn, trên một <em class="gold-text">sân khấu hoà nhạc</em>.'),
             lead=T("Keyflow plays, practises and records piano video from MIDI at production quality. "
-                   "Notes fall in time, sparks glow hot and cool down, and an 88-key keyboard is lit by a "
-                   "ray-traced shader — all drawn by a Direct3D 11 engine on a thread of its own, so a heavy "
-                   "frame costs frame rate and never MIDI latency.",
+                   "Notes fall in time, sparks glow hot and cool down, and a ray-traced keyboard — 88, 76, 61 "
+                   "or 49 keys — is lit key by key. It is all drawn by a Direct3D 11 engine on a thread of its "
+                   "own, so a heavy frame costs frame rate and never MIDI latency.",
                    "Keyflow chơi, luyện tập và quay video piano từ MIDI với chất lượng sản xuất. "
-                   "Nốt nhạc rơi đúng nhịp, tia lửa nóng sáng rồi nguội dần, bàn phím 88 phím được chiếu sáng "
-                   "bằng shader ray-tracing — tất cả do engine Direct3D 11 vẽ trên luồng riêng, nên một khung hình "
-                   "nặng chỉ làm giảm FPS chứ không bao giờ làm trễ MIDI."),
+                   "Nốt nhạc rơi đúng nhịp, tia lửa nóng sáng rồi nguội dần, và bàn phím ray-tracing — 88, 76, "
+                   "61 hoặc 49 phím — sáng lên theo từng phím. Tất cả do engine Direct3D 11 vẽ trên luồng riêng, "
+                   "nên một khung hình nặng chỉ làm giảm FPS chứ không bao giờ làm trễ MIDI."),
             actions=[dl, gh],
             facts=[
                 T("Free · MIT licensed", "Miễn phí · giấy phép MIT"),
                 T("Windows 10 / 11, 64-bit", "Windows 10 / 11, 64-bit"),
                 T("English & Tiếng Việt, switched live", "English & Tiếng Việt, đổi ngay lúc chạy"),
-                T("Version 1.0.0 · Concert Grand Edition", "Phiên bản 1.0.0 · Concert Grand Edition"),
+                T(f"Version {RELEASE_VERSION} · released {RELEASE_DATE_EN}",
+                  f"Phiên bản {RELEASE_VERSION} · phát hành {RELEASE_DATE_VI}"),
             ],
             media=_video(
                 doc,
-                T("Recorded by Keyflow itself: the GPU stage running a score with the Galaxy Voyage preset.",
-                  "Do chính Keyflow quay lại: sân khấu GPU chạy một bản nhạc với preset Galaxy Voyage."),
+                T("Recorded by Keyflow itself: the GPU stage running a score, first under the name PianoPath.",
+                  "Do chính Keyflow quay lại: sân khấu GPU chạy một bản nhạc, khi đó còn mang tên PianoPath."),
                 T("Live GPU stage", "Sân khấu GPU trực tiếp"),
             ),
         ),
@@ -79,7 +82,7 @@ def build(doc) -> dict:
             (("240", "240"), T("FPS on the GPU stage", "FPS trên sân khấu GPU"), 240),
             (("16-bit", "16-bit"), T("HDR with multi-level bloom", "HDR kèm bloom nhiều tầng"), None),
             (("24,000", "24.000"), T("particles simulated at once", "hạt mô phỏng cùng lúc"), None),
-            (("88", "88"), T("ray-traced keys", "phím ray-tracing"), 88),
+            (("88", "88"), T("ray-traced keys — also 76, 61 or 49", "phím ray-tracing — còn 76, 61 hoặc 49"), 88),
             (("14", "14"), T("built-in stage presets", "preset sân khấu dựng sẵn"), 14),
             (("2", "2"), T("languages, no restart", "ngôn ngữ, không cần khởi động lại"), 2),
         ]),
@@ -112,10 +115,12 @@ def build(doc) -> dict:
                         "Chơi theo, chờ bạn bấm đúng nốt, tập riêng một tay, lặp A-B, giảm còn 50% — kèm "
                         "độ chính xác, chuỗi đúng, lịch sử và bóng lượt chơi tốt nhất."),
                  "href": "features/practice.html"},
-                {"icon": "wave", "t": T("Your instrument, your sound", "Nhạc cụ của bạn, âm thanh của bạn"),
-                 "d": T("A bundled Yamaha grand SoundFont, hall reverb, all three pedals, MIDI in and out, "
+                {"icon": "wave", "t": T("A concert grand, one download", "Một cây grand hoà nhạc, một lần tải"),
+                 "d": T(f"{PIANO_NAME} (a Yamaha C5, {PIANO_SIZE}) downloads once from Settings → Audio. "
+                        "Hall and convolution reverb, string resonance, all three pedals, MIDI in and out, "
                         "and MIDI or MusicXML scores read properly.",
-                        "SoundFont grand Yamaha đi kèm, reverb phòng hoà nhạc, đủ ba pedal, MIDI vào và ra, "
+                        f"{PIANO_NAME} (Yamaha C5, {PIANO_SIZE}) tải một lần từ Settings → Audio. "
+                        "Reverb hall và convolution, cộng hưởng dây, đủ ba pedal, MIDI vào và ra, "
                         "đọc tử tế cả bản nhạc MIDI lẫn MusicXML."),
                  "href": "features/sound.html"},
                 {"icon": "rec", "t": T("Record in one click", "Quay video một chạm"),
@@ -140,9 +145,11 @@ def build(doc) -> dict:
             cards=[
                 {"icon": "camera", "t": T("Camera overlay & hand tracking", "Lớp phủ camera & theo dõi bàn tay"),
                  "d": T("Put a webcam or a looping clip in any corner, key out green, and see which key your "
-                        "hand is over — classical computer vision, no model to download.",
+                        "hand is over — classical computer vision, no model to download. The AR overlay goes "
+                        "further and draws the notes in perspective over your own keyboard.",
                         "Đặt webcam hoặc clip lặp ở bất kỳ góc nào, key nền xanh, và xem bàn tay đang ở phím nào — "
-                        "thị giác máy tính cổ điển, không phải tải mô hình."),
+                        "thị giác máy tính cổ điển, không phải tải mô hình. Lớp phủ AR còn đi xa hơn: vẽ nốt theo "
+                        "phối cảnh đè lên chính cây đàn của bạn."),
                  "href": "features/camera.html"},
                 {"icon": "globe", "t": T("Two languages, live", "Hai ngôn ngữ, đổi tức thì"),
                  "d": T("Switch between English and Tiếng Việt without a restart: labels, dialogs, tooltips and "
@@ -215,8 +222,8 @@ def build(doc) -> dict:
             id="keyboard",
             flip=True,
             eyebrow=T("The keyboard", "Bàn phím"),
-            title=T("Eighty-eight keys, shaded like a product render",
-                    "Tám mươi tám phím, đổ bóng như một bức render sản phẩm"),
+            title=T("88, 76, 61 or 49 keys, shaded like a product render",
+                    "88, 76, 61 hay 49 phím, đổ bóng như một bức render sản phẩm"),
             body=[T("The keyboard is not a picture: it is a shader. A Cook-Torrance GGX BRDF with Smith visibility "
                     "and Schlick fresnel, a softbox with a real penumbra, contact occlusion inside the gaps between "
                     "keys, image-based lighting from the environment, coloured light thrown back by the keys that "
@@ -226,6 +233,10 @@ def build(doc) -> dict:
                     "các phím, ánh sáng môi trường IBL, ánh sáng màu hắt lại từ những phím đang kêu, và tonemap "
                     "ACES filmic.")],
             ticks=[
+                T("Pick the size that matches your instrument — 88, 76, 61 or 49 keys — and the stage, the "
+                  "falling notes, the lit keys and the GPU engine all follow it",
+                  "Chọn đúng cỡ đàn của bạn — 88, 76, 61 hoặc 49 phím — sân khấu, nốt rơi, phím sáng và engine "
+                  "GPU đều theo đó"),
                 T("Classic, Studio 3D or Glass keys, with key labels, lid shadow, red felt strip and key dip",
                   "Phím kiểu Classic, Studio 3D hoặc Glass, kèm nhãn phím, bóng nắp đàn, dải nỉ đỏ và độ lún khi nhấn"),
                 T("Off / Fast / Balanced / Cinematic quality, plus key light, gloss, rim, emission, exposure and camera tilt",
@@ -238,10 +249,10 @@ def build(doc) -> dict:
             actions=[{"label": T("How the shading works", "Cách đổ bóng hoạt động"),
                       "href": "features/stage.html#keyboard", "kind": "btn-ghost", "icon": "arrow"}],
             media=framed(doc, "stage-gpu",
-                          T("Neon Violet, the default stage look", "Neon Violet, diện mạo sân khấu mặc định"),
-                          T("Neon Violet, the default look: a held chord joins the keys with hold effects",
-                            "Neon Violet, diện mạo mặc định: một hợp âm đang giữ nối các phím bằng hiệu ứng giữ"),
-                          badge=T("GPU stage · Neon Violet", "Sân khấu GPU · Neon Violet")),
+                          T("Concert Gold, the look the app opens on", "Concert Gold, diện mạo ứng dụng mở sẵn"),
+                          T("Concert Gold, the default look: a held chord joins the keys with hold effects",
+                            "Concert Gold, diện mạo mặc định: một hợp âm đang giữ nối các phím bằng hiệu ứng giữ"),
+                          badge=T("GPU stage · Concert Gold", "Sân khấu GPU · Concert Gold")),
         ),
 
         split(
@@ -335,8 +346,8 @@ def build(doc) -> dict:
                                                 "Sân khấu live: nốt rơi, đường chạm, tia lửa và thanh transport")},
                 {"shot": "background-image", "cap": T("Your own picture behind the keys, centre-cropped and dimmed",
                                                       "Ảnh của bạn sau bàn phím, cắt giữa và được làm tối")},
-                {"shot": "main-menu", "cap": T("The Concert Grand start menu, with the language chips",
-                                               "Menu khởi động Concert Grand, kèm chip chọn ngôn ngữ")},
+                {"shot": "main-menu", "cap": T("The start menu, with the language chips",
+                                               "Menu khởi động, kèm chip chọn ngôn ngữ")},
                 {"shot": "design-dock", "cap": T("Stage design dock: presets and every layer of the stage",
                                                  "Bàn thiết kế sân khấu: preset và mọi lớp hiệu ứng")},
                 {"shot": "theme-dock", "cap": T("Three concert interfaces, plus the themes you make yourself",
@@ -354,10 +365,15 @@ def build(doc) -> dict:
             title=T("Up and playing in a minute", "Chơi được ngay trong một phút"),
             items=[
                 {"t": T("Download", "Tải về"),
-                 "d": T("Take the installer (recommended) or the portable ZIP from the latest release — "
-                        "nothing else to install for the self-contained build.",
-                        "Lấy bộ cài (khuyên dùng) hoặc bản ZIP chạy trực tiếp ở bản phát hành mới nhất — "
-                        "bản self-contained không cần cài thêm gì.")},
+                 "d": T(f"Take the installer (recommended, {SIZE['setup']}) or the portable ZIP from the latest "
+                        "release — nothing else to install for the self-contained build.",
+                        f"Lấy bộ cài (khuyên dùng, {SIZE['setup']}) hoặc bản ZIP chạy trực tiếp ở bản phát hành "
+                        "mới nhất — bản self-contained không cần cài thêm gì.")},
+                {"t": T("Fetch the piano", "Tải cây đàn"),
+                 "d": T(f"The samples are not in the package: press Download piano · {PIANO_SIZE} in "
+                        "Settings → Audio and Keyflow fetches, verifies and loads them once.",
+                        f"Mẫu đàn không nằm trong gói: bấm Download piano · {PIANO_SIZE} trong "
+                        "Settings → Audio, Keyflow tải, xác minh rồi nạp một lần.")},
                 {"t": T("Plug in, or just type", "Cắm đàn, hoặc gõ phím"),
                  "d": T("Connect a MIDI keyboard and Keyflow finds it, or play "
                         "A W S E D F T G Y H U J K on the computer keyboard.",
@@ -411,20 +427,22 @@ def build(doc) -> dict:
             title=T("Before you download", "Trước khi tải về"),
             items=[
                 {"q": T("Is Keyflow really free?", "Keyflow có thật sự miễn phí không?"),
-                 "a": T("Yes. The application is free and the code is released under the MIT licence; the bundled "
-                        "SoundFont belongs to FreePats under CC BY 3.0. There is no account, no subscription and "
-                        "no telemetry.",
-                        "Có. Ứng dụng miễn phí và mã nguồn phát hành theo giấy phép MIT; SoundFont đi kèm thuộc về "
-                        "FreePats theo CC BY 3.0. Không tài khoản, không phí thuê bao và không telemetry.")},
+                 "a": T(f"Yes. The application is free and the code is released under the MIT licence; the piano "
+                        f"samples are {PIANO_NAME} by {PIANO_CREDIT}, under {PIANO_LICENSE}. There is no account, "
+                        "no subscription and no telemetry.",
+                        f"Có. Ứng dụng miễn phí và mã nguồn phát hành theo giấy phép MIT; mẫu đàn là "
+                        f"{PIANO_NAME} của {PIANO_CREDIT}, theo {PIANO_LICENSE}. Không tài khoản, không phí "
+                        "thuê bao và không telemetry.")},
                 {"q": T("Which computers can run it?", "Máy nào chạy được?"),
                  "a": T("Windows 10 (22H2 recommended) or Windows 11, 64-bit, with a Direct3D 11 GPU "
-                        "(feature level 11_0, shader model 5.0). Machines without a compatible card fall back to "
-                        "WARP — the same shaders, slower — and then to the WPF renderer. A Windows-on-ARM package "
-                        "is published but has not been run on real ARM hardware yet.",
+                        "(feature level 11_0, shader model 5.0) and about 748 MB free for the piano samples. "
+                        "Machines without a compatible card fall back to WARP — the same shaders, slower — and "
+                        "then to the WPF renderer. A Windows-on-ARM package is published but has not been run on "
+                        "real ARM hardware yet.",
                         "Windows 10 (khuyến nghị 22H2) hoặc Windows 11, 64-bit, với GPU Direct3D 11 "
-                        "(feature level 11_0, shader model 5.0). Máy không có card tương thích sẽ lùi xuống WARP — "
-                        "cùng shader, chỉ chậm hơn — rồi tới bộ dựng hình WPF. Bản Windows-on-ARM đã được phát hành "
-                        "nhưng chưa chạy thử trên máy ARM thật.")},
+                        "(feature level 11_0, shader model 5.0) và khoảng 748 MB trống cho mẫu đàn. Máy không có "
+                        "card tương thích sẽ lùi xuống WARP — cùng shader, chỉ chậm hơn — rồi tới bộ dựng hình "
+                        "WPF. Bản Windows-on-ARM đã được phát hành nhưng chưa chạy thử trên máy ARM thật.")},
                 {"q": T("Do I need a MIDI keyboard?", "Có bắt buộc phải có đàn MIDI không?"),
                  "a": T("No. The computer keyboard plays one octave from middle C, the on-screen piano takes mouse "
                         "clicks with full colour and spark response, and any USB instrument Windows recognises "
@@ -446,18 +464,24 @@ def build(doc) -> dict:
                         "Các gói chưa được ký số nên SmartScreen hiện “Windows protected your PC”. "
                         "Chọn More info rồi Run anyway — và đối chiếu tệp với SHA256SUMS.txt của bản phát hành "
                         "nếu bạn muốn chắc chắn tệp không bị thay đổi trên đường tải.")},
-                {"q": T("Can I use my own piano sound?", "Tôi dùng âm thanh piano của riêng mình được không?"),
-                 "a": T("Yes. Open Settings → Audio → Load SoundFont and pick any uncompressed .sf2, then choose a "
-                        "bank/program preset and toggle the hall reverb. .sf3 is not supported yet.",
-                        "Được. Mở Settings → Audio → Load SoundFont và chọn bất kỳ tệp .sf2 không nén nào, sau đó "
-                        "chọn preset bank/program và bật/tắt hall reverb. Định dạng .sf3 chưa được hỗ trợ.")},
+                {"q": T("Can I use a different piano sound?", "Tôi dùng âm thanh piano khác được không?"),
+                 "a": T(f"You can choose how the grand sounds — gain, the classic hall reverb, a convolution "
+                        f"reverb built in the app or from your own WAV/FLAC impulse response, and string "
+                        f"resonance — but {PIANO_NAME} is the one instrument. There is no SoundFont import and no "
+                        "external instrument picker: the app generates the SFZ mapping for this library itself.",
+                        f"Bạn chọn được cách cây grand nghe — gain, reverb hall cổ điển, reverb convolution dựng "
+                        f"trong ứng dụng hoặc từ impulse response WAV/FLAC của bạn, và cộng hưởng dây — nhưng "
+                        f"{PIANO_NAME} là nhạc cụ duy nhất. Không có nhập SoundFont và không có chỗ chọn nhạc cụ "
+                        "ngoài: ứng dụng tự sinh mapping SFZ cho bộ mẫu này.")},
             ],
         ),
 
         cta(
             title=T("Put your music on stage", "Đưa âm nhạc của bạn lên sân khấu"),
-            sub=T("One download, every feature, two languages. Keyflow 1.0.0 for Windows 10 and 11.",
-                  "Một bản tải, mọi tính năng, hai ngôn ngữ. Keyflow 1.0.0 cho Windows 10 và 11."),
+            sub=T(f"One download, every feature, two languages. Keyflow {RELEASE_VERSION} for Windows 10 and 11 "
+                  f"— the installer is {SIZE['setup']}, the piano is fetched separately.",
+                  f"Một bản tải, mọi tính năng, hai ngôn ngữ. Keyflow {RELEASE_VERSION} cho Windows 10 và 11 — "
+                  f"bộ cài nặng {SIZE['setup']}, cây đàn tải riêng."),
             actions=[dl, gh,
                      {"label": T("Read the guide", "Đọc hướng dẫn"), "href": "guide.html",
                       "kind": "btn-quiet", "icon": "book"}],
@@ -469,11 +493,11 @@ def build(doc) -> dict:
                    "Keyflow · Studio trực quan hoá piano & hiệu ứng sân khấu cho Windows"),
         "description": T(
             "Keyflow turns MIDI into concert-grade piano performances and videos: a Direct3D 11 GPU stage, "
-            "a ray-traced 88-key keyboard, practice modes and one-click MP4 recording. Free for Windows 10 and 11, "
-            "in English and Tiếng Việt.",
+            "a ray-traced keyboard in 88, 76, 61 or 49 keys, an AR camera overlay, practice modes and one-click "
+            "MP4 recording. Free for Windows 10 and 11, in English and Tiếng Việt.",
             "Keyflow biến MIDI thành buổi biểu diễn và video piano chất lượng hoà nhạc: sân khấu GPU Direct3D 11, "
-            "bàn phím 88 phím ray-tracing, các chế độ luyện tập và quay MP4 một chạm. Miễn phí cho Windows 10 và 11, "
-            "có English và Tiếng Việt."),
+            "bàn phím ray-tracing 88/76/61/49 phím, lớp phủ AR qua camera, các chế độ luyện tập và quay MP4 một "
+            "chạm. Miễn phí cho Windows 10 và 11, có English và Tiếng Việt."),
         "og_image": "previews/en/stage-gpu-galaxy.png",
         "body": body,
     }

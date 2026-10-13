@@ -26,7 +26,7 @@ import content_studio  # noqa: E402
 import content_more  # noqa: E402
 from sitekit import SITE_URL, UI, render_page, write_vi_js  # noqa: E402
 
-LASTMOD = "2026-10-10"          # sitemap <lastmod>; fixed (not today's date) so `--check` stays stable. Bump it when the site changes.
+LASTMOD = "2026-10-13"          # sitemap <lastmod>; fixed (not today's date) so `--check` stays stable. Bump it when the site changes.
 
 PAGES = [
     ("home", "index.html", content_home.build),

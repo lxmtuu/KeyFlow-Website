@@ -601,7 +601,7 @@
   })();
 
   /* 8. release info straight from GitHub ---------------------------------- */
-  /* The links in the markup are pinned to v1.0.0 so the page works offline;
+  /* The links in the markup are pinned to v2.0.1 so the page works offline;
      when the API answers they move to the newest release by themselves. */
   (function () {
     var nodes = $$("[data-asset], [data-release-tag], [data-release-date], [data-release-size]");

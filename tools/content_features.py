@@ -7,8 +7,9 @@ the documentation describe the same product.
 """
 from __future__ import annotations
 
-from sitekit import (E, REPO, T, band, callout, chipcloud, cta, framed, grid, iconbox,
-                     pagehero, pagenav, slider, split, specdl, steps, table)
+from sitekit import (E, PIANO_LICENSE, PIANO_NAME, PIANO_SIZE, REPO, SIZE, T, band, callout,
+                     chipcloud, cta, framed, grid, iconbox, pagehero, pagenav, slider, split,
+                     specdl, steps, table)
 
 DOWNLOAD = {"label": T("Download for Windows", "Tải cho Windows"), "href": "download.html",
             "kind": "btn-gold", "icon": "download"}
@@ -42,11 +43,12 @@ def build_stage(doc) -> dict:
             title=T("A Direct3D 11 stage that never holds up your MIDI",
                     "Sân khấu Direct3D 11 không bao giờ giữ chân MIDI"),
             lead=T("The stage runs a game loop of its own on a thread of its own: 16-bit HDR, multi-level bloom, "
-                   "up to 24,000 particles and an 88-key keyboard shaded by HLSL. A heavy frame costs frame rate — "
+                   "up to 24,000 particles and a keyboard in 88, 76, 61 or 49 keys shaded by HLSL. A heavy frame costs "
+                   "frame rate — "
                    "never latency, because your notes reach the sound engine and the renderer on the MIDI callback "
                    "thread itself.",
                    "Sân khấu chạy một vòng lặp game riêng trên một luồng riêng: HDR 16-bit, bloom nhiều tầng, "
-                   "tới 24.000 hạt và bàn phím 88 phím đổ bóng bằng HLSL. Khung hình nặng chỉ tốn FPS — "
+                   "tới 24.000 hạt và bàn phím 88, 76, 61 hoặc 49 phím đổ bóng bằng HLSL. Khung hình nặng chỉ tốn FPS — "
                    "không bao giờ trễ, vì nốt nhạc đi tới engine âm thanh và bộ dựng hình ngay trên luồng "
                    "callback MIDI."),
             chips=[
@@ -202,11 +204,11 @@ def build_stage(doc) -> dict:
             actions=[{"label": T("Keyboard page of the dock", "Trang Keyboard của bàn cài đặt"),
                       "href": "features/design.html#dock", "kind": "btn-ghost", "icon": "sliders"}],
             media=framed(doc, "stage-gpu",
-                         T("Neon Violet, the default stage, with a held chord",
-                           "Neon Violet, sân khấu mặc định, với một hợp âm đang giữ"),
-                         T("Neon Violet, the default look: hold effects join the keys of a chord that is being held.",
-                           "Neon Violet, diện mạo mặc định: hiệu ứng giữ phím nối các phím của một hợp âm đang giữ."),
-                         badge=T("GPU stage · Neon Violet", "Sân khấu GPU · Neon Violet")),
+                         T("Concert Gold, the look the app opens on, with a held chord",
+                           "Concert Gold, diện mạo ứng dụng mở sẵn, với một hợp âm đang giữ"),
+                         T("Concert Gold, the default look: hold effects join the keys of a chord that is being held.",
+                           "Concert Gold, diện mạo mặc định: hiệu ứng giữ phím nối các phím của một hợp âm đang giữ."),
+                         badge=T("GPU stage · Concert Gold", "Sân khấu GPU · Concert Gold")),
         ),
 
         split(
@@ -339,7 +341,7 @@ def build_stage(doc) -> dict:
                   "Ảnh tự chuyển; dùng mũi tên để chọn, hoặc bấm vào ảnh để xem cỡ lớn. "
                   "Mọi khung hình đều do Keyflow render trong CI."),
             slides=[
-                {"shot": "stage-gpu", "cap": T("Neon Violet — the default stage", "Neon Violet — sân khấu mặc định")},
+                {"shot": "stage-gpu", "cap": T("Concert Gold — the default stage", "Concert Gold — sân khấu mặc định")},
                 {"shot": "stage-gpu-galaxy", "cap": T("Galaxy Voyage — rainbow trails and a cosmic layer",
                                                       "Galaxy Voyage — vệt cầu vồng và lớp nền vũ trụ")},
                 {"shot": "stage-gpu-storm", "cap": T("Electric Storm — speed lines and arcs between held keys",
@@ -365,10 +367,11 @@ def build_stage(doc) -> dict:
         "title": T("GPU stage & concert VFX · Keyflow", "Sân khấu GPU & hiệu ứng sân khấu · Keyflow"),
         "description": T(
             "Keyflow's stage is a Direct3D 11 engine on its own thread: 16-bit HDR, multi-level bloom, 24,000 "
-            "particles, seven trail families, six shader backgrounds and an 88-key keyboard shaded in HLSL with GGX, "
+            "particles, seven trail families, six shader backgrounds and a keyboard in 88, 76, 61 or 49 keys shaded "
+            "in HLSL with GGX, "
             "a softbox and an ACES tonemap.",
             "Sân khấu của Keyflow là engine Direct3D 11 chạy trên luồng riêng: HDR 16-bit, bloom nhiều tầng, "
-            "24.000 hạt, bảy họ vệt rơi, sáu nền shader và bàn phím 88 phím đổ bóng bằng HLSL với GGX, softbox "
+            "24.000 hạt, bảy họ vệt rơi, sáu nền shader và bàn phím 88/76/61/49 phím đổ bóng bằng HLSL với GGX, softbox "
             "và tonemap ACES."),
         "og_image": "previews/en/stage-gpu-galaxy.png",
         "crumb_trail": TRAIL + [("GPU stage & VFX", "features/stage.html")],
@@ -640,56 +643,64 @@ def build_sound(doc) -> dict:
             doc,
             crumb=T("Sound & MIDI", "Âm thanh & MIDI"),
             eyebrow=T("Audio, MIDI & scores", "Âm thanh, MIDI & bản nhạc"),
-            title=T("A concert grand in the box, and your own if you prefer",
-                    "Có sẵn một cây grand hoà nhạc, và của riêng bạn nếu muốn"),
-            lead=T("Keyflow bundles a Yamaha grand SoundFont, renders stereo 44.1 kHz through the Windows audio "
-                   "device, answers all three pedals, plays through your MIDI keyboard or the computer keys, and "
-                   "reads MIDI and MusicXML scores properly — tempo maps, meter changes, per-track colours and all.",
-                   "Keyflow kèm sẵn SoundFont grand Yamaha, phát stereo 44.1 kHz qua thiết bị âm thanh của Windows, "
-                   "nhận đủ ba pedal, chơi bằng đàn MIDI hoặc bàn phím máy tính, và đọc tử tế cả bản nhạc MIDI lẫn "
-                   "MusicXML — tempo map, đổi nhịp, màu theo từng track, đủ cả."),
+            title=T("One concert grand, fetched in one click, and played through your own sound card",
+                    "Một cây grand hoà nhạc, tải bằng một cú bấm, phát qua chính card âm thanh của bạn"),
+            lead=T("Keyflow plays a Yamaha C5 — Salamander Grand Piano V3, about 748 MB of samples the app fetches "
+                   "for you once — renders stereo 44.1 kHz through WASAPI, ASIO or waveOut, answers all three pedals "
+                   "with a continuous damper and string resonance, plays through your MIDI keyboard or the computer "
+                   "keys, and reads MIDI and MusicXML scores properly — tempo maps, meter changes, per-track colours "
+                   "and all.",
+                   "Keyflow chơi một cây Yamaha C5 — Salamander Grand Piano V3, khoảng 748 MB mẫu mà ứng dụng tải "
+                   "một lần cho bạn — phát stereo 44.1 kHz qua WASAPI, ASIO hoặc waveOut, nhận đủ ba pedal với "
+                   "damper liên tục và cộng hưởng dây, chơi bằng đàn MIDI hoặc bàn phím máy tính, và đọc tử tế cả "
+                   "bản nhạc MIDI lẫn MusicXML — tempo map, đổi nhịp, màu theo từng track, đủ cả."),
             chips=[
-                E("YDP Grand Piano · FreePats"), E("44.1 kHz stereo"),
+                E("Salamander Grand Piano V3"), E("44.1 kHz stereo"),
                 T("Three pedals (CC 64 / 66 / 67)", "Ba pedal (CC 64 / 66 / 67)"),
-                E("MIDI in & out"), E("MIDI 0/1/2 · MusicXML"),
+                E("WASAPI · ASIO · waveOut"), E("MIDI 0/1/2 · MusicXML"),
             ],
             shot="main-menu",
-            alt=T("The Concert Grand start menu", "Menu khởi động Concert Grand"),
-            cap=T("The start menu: “Audio & MIDI Hardware Setup” opens the sound pages, “Perform & Play” the session "
-                  "dialog.",
-                  "Menu khởi động: “Audio & MIDI Hardware Setup” mở các trang âm thanh, “Perform & Play” mở hộp "
-                  "thoại phiên."),
-            badge=T("Concert Grand menu", "Menu Concert Grand"),
+            alt=T("The Keyflow start menu", "Menu khởi động Keyflow"),
+            cap=T("The start menu: “Piano & Audio Setup” opens the sound pages, “MIDI Devices” the device list, and "
+                  "“Perform & Play” the session dialog.",
+                  "Menu khởi động: “Piano & Audio Setup” mở các trang âm thanh, “MIDI Devices” mở danh sách thiết "
+                  "bị, và “Perform & Play” mở hộp thoại phiên."),
+            badge=T("Start menu", "Menu khởi động"),
         ),
 
         band(stats=[
-            (("44.1 kHz", "44.1 kHz"), T("stereo render through waveOut", "stereo phát qua waveOut"), None),
-            (("3", "3"), T("MIDI pedals supported", "pedal MIDI được hỗ trợ"), 3),
-            (("113 MiB", "113 MiB"), T("bundled SoundFont", "SoundFont đi kèm"), None),
+            (("44.1 kHz", "44.1 kHz"), T("stereo, through WASAPI, ASIO or waveOut",
+                                         "stereo, qua WASAPI, ASIO hoặc waveOut"), None),
+            (("3", "3"), T("MIDI pedals, with a continuous damper",
+                           "pedal MIDI, có damper liên tục"), 3),
+            (("748 MB", "748 MB"), T("piano samples, downloaded once", "mẫu đàn, tải một lần"), None),
             (("500", "500"), T("songs indexed from one folder", "bài được lập chỉ mục từ một thư mục"), 500),
         ]),
 
         split(
-            id="soundfont",
-            eyebrow=T("The bundled piano", "Cây đàn đi kèm"),
-            title=T("A Yamaha Disklavier Pro multisample, loaded for you",
-                    "Bộ multisample Yamaha Disklavier Pro, nạp sẵn cho bạn"),
+            id="piano",
+            eyebrow=T("The one piano", "Cây đàn duy nhất"),
+            title=T("Salamander Grand Piano V3: a Yamaha C5, fetched once and verified",
+                    "Salamander Grand Piano V3: một cây Yamaha C5, tải một lần và được xác minh"),
             ticks=[
-                T("Keyflow ships the YDP Grand Piano SF2 from FreePats, built from a Yamaha Disklavier Pro "
-                  "multisample, with the acoustic-grand preset already selected.",
-                  "Keyflow đi kèm YDP Grand Piano SF2 của FreePats, dựng từ multisample Yamaha Disklavier Pro, "
-                  "với preset grand acoustic được chọn sẵn."),
-                T("It loads automatically when the app opens — a few seconds, and the label on the Audio page tells "
-                  "you when it is ready.",
-                  "SoundFont tự nạp khi mở ứng dụng — mất vài giây, và nhãn trên trang Audio báo khi xong."),
-                T("Load any uncompressed .sf2 of your own from Settings → Audio → LOAD SOUNDFONT, then pick a "
-                  "bank/program preset from the list below it. Polyphony is handled for you.",
-                  "Mở Settings → Audio → LOAD SOUNDFONT để nạp bất kỳ tệp .sf2 không nén nào của bạn, rồi chọn "
-                  "preset bank/program trong danh sách bên dưới. Đa âm được xử lý sẵn."),
-                T("Hall reverb runs in real time in stereo, is on by default, has its own bypass button and keeps "
-                  "ringing after you release a key.",
-                  "Hall reverb chạy thời gian thực ở stereo, bật mặc định, có nút bypass riêng và vẫn vang sau khi "
-                  "bạn nhả phím."),
+                T(f"The samples are not inside the installer — that is what keeps the download at "
+                  f"{SIZE['setup']}. Press Download piano · {PIANO_SIZE} in Settings → Audio and the app fetches "
+                  f"all 641 FLAC files, one time.",
+                  f"Bộ mẫu không nằm trong bộ cài — nhờ vậy bản tải chỉ còn {SIZE['setup']}. Bấm Download piano · "
+                  f"{PIANO_SIZE} trong Settings → Audio và ứng dụng tải cả 641 tệp FLAC, một lần duy nhất."),
+                T("The source commit is pinned, every file is checked against its Git blob SHA-1 as it arrives, a "
+                  "valid file already on disk is reused, and a cancelled download resumes where it stopped.",
+                  "Commit nguồn được ghim, từng tệp được đối chiếu Git blob SHA-1 khi về, tệp hợp lệ đã có trên đĩa "
+                  "được dùng lại, và bản tải bị huỷ sẽ tiếp tục đúng chỗ dừng."),
+                T("Keyflow generates the SFZ mapping for this one library itself — 16 velocity layers, hammer and "
+                  "release samples, pedal noise and string resonance — and loads the instrument as soon as the last "
+                  "file verifies.",
+                  "Keyflow tự sinh mapping SFZ cho đúng bộ mẫu này — 16 lớp velocity, mẫu búa và mẫu nhả, tiếng "
+                  "pedal và cộng hưởng dây — và nạp nhạc cụ ngay khi tệp cuối cùng được xác minh."),
+                T("The recorded samples live in %LocalAppData%\\Keyflow\\Instruments\\SalamanderGrandPiano, and the "
+                  "CC BY 3.0 attribution is written beside them the moment the download completes.",
+                  "Mẫu đàn nằm trong %LocalAppData%\\Keyflow\\Instruments\\SalamanderGrandPiano, và phần ghi công "
+                  "CC BY 3.0 được ghi ngay cạnh đó khi bản tải hoàn tất."),
             ],
             media=framed(doc, "design-dock",
                          T("The design dock, where every sound and stage setting lives",
@@ -700,19 +711,56 @@ def build_sound(doc) -> dict:
                          badge=T("Design dock", "Bàn thiết kế")),
         ),
 
+        split(
+            id="output",
+            flip=True,
+            eyebrow=T("Output & reverb", "Đầu ra & tiếng vang"),
+            title=T("Pick your audio path, then pick your room",
+                    "Chọn đường tiếng của bạn, rồi chọn căn phòng"),
+            ticks=[
+                T("OUTPUT & LATENCY offers WASAPI in shared or exclusive mode, an ASIO driver for a studio "
+                  "interface, or waveOut as the fallback, plus the target latency — and a status line that reports "
+                  "the live output and buffer.",
+                  "OUTPUT & LATENCY cho chọn WASAPI chế độ shared hoặc exclusive, driver ASIO cho interface phòng "
+                  "thu, hoặc waveOut làm đường dự phòng, kèm độ trễ mong muốn — và dòng trạng thái báo đầu ra cùng "
+                  "buffer đang chạy."),
+                T("HALL REVERB is on by default with its own bypass button, and the tail keeps ringing after you "
+                  "release the keys.",
+                  "HALL REVERB bật mặc định với nút bypass riêng, và đuôi vang vẫn kéo dài sau khi bạn nhả phím."),
+                T("Beyond the classic hall there is a convolution reverb — partitioned FFT, overlap-save — with a "
+                  "~2.8 s concert hall and a close soundboard generated inside the app, or your own .wav / .flac "
+                  "impulse response.",
+                  "Ngoài hall cổ điển còn có reverb convolution — FFT phân đoạn, overlap-save — với phòng hoà nhạc "
+                  "~2,8 giây và soundboard cận mic dựng sẵn trong ứng dụng, hoặc impulse response .wav / .flac của "
+                  "chính bạn."),
+                T("STRING RESONANCE adds a bank of 64 waveguides — one per string — that rings along while the pedal "
+                  "is down and chokes the moment it lifts. Gain sits next to all of it.",
+                  "STRING RESONANCE thêm một bank 64 waveguide — mỗi dây một cái — cùng ngân khi pedal đang xuống và "
+                  "tắt ngay khi pedal nhả. Gain nằm ngay cạnh đó."),
+            ],
+            media=framed(doc, "background-image",
+                         T("A stage whose backdrop is a picture of your choosing",
+                           "Sân khấu với nền là ảnh do bạn chọn"),
+                         T("The Audio page is where the reverb, the room and the output backend live; the stage "
+                           "keeps drawing either way.",
+                           "Trang Audio là nơi có reverb, căn phòng và backend đầu ra; sân khấu vẫn vẽ như thường."),
+                         badge=T("Output", "Đầu ra")),
+        ),
+
         callout(
-            style="warn",
-            icon="alert",
-            title=T("What the built-in synthesizer does not do", "Bộ tổng hợp tích hợp chưa làm được gì"),
-            body=[T(".sf3 is not supported, and some advanced SF2 parts — modulators, instrument filters and the "
-                    "reverb/chorus effects — are not fully reproduced, so the sound can differ from a dedicated "
-                    "SoundFont synthesizer depending on the file. The bundled SoundFont is about 113 MiB; its "
-                    "authors, source and CC BY 3.0 licence are credited in Assets/ATTRIBUTION.txt inside every "
-                    "package.",
-                    "Định dạng .sf3 chưa được hỗ trợ, và một số phần SF2 nâng cao — modulators, bộ lọc nhạc cụ và "
-                    "hiệu ứng reverb/chorus — chưa được tái tạo đầy đủ, nên âm thanh có thể khác một bộ tổng hợp "
-                    "SoundFont chuyên dụng tùy theo tệp. SoundFont đi kèm nặng khoảng 113 MiB; tác giả, nguồn và "
-                    "giấy phép CC BY 3.0 được ghi công trong Assets/ATTRIBUTION.txt nằm trong mỗi gói.")],
+            style="tip",
+            icon="info",
+            title=T("Why the samples are a separate download", "Vì sao bộ mẫu phải tải riêng"),
+            body=[T("748 MB of samples in every installer, in Git and in every ZIP would be paid for by everyone, "
+                    "including the people who never open the Audio page. So the packages stay small, the samples "
+                    "are fetched on request, and the CC BY 3.0 notice travels beside them.",
+                    "748 MB mẫu đàn trong mọi bộ cài, trong Git và trong mọi tệp ZIP sẽ bắt tất cả mọi người trả "
+                    "giá, kể cả những người không bao giờ mở trang Audio. Nên các gói giữ nhẹ, bộ mẫu được tải khi "
+                    "bạn yêu cầu, và thông báo CC BY 3.0 đi kèm ngay cạnh đó."),
+                  T("There is no SoundFont import and no external instrument picker: Keyflow reads the opcodes its "
+                    "own SFZ mapping needs, plus WAV in 16/24/32-bit or float32 and FLAC — and nothing else.",
+                    "Không có nhập SoundFont và không có chỗ chọn nhạc cụ ngoài: Keyflow đọc đúng tập opcode mà "
+                    "mapping SFZ của nó cần, cùng WAV 16/24/32-bit hoặc float32 và FLAC — không gì khác.")],
         ),
 
         grid(
@@ -721,8 +769,11 @@ def build_sound(doc) -> dict:
             title=T("Three pedals, four ways to play a note", "Ba pedal, bốn cách tạo ra một nốt"),
             cards=[
                 {"icon": "wave", "t": E("Sustain · CC 64"),
-                 "d": T("The damper pedal: the sound keeps going after you release the key.",
-                        "Pedal damper: tiếng đàn vẫn giữ sau khi bạn nhả phím.")},
+                 "d": T("A continuous damper: half-pedalling stretches the release tail instead of holding it "
+                        "outright, repedalling in time catches strings that are still ringing, and the raw CC 64 "
+                        "value of a continuous pedal goes straight to the synthesizer.",
+                        "Damper liên tục: pedal nửa chừng kéo dài đuôi nhả thay vì giữ hẳn, đạp lại kịp lúc bắt "
+                        "được dây còn đang kêu, và giá trị CC 64 thô của pedal liên tục đi thẳng vào bộ tổng hợp.")},
                 {"icon": "wave", "t": E("Sostenuto · CC 66"),
                  "d": T("Holds only the notes that were already sounding when the pedal went down.",
                         "Chỉ giữ những nốt đang kêu tại thời điểm pedal được nhấn xuống.")},
@@ -762,9 +813,9 @@ def build_sound(doc) -> dict:
                    "sau khi làm mới danh sách.")],
                 [T("Playing through an external synth", "Phát qua synth ngoài"),
                  T("WinMM MIDI output sends Note On/Off to the device you pick — an extra audio path beside the "
-                   "internal SoundFont.",
-                   "Ngõ ra WinMM MIDI gửi Note On/Off tới thiết bị bạn chọn — một đường âm thanh bổ sung cạnh "
-                   "SoundFont nội bộ.")],
+                   "internal Salamander synthesizer.",
+                   "Ngõ ra WinMM MIDI gửi Note On/Off tới thiết bị bạn chọn — một đường âm thanh bổ sung cạnh bộ "
+                   "tổng hợp Salamander bên trong.")],
                 [T("Keeping time", "Giữ nhịp"),
                  T("A metronome that follows the tempo map and accents the first beat of each bar.",
                    "Metronome đi theo tempo map và nhấn mạnh phách đầu của mỗi ô nhịp.")],
@@ -866,9 +917,10 @@ def build_sound(doc) -> dict:
         pagenav(prev=("features/practice.html", "practice"), next=("features/recording.html", "recording")),
         cta(
             title=T("Play the first note in a minute", "Bấm nốt đầu tiên trong một phút"),
-            sub=T("The SoundFont loads itself, the first MIDI input connects itself, and the computer keyboard plays "
-                  "right away.",
-                  "SoundFont tự nạp, ngõ vào MIDI đầu tiên tự kết nối, và bàn phím máy tính chơi được ngay."),
+            sub=T(f"The piano is one button and about {PIANO_SIZE}, the first MIDI input connects itself, and the "
+                  "computer keyboard plays right away — the stage works even before the samples land.",
+                  f"Cây đàn là một nút bấm và khoảng {PIANO_SIZE}, ngõ vào MIDI đầu tiên tự kết nối, và bàn phím "
+                  "máy tính chơi được ngay — sân khấu vẫn chạy cả trước khi mẫu đàn về."),
             actions=[DOWNLOAD,
                      {"label": T("First-time setup", "Thiết lập lần đầu"), "href": "guide.html#setup",
                       "kind": "btn-ghost", "icon": "book"}],
@@ -877,12 +929,12 @@ def build_sound(doc) -> dict:
     return {
         "title": T("Sound, MIDI & score import · Keyflow", "Âm thanh, MIDI & nhập bản nhạc · Keyflow"),
         "description": T(
-            "Keyflow bundles a Yamaha grand SoundFont with hall reverb and all three pedals, plays from a MIDI "
-            "keyboard, the on-screen piano or the computer keys, and reads MIDI formats 0/1/2, PPQ and SMPTE "
-            "divisions and MusicXML scores — with a tagged folder library.",
-            "Keyflow kèm SoundFont grand Yamaha với hall reverb và đủ ba pedal, chơi bằng đàn MIDI, piano trên màn "
-            "hình hoặc bàn phím máy tính, và đọc MIDI định dạng 0/1/2, độ chia PPQ lẫn SMPTE cùng bản nhạc "
-            "MusicXML — kèm thư viện theo thư mục có gắn thẻ."),
+            "Keyflow plays Salamander Grand Piano V3 — a Yamaha C5, about 748 MB downloaded once — through WASAPI, "
+            "ASIO or waveOut, with hall and convolution reverb, string resonance and all three pedals. It reads "
+            "MIDI formats 0/1/2, PPQ and SMPTE divisions and MusicXML scores, with a tagged folder library.",
+            "Keyflow chơi Salamander Grand Piano V3 — Yamaha C5, khoảng 748 MB tải một lần — qua WASAPI, ASIO hoặc "
+            "waveOut, với reverb hall và convolution, cộng hưởng dây và đủ ba pedal. Ứng dụng đọc MIDI định dạng "
+            "0/1/2, độ chia PPQ lẫn SMPTE cùng bản nhạc MusicXML, kèm thư viện theo thư mục có gắn thẻ."),
         "og_image": "previews/en/main-menu.png",
         "crumb_trail": TRAIL + [("Sound & MIDI", "features/sound.html")],
         "body": body,
