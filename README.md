@@ -50,4 +50,4 @@ GitHub Actions checks generated-page freshness and runs the static QA suite befo
 
 Keyflow is made by **Yami**, **Neyu** and **Jin**. Every page credits all three in its footer, in `<meta name="author">` and in the JSON-LD (`author`, `copyrightHolder`, `copyrightYear`). The names live in `tools/sitekit.py` (`AUTHORS`), and `tools/check_site.py` fails if one goes missing.
 
-© 2026 Yami, Neyu, Jin. The application is released under the MIT licence (see `LICENSE` in the [Keyflow repository](https://github.com/lxmtuu/KeyFlow)); the bundled YDP Grand Piano SoundFont is by FreePats under CC BY 3.0.
+© 2026 Yami, Neyu, Jin. The application is released under the MIT licence (see `LICENSE` in the [Keyflow repository](https://github.com/lxmtuu/KeyFlow)); the piano samples are Salamander Grand Piano V3, recorded by Alexander Holm, under CC BY 3.0 — downloaded by the app on request, not bundled with it.

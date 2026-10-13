@@ -24,7 +24,35 @@ from typing import Any, Iterable, Sequence
 SITE_URL = "https://ymkeyflow.online"
 REPO = "https://github.com/lxmtuu/KeyFlow"
 RELEASES = f"{REPO}/releases"
-RELEASE_TAG = "v1.0.0"
+
+# --- the release this site describes -------------------------------------
+# Bump these five values together with the sizes below when a new release goes
+# out; every page reads the version, the date and the package names from here.
+RELEASE_TAG = "v2.0.1"
+RELEASE_VERSION = "2.0.1"                       # without the leading "v"
+RELEASE_PREV = "2.0.0"                          # the release before it, for "what changed"
+RELEASE_DATE_ISO = "2026-10-13T10:42:59Z"       # GitHub's published_at for RELEASE_TAG
+RELEASE_DATE_EN = "13 Oct 2026"
+RELEASE_DATE_VI = "13 tháng 10 năm 2026"
+
+# Byte sizes of the published assets of RELEASE_TAG, printed the way site.js
+# prints the live ones (`(bytes / 1048576).toFixed(1) + " MiB"`), so the pinned
+# numbers and the numbers the API returns agree.
+SIZE = {
+    "setup": "48.8 MiB",          # Keyflow-Setup-2.0.1.exe        51 131 075 B
+    "portable": "66.6 MiB",       # Keyflow-2.0.1-win-x64.zip      69 834 737 B
+    "fd": "2.7 MiB",              # Keyflow-2.0.1-win-x64-fd.zip    2 813 029 B
+    "arm64": "53.0 MiB",          # Keyflow-2.0.1-win-arm64.zip    55 578 988 B
+    "sums": "375 B",              # SHA256SUMS.txt
+}
+
+# The piano: one library, downloaded by the app on request, never packaged.
+PIANO_NAME = "Salamander Grand Piano V3"
+PIANO_SIZE = "748 MB"                            # 641 FLAC files, 748 397 030 bytes
+PIANO_SIZE_MI = "713.7 MiB"
+PIANO_CREDIT = "Alexander Holm"                  # recorded a Yamaha C5 at 48 kHz / 24-bit
+PIANO_LICENSE = "CC BY 3.0"
+
 RELEASE_PAGE = f"{REPO}/releases/tag/{RELEASE_TAG}"
 ISSUES = f"{REPO}/issues"
 CHANGELOG = f"{REPO}/blob/main/CHANGELOG.en.md"
@@ -33,7 +61,7 @@ README_EN = f"{REPO}/blob/main/README.en.md"
 README_VI = f"{REPO}/blob/main/README.md"
 LICENSE = f"{REPO}/blob/main/LICENSE"
 DOTNET = "https://dotnet.microsoft.com/download/dotnet/10.0"
-FREEPATS = "https://freepats.zenvoid.org/"
+SALAMANDER = "https://github.com/sfzinstruments/SalamanderGrandPiano"
 VORTICE = "https://github.com/amerkoleci/Vortice.Windows"
 
 # Credits.  All three are authors and copyright holders; none is given a role.  The names appear in the
@@ -42,11 +70,20 @@ AUTHORS = ("Yami", "Neyu", "Jin")
 COPYRIGHT_YEAR = 2026
 
 ASSETS = {
-    "setup": f"{REPO}/releases/download/{RELEASE_TAG}/Keyflow-Setup-1.0.0.exe",
-    "portable": f"{REPO}/releases/download/{RELEASE_TAG}/Keyflow-1.0.0-win-x64.zip",
-    "fd": f"{REPO}/releases/download/{RELEASE_TAG}/Keyflow-1.0.0-win-x64-fd.zip",
-    "arm64": f"{REPO}/releases/download/{RELEASE_TAG}/Keyflow-1.0.0-win-arm64.zip",
+    "setup": f"{REPO}/releases/download/{RELEASE_TAG}/Keyflow-Setup-{RELEASE_VERSION}.exe",
+    "portable": f"{REPO}/releases/download/{RELEASE_TAG}/Keyflow-{RELEASE_VERSION}-win-x64.zip",
+    "fd": f"{REPO}/releases/download/{RELEASE_TAG}/Keyflow-{RELEASE_VERSION}-win-x64-fd.zip",
+    "arm64": f"{REPO}/releases/download/{RELEASE_TAG}/Keyflow-{RELEASE_VERSION}-win-arm64.zip",
     "sums": f"{REPO}/releases/download/{RELEASE_TAG}/SHA256SUMS.txt",
+}
+
+# The same five file names on their own, for the tables and the ZIP listing.
+FILE = {
+    "setup": f"Keyflow-Setup-{RELEASE_VERSION}.exe",
+    "portable": f"Keyflow-{RELEASE_VERSION}-win-x64.zip",
+    "fd": f"Keyflow-{RELEASE_VERSION}-win-x64-fd.zip",
+    "arm64": f"Keyflow-{RELEASE_VERSION}-win-arm64.zip",
+    "sums": "SHA256SUMS.txt",
 }
 
 # Internal pages, in the order the footer, the menu and the prev/next links use.
@@ -828,7 +865,7 @@ def render_dlhero(doc: Doc, s: dict[str, Any]) -> str:
     rk, rv = doc.key(T("Recommended", "Khuyên dùng"))
     tk, tv = doc.key(main["t"])
     dk, dv = doc.key(main["d"])
-    fk, fv = doc.key(main.get("file") or E("Keyflow-Setup-1.0.0.exe"))
+    fk, fv = doc.key(main.get("file") or E(FILE["setup"]))
     lk, lv = doc.key(main["label"])
     left = (
         '<div class="dl-card reveal">'
@@ -840,9 +877,9 @@ def render_dlhero(doc: Doc, s: dict[str, Any]) -> str:
         f'{icon("download", 18)} <span data-i18n="{lk}">{lv}</span></a>'
         '<div class="badge-row">'
         '<span class="badge">Windows 10 / 11 · x64</span>'
-        f'<span class="badge"><span data-release-size="setup">83.2 MiB</span></span>'
-        f'<span class="badge">v<span data-release-tag>1.0.0</span></span>'
-        f'<span class="badge js-date" data-release-date data-date="2026-10-02T10:10:24Z">2 Oct 2026</span>'
+        f'<span class="badge"><span data-release-size="setup">{SIZE["setup"]}</span></span>'
+        f'<span class="badge">v<span data-release-tag>{RELEASE_VERSION}</span></span>'
+        f'<span class="badge js-date" data-release-date data-date="{RELEASE_DATE_ISO}">{RELEASE_DATE_EN}</span>'
         '</div></div>'
     )
     cards = []
@@ -911,14 +948,14 @@ UI: dict[str, tuple[str, str]] = {
                          "Vòng lặp vẽ Direct3D 11, bloom HDR, 24.000 hạt, phím ray-tracing"),
     "feature.practice.d": T("Wait-for-note, one hand, A-B loop, history, ghost and staff layer",
                             "Chờ nốt, tập một tay, vòng lặp A-B, lịch sử, bóng luyện tập và khuông nhạc"),
-    "feature.sound.d": T("Bundled Yamaha grand, hall reverb, three pedals, MIDI in and out",
-                         "Grand Yamaha đi kèm, reverb phòng hoà nhạc, ba pedal, MIDI vào và ra"),
+    "feature.sound.d": T("Salamander Grand Piano V3 (one-time download), hall and convolution reverb, three pedals, MIDI in and out",
+                         "Salamander Grand Piano V3 (tải một lần), reverb hall và convolution, ba pedal, MIDI vào và ra"),
     "feature.recording.d": T("MP4 with the sound inside, AVI, or 32-bit PNG with transparency",
                              "MP4 có sẵn tiếng, AVI, hoặc chuỗi PNG 32-bit trong suốt"),
-    "feature.design.d": T("14 presets, three concert themes, theme studio and one-line share codes",
-                          "14 preset, ba giao diện hoà nhạc, xưởng theme và mã chia sẻ một dòng"),
-    "feature.camera.d": T("Webcam overlay with green key and hand tracking, no model to download",
-                          "Lớp phủ webcam có key xanh và theo dõi bàn tay, không cần tải mô hình"),
+    "feature.design.d": T("14 built-in presets, three concert themes, a theme studio and one-line share codes",
+                          "14 preset sẵn có, ba giao diện hoà nhạc, xưởng theme và mã chia sẻ một dòng"),
+    "feature.camera.d": T("Webcam overlay with green key, classical hand tracking, and an AR overlay on the real keys",
+                          "Lớp phủ webcam có key xanh, theo dõi tay cổ điển, và lớp phủ AR trên phím thật"),
 
     "ui.foot.product": T("Product", "Sản phẩm"),
     "ui.foot.resources": T("Resources", "Tài nguyên"),
@@ -930,7 +967,8 @@ UI: dict[str, tuple[str, str]] = {
     "ui.foot.readme": T("Full documentation", "Tài liệu đầy đủ"),
     "ui.foot.releases": T("All releases", "Tất cả bản phát hành"),
     "ui.foot.license": T("MIT licence", "Giấy phép MIT"),
-    "ui.foot.soundfont": T("SoundFont credit (FreePats)", "Ghi công SoundFont (FreePats)"),
+    "ui.foot.soundfont": T("Piano samples: Salamander Grand Piano V3 (CC BY 3.0)",
+                           "Mẫu đàn: Salamander Grand Piano V3 (CC BY 3.0)"),
     "ui.foot.privacy": T("No trackers, no cookies", "Không tracker, không cookie"),
     "ui.foot.authors": T("Authors", "Tác giả"),
     "ui.foot.credits": T(f"© {COPYRIGHT_YEAR} {' · '.join(AUTHORS)}. Keyflow is released under the MIT licence.",
@@ -985,7 +1023,7 @@ def render_chrome(doc: Doc, active: str, page_title: tuple[str, str]) -> tuple[s
   <div class="nav-in">
     <a class="brand" href="{doc.url('index.html')}">
       <img src="{doc.root}logo.png" width="30" height="30" alt="" decoding="async">
-      <span>Keyflow</span><span class="ver">v<span data-release-tag>1.0.0</span></span>
+      <span>Keyflow</span><span class="ver">v<span data-release-tag>{RELEASE_VERSION}</span></span>
     </a>
     <nav class="nav-links" aria-label="{_html.escape(nav_label_en, quote=True)}" data-i18n-attr="aria-label={nav_label_key}">
       <div class="has-menu">
@@ -1075,7 +1113,7 @@ def render_chrome(doc: Doc, active: str, page_title: tuple[str, str]) -> tuple[s
     ])
     about = ul([
         ("a0", UI["ui.foot.license"], {"href": LICENSE}),
-        ("a1", UI["ui.foot.soundfont"], {"href": FREEPATS}),
+        ("a1", UI["ui.foot.soundfont"], {"href": SALAMANDER}),
         ("a2", UI["ui.foot.issues"], {"href": ISSUES}),
         ("a3", UI["ui.foot.privacy"], {"href": "guide.html#privacy"}),
     ])
@@ -1123,24 +1161,28 @@ JSONLD = {
     "applicationCategory": "MultimediaApplication",
     "applicationSubCategory": "Piano visualization, practice and video production",
     "operatingSystem": "Windows 10 (22H2) or Windows 11, 64-bit",
-    "softwareVersion": "1.0.0",
+    "softwareVersion": RELEASE_VERSION,
+    "datePublished": RELEASE_DATE_ISO,
     "inLanguage": ["en", "vi"],
     "isAccessibleForFree": True,
     "license": LICENSE,
     "downloadUrl": ASSETS["setup"],
-    "softwareRequirements": "Direct3D 11 GPU (feature level 11_0, shader model 5.0)",
+    "softwareRequirements": ("Windows 10 (22H2) or Windows 11, 64-bit; Direct3D 11 GPU (feature level 11_0, "
+                            "shader model 5.0); about 748 MB free for the piano samples"),
     "screenshot": f"{SITE_URL}/previews/en/stage-gpu-galaxy.png",
     "author": [{"@type": "Person", "name": name} for name in AUTHORS],
     "copyrightHolder": [{"@type": "Person", "name": name} for name in AUTHORS],
     "copyrightYear": COPYRIGHT_YEAR,
     "featureList": [
         "Direct3D 11 GPU stage with 16-bit HDR and multi-level bloom",
-        "Ray-traced 88-key keyboard (GGX, softbox penumbra, ACES tonemap)",
+        "Ray-traced keyboard in 88, 76, 61 or 49 keys (GGX, softbox penumbra, ACES tonemap)",
         "Practice modes: follow along, wait for my note, one hand, A-B loop",
         "Recording to MP4 (H.264 + AAC), AVI or 32-bit PNG sequence with alpha",
-        "MIDI and MusicXML import, bundled Yamaha grand SoundFont, three pedals",
+        "MIDI and MusicXML import; Salamander Grand Piano V3 downloaded on request",
+        "Hall, convolution and impulse-response reverb, continuous damper, string resonance",
         "14 stage presets, three concert themes and a user theme studio",
-        "Webcam overlay with green key and classical hand tracking",
+        "Share a whole look as one KEYFLOW-LOOK-2 line of text",
+        "Webcam overlay with green key, classical hand tracking and an AR overlay calibrated to the real keys",
         "English and Tiếng Việt, switched live without a restart",
     ],
 }

@@ -138,8 +138,8 @@ def build_recording(doc) -> dict:
                   "sound is missing.",
                   "Máy không có bộ mã hoá H.264 sẽ nhận một câu báo rõ kèm mã lỗi thay vì một tệp hỏng; máy có "
                   "H.264 nhưng thiếu bộ mã hoá AAC vẫn ghi được phần hình, và hộp thoại nói rõ vì sao thiếu tiếng."),
-                T("No SoundFont loaded means picture only, and the status line says so before you press REC.",
-                  "Máy chưa nạp SoundFont thì chỉ ghi hình, và dòng thông tin nói rõ trước khi bạn bấm REC."),
+                T("No piano loaded means picture only, and the status line says so before you press REC.",
+                  "Chưa tải cây đàn thì chỉ ghi hình, và dòng thông tin nói rõ trước khi bạn bấm REC."),
             ],
             media=framed(doc, "recording-dock",
                          T("The Recording page of the settings dock", "Trang Recording của bàn cài đặt"),
@@ -172,10 +172,10 @@ def build_recording(doc) -> dict:
                 T("After you stop, the dialog prints the length and the ffmpeg line that muxes the two files into "
                   "one MP4.",
                   "Sau khi dừng ghi, hộp thoại in độ dài cùng dòng lệnh ffmpeg ghép hai tệp thành một MP4."),
-                T("The info line adapts to the machine: with a SoundFont it says where the sound goes, without one "
-                  "it says plainly that the take will be silent.",
-                  "Dòng thông tin đổi theo thực tế từng máy: có SoundFont thì nói rõ đường tiếng đi đâu, không có "
-                  "thì nói thẳng rằng bản ghi sẽ không có tiếng."),
+                T("The info line adapts to the machine: with Salamander loaded it says where the sound goes, without "
+                  "it it says plainly that the take will be silent.",
+                  "Dòng thông tin đổi theo thực tế từng máy: đã nạp Salamander thì nói rõ đường tiếng đi đâu, chưa "
+                  "có thì nói thẳng rằng bản ghi sẽ không có tiếng."),
             ],
             media=_codecard(
                 doc, "wave",
@@ -306,8 +306,10 @@ def build_recording(doc) -> dict:
 # 5. Looks, presets & themes
 # ===========================================================================
 PRESETS = [
-    ("Neon Violet", T("The default: a dark hall, violet neon and clean trails.",
-                      "Mặc định: hội trường tối, neon tím và vệt sáng gọn.")),
+    ("Concert Gold", T("The default: champagne gold on ebony, matched to the Concert Grand interface.",
+                       "Mặc định: vàng champagne trên nền gỗ đen, hợp với giao diện Concert Grand.")),
+    ("Neon Violet", T("A dark hall, violet neon and clean trails.",
+                      "Hội trường tối, neon tím và vệt sáng gọn.")),
     ("Inferno", T("Fire notes with an animated burning texture and warm sparks.",
                   "Nốt lửa có vân cháy chuyển động và tia lửa ấm.")),
     ("Aurora Rainbow", T("Rainbow colour by pitch over an aurora backdrop.",
@@ -322,8 +324,6 @@ PRESETS = [
                        "Nền xanh lá thuần để key trong OBS hoặc phần mềm dựng.")),
     ("Sakura Nocturne", T("Petals drifting through a night stage.",
                           "Cánh hoa anh đào trôi trong sân khấu đêm.")),
-    ("Concert Gold", T("Champagne gold on ebony, matched to the Concert Grand interface.",
-                       "Vàng champagne trên nền gỗ đen, hợp với giao diện Concert Grand.")),
     ("Moonlight Sonata", T("A restrained, moonlit look for slow movements.",
                            "Diện mạo dưới trăng, tiết chế, hợp với chương chậm.")),
     ("Galaxy Voyage", T("Rainbow trails over a cosmic ambient layer.",
@@ -355,7 +355,7 @@ def build_design(doc) -> dict:
                 T("3 concert interfaces", "3 giao diện hoà nhạc"),
                 T("13 dock pages in 4 groups", "13 trang dock trong 4 nhóm"),
                 T("32 undo states", "32 trạng thái hoàn tác"),
-                E("KEYFLOW-LOOK-1:…"),
+                E("KEYFLOW-LOOK-2:…"),
             ],
             shot="theme-dock",
             alt=T("The Theme page: three concert interfaces and the theme studio",
@@ -437,8 +437,10 @@ def build_design(doc) -> dict:
                                          "theo dõi bàn tay.")),
                 ]},
                 {"name": T("Sound & input", "Âm thanh & đầu vào"), "icon": "wave", "items": [
-                    (E("Audio"), T("Load a SoundFont, choose an instrument preset, toggle the hall reverb.",
-                                   "Nạp SoundFont, chọn preset nhạc cụ, bật/tắt hall reverb.")),
+                    (E("Audio"), T("Download and load the one Salamander piano, pick the reverb and its room, string "
+                                   "resonance, gain and the output backend.",
+                                   "Tải và nạp cây Salamander duy nhất, chọn reverb và căn phòng, cộng hưởng "
+                                   "dây, gain và backend đầu ra.")),
                     (E("MIDI"), T("Input and output devices, the track list with solo/mute/colour, and the "
                                   "metronome.",
                                   "Thiết bị vào và ra, danh sách track có solo/mute/màu, và metronome.")),
@@ -506,11 +508,13 @@ def build_design(doc) -> dict:
             media=framed(doc, "main-menu",
                          T("The start menu with the interface language chips",
                            "Menu khởi động với chip chọn ngôn ngữ giao diện"),
-                         T("The start menu: Perform & Play, Quick Adjustments for the most-used controls, Stage "
-                           "Design Studio for the full dock, and the language chips.",
-                           "Menu khởi động: Perform & Play, Quick Adjustments cho các điều khiển hay dùng, Stage "
-                           "Design Studio cho bàn thiết kế đầy đủ, và chip chọn ngôn ngữ."),
-                         badge=T("Concert Grand menu", "Menu Concert Grand")),
+                         T("The start menu: Perform & Play, Quick Adjustments for the most-used controls, Piano & Audio "
+                           "Setup and MIDI Devices straight into their pages, the language chips — and Stage "
+                           "Design Studio for the full dock.",
+                           "Menu khởi động: Perform & Play, Quick Adjustments cho các điều khiển hay dùng, Piano & "
+                           "Audio Setup và MIDI Devices mở thẳng vào trang tương ứng, chip chọn ngôn ngữ — và "
+                           "Stage Design Studio cho bàn thiết kế đầy đủ."),
+                         badge=T("Start menu", "Menu khởi động")),
         ),
 
         split(
@@ -519,16 +523,20 @@ def build_design(doc) -> dict:
             title=T("COPY CODE, paste it in a chat, APPLY CODE",
                     "COPY CODE, dán vào khung chat, rồi APPLY CODE"),
             ticks=[
-                T("A code is the whole look — every visual setting — gzipped into base64url behind a "
-                  "KEYFLOW-LOOK-1: version prefix, so one line of text carries it.",
-                  "Một mã chia sẻ là toàn bộ diện mạo — mọi cài đặt hình ảnh — nén gzip rồi mã hoá base64url sau "
-                  "tiền tố phiên bản KEYFLOW-LOOK-1:, nên chỉ một dòng chữ là mang đi được."),
+                T("A code is the whole look — every visual setting, and since version 2 the note width-by-velocity "
+                  "and fade graphs the AR overlay draws from too — gzipped into base64url behind a "
+                  "KEYFLOW-LOOK-2: version prefix, so one line of text carries it.",
+                  "Một mã chia sẻ là toàn bộ diện mạo — mọi cài đặt hình ảnh, và từ phiên bản 2 còn có cả đồ thị "
+                  "độ rộng và độ mờ theo velocity mà lớp phủ AR dùng — nén gzip rồi mã hoá base64url sau tiền tố "
+                  "phiên bản KEYFLOW-LOOK-2:, nên chỉ một dòng chữ là mang đi được."),
                 T("It round-trips every value but deliberately drops the sender's background image path: a look that "
                   "used a picture falls back to a solid colour rather than pointing at a file you do not have.",
                   "Mã đi-về đúng từng giá trị nhưng cố ý bỏ đường dẫn ảnh nền của máy người gửi: diện mạo dùng ảnh "
                   "sẽ rơi về nền màu thay vì trỏ tới một tệp bạn không có."),
-                T("A code that a chat window wrapped over several lines still reads.",
-                  "Mã bị cửa sổ chat xuống dòng vẫn đọc được."),
+                T("Codes made by version 1 (KEYFLOW-LOOK-1:…) still open bit for bit — the envelope was complete from "
+                  "day one — and a code that a chat window wrapped over several lines still reads.",
+                  "Mã do phiên bản 1 tạo (KEYFLOW-LOOK-1:…) vẫn mở được đúng từng bit — phần vỏ đã đầy đủ ngay "
+                  "từ đầu — và mã bị cửa sổ chat xuống dòng vẫn đọc được."),
                 T("An empty, unknown, other-version, oversized or corrupt code is rejected with the reason printed "
                   "right in the dock — and your current settings are left alone.",
                   "Mã rỗng, lạ, khác phiên bản, quá lớn hoặc hỏng bị từ chối kèm lý do in ngay trong dock — và cài "
@@ -537,7 +545,7 @@ def build_design(doc) -> dict:
             media=_codecard(
                 doc, "share",
                 T("What a shared look looks like", "Một diện mạo được chia sẻ trông ra sao"),
-                "KEYFLOW-LOOK-1:H4sIAAAAAAAACqvWKkktLlGy\n"
+                "KEYFLOW-LOOK-2:H4sIAAAAAAAACqvWKkktLlGy\n"
                 "UlAqS8wpTtVRSs7PS8nMS1eqBQBJFvYhHAAAAA==",
                 T("A real code is longer; the shape is what matters — one prefix, one blob of text, and it pastes "
                   "anywhere.",
@@ -723,35 +731,40 @@ def build_camera(doc) -> dict:
             doc,
             crumb=T("Camera & hand tracking", "Camera & theo dõi bàn tay"),
             eyebrow=E("Camera & FX"),
-            title=T("Put yourself on the stage — and let it know where your hands are",
-                    "Đưa bạn lên sân khấu — và cho nó biết tay bạn đang ở đâu"),
+            title=T("Put yourself on the stage — and the stage over your own piano",
+                    "Đưa bạn lên sân khấu — và đưa sân khấu lên chính cây đàn của bạn"),
             lead=T("Draw a live webcam or a looping video file onto the stage in any corner, key out a green "
                    "backdrop, and turn on hand tracking: Keyflow reads your hands straight out of the camera frame "
-                   "with classical computer vision — no model, no download, nothing leaves your machine.",
+                   "with classical computer vision — no model, no download, nothing leaves your machine. The AR "
+                   "overlay goes further and draws the falling notes over your real keyboard, calibrated from four "
+                   "marked corners.",
                    "Vẽ một webcam trực tiếp hoặc một tệp video chạy lặp lên sân khấu ở bất kỳ góc nào, key nền "
                    "xanh, và bật theo dõi bàn tay: Keyflow đọc bàn tay ngay từ khung camera bằng thị giác máy tính "
-                   "cổ điển — không mô hình, không tải gì thêm, không gì rời khỏi máy bạn."),
+                   "cổ điển — không mô hình, không tải gì thêm, không gì rời khỏi máy bạn. Lớp phủ AR còn đi xa "
+                   "hơn: vẽ nốt rơi đè lên chính cây đàn thật, hiệu chỉnh từ bốn góc được đánh dấu."),
             chips=[
                 T("Live camera or video file", "Camera trực tiếp hoặc tệp video"),
-                T("4 corners · 15–60% width", "4 góc · 15–60% chiều rộng"),
+                T("4 corners · up to 60 fps", "4 góc · tới 60 fps"),
                 T("Green key, 0–100 tolerance", "Key xanh, dung sai 0–100"),
+                T("AR overlay on the real keys", "Lớp phủ AR trên phím thật"),
                 T("Hand tracking, no ML model", "Theo dõi tay, không mô hình ML"),
-                E("30 fps overlay"),
             ],
             shot="stage-live",
             alt=T("The live stage where the camera overlay is drawn",
                   "Sân khấu live nơi lớp phủ camera được vẽ"),
-            cap=T("The live stage: the camera overlay is composited into a corner of this same frame, and the hand "
-                  "marker sits on the keys themselves.",
-                  "Sân khấu live: lớp phủ camera được ghép vào một góc của chính khung hình này, còn điểm đánh dấu "
-                  "bàn tay nằm ngay trên phím."),
+            cap=T("The live stage: the camera overlay is composited into a corner of this same frame, the hand "
+                  "marker sits on the keys themselves, and the AR overlay puts this whole picture over your own "
+                  "keyboard.",
+                  "Sân khấu live: lớp phủ camera được ghép vào một góc của chính khung hình này, điểm đánh dấu "
+                  "bàn tay nằm ngay trên phím, còn lớp phủ AR đặt cả khung hình này lên cây đàn thật của bạn."),
             badge=E("Camera & FX"),
         ),
 
         band(stats=[
-            (("30", "30"), T("fps the overlay reaches the stage at", "fps lớp phủ lên sân khấu"), 30),
-            (("4", "4"), T("corners to place it in", "góc để đặt khung camera"), 4),
-            (("15–60%", "15–60%"), T("of the stage width", "chiều rộng sân khấu"), None),
+            (("60", "60"), T("fps the camera can reach the stage at", "fps camera có thể lên sân khấu"), 60),
+            (("4", "4"), T("corners to mark for the AR calibration", "góc cần đánh dấu cho hiệu chỉnh AR"), 4),
+            (("0–300 ms", "0–300 ms"), T("camera delay, remembered per camera",
+                                         "độ trễ camera, nhớ theo từng camera"), None),
             (("0", "0"), T("models to download", "mô hình phải tải về"), 0),
         ]),
 
@@ -762,27 +775,36 @@ def build_camera(doc) -> dict:
                     "Một cửa sổ camera trên sân khấu, key nền nếu bạn muốn"),
             ticks=[
                 T("Camera overlay draws a live camera or a looping video file onto the stage as a small window. "
-                  "Pick a camera from the list your machine has (REFRESH CAMERAS re-reads it), or USE CAMERA / "
-                  "CHOOSE VIDEO… to change the source.",
+                  "The list is the machine's own: one line per camera with its real name (never “Camera 1”), kind, "
+                  "port and VID/PID — and Automatic prefers colour cameras, ranks virtual ones after them and "
+                  "infrared (Windows Hello) cameras last.",
                   "Camera overlay vẽ một camera trực tiếp hoặc một tệp video chạy lặp lên sân khấu như một cửa sổ "
-                  "nhỏ. Chọn camera trong danh sách máy đang có (REFRESH CAMERAS đọc lại), hoặc USE CAMERA / "
-                  "CHOOSE VIDEO… để đổi nguồn."),
-                T("Corner places it in any of the four corners, Size sets 15–60% of the stage width, and Opacity and "
-                  "Mirror do what they say.",
-                  "Corner đặt khung vào một trong bốn góc, Size chỉnh 15–60% chiều rộng sân khấu, còn Opacity và "
-                  "Mirror đúng như tên gọi."),
-                T("Key tolerance goes from 0 (key off) to 100 (widest) and removes pure green — exactly the colour of "
-                  "the Green Screen preset — so the backdrop disappears and the player stays.",
-                  "Key tolerance chạy từ 0 (tắt key) tới 100 (rộng nhất) và loại bỏ màu xanh lá thuần — đúng màu "
-                  "của preset Green Screen — nên phông xanh biến mất còn người chơi ở lại."),
-                T("The status line under the rows says plainly which camera is open, which file is playing, or why it "
-                  "cannot run: no camera on this machine, or no Media Foundation.",
+                  "nhỏ. Danh sách là của chính máy bạn: mỗi camera một dòng với tên thật (không bao giờ là "
+                  "“Camera 1”), loại, cổng và VID/PID — và chế độ Automatic ưu tiên camera màu, xếp camera ảo "
+                  "sau đó và camera hồng ngoại (Windows Hello) cuối cùng."),
+                T("Plugging a camera in or out, or starting and stopping OBS Virtual Camera, updates the list and "
+                  "reopens the camera when it has to — but never while a take is being recorded, the delay is "
+                  "being measured or the keys are being marked.",
+                  "Cắm hoặc rút camera, hay bật/tắt OBS Virtual Camera, đều cập nhật danh sách và mở lại camera "
+                  "khi cần — nhưng không bao giờ trong lúc đang ghi, đang đo độ trễ hay đang đánh dấu phím."),
+                T("For a live camera the app picks the mode nearest 720p at the highest rate the camera offers — "
+                  "up to 60 fps, MJPG preferred — reads at the camera's own pace instead of a fixed 30 fps cap, "
+                  "shows the real mode in the status line (`720p · 60 fps · MJPG`) and passes frames through a "
+                  "three-buffer ring so a slow draw cannot tear a picture.",
+                  "Với camera trực tiếp, ứng dụng chọn mode gần 720p nhất ở tốc độ cao nhất camera có — tới 60 "
+                  "fps, ưu tiên MJPG — đọc theo nhịp của camera thay vì khoá cứng 30 fps, hiện đúng mode thật ở "
+                  "dòng trạng thái (`720p · 60 fps · MJPG`) và cho khung hình đi qua vòng ba buffer nên nhịp vẽ "
+                  "chậm không làm rách hình."),
+                T("Corner places it in any of the four corners, Size sets 15–60% of the stage width, Opacity and "
+                  "Mirror do what they say, and Key tolerance goes from 0 (key off) to 100 (widest) to remove pure "
+                  "green — exactly the colour of the Green Screen preset.",
+                  "Corner đặt khung vào một trong bốn góc, Size chỉnh 15–60% chiều rộng sân khấu, Opacity và "
+                  "Mirror đúng như tên gọi, còn Key tolerance chạy từ 0 (tắt key) tới 100 (rộng nhất) để loại bỏ "
+                  "màu xanh lá thuần — đúng màu của preset Green Screen."),
+                T("The status line under the rows says plainly which camera is open, which file is playing, or why "
+                  "it cannot run: no camera on this machine, or no Media Foundation.",
                   "Dòng trạng thái dưới các hàng nói rõ đang mở camera nào, đang chạy tệp nào, hay vì sao không "
                   "chạy được: máy không có camera, hoặc máy không có Media Foundation."),
-                T("Frames are read with Media Foundation on a thread of their own and reach the stage at 30 fps, so "
-                  "the camera never blocks drawing.",
-                  "Khung hình được đọc bằng Media Foundation trên luồng riêng và lên sân khấu ở 30 fps, nên camera "
-                  "không bao giờ chặn việc vẽ."),
             ],
             media=framed(doc, "background-image",
                          T("A stage with a picture behind the keys, ready for an overlay",
@@ -794,8 +816,176 @@ def build_camera(doc) -> dict:
         ),
 
         split(
-            id="hands",
+            id="ar",
             flip=True,
+            eyebrow=T("AR overlay", "Lớp phủ AR"),
+            title=T("The notes fall onto your keyboard, not onto a piano roll",
+                    "Nốt rơi xuống chính bàn phím của bạn, không phải một piano roll"),
+            ticks=[
+                T("The AR OVERLAY card turns the camera into a full-screen background and puts the stage on top of "
+                  "it. Mark the four corners of your keyboard's key strip once, and the app solves the camera's "
+                  "field of view and a full 3D pose for the keyboard from those marks.",
+                  "Thẻ AR OVERLAY biến camera thành nền toàn màn hình và đặt sân khấu lên trên. Đánh dấu bốn góc "
+                  "dải phím của cây đàn một lần, ứng dụng sẽ giải ra trường nhìn (FOV) của camera và pose 3D đầy "
+                  "đủ cho bàn phím từ chính các điểm đó."),
+                T("Calibrate has a Unity-style Move / Rotate / Scale gizmo plus numeric translation and uniform-"
+                  "scale sliders, so a pose that is nearly right can be nudged instead of marked again. "
+                  "Calibration version 5 stores the complete transform, the FOV and the baseline; versions 1–4 "
+                  "still load — with zero translation and unit scale, v4 keeping its rotation, v3/v4 their saved "
+                  "FOV.",
+                  "Cửa sổ Calibrate có gizmo kiểu Unity Move / Rotate / Scale cùng thanh trượt số cho tịnh tiến và "
+                  "scale đồng đều, nên pose gần đúng có thể chỉnh nhẹ thay vì đánh dấu lại. Calibration phiên bản "
+                  "5 lưu đầy đủ transform, FOV và baseline; các phiên bản 1–4 vẫn nạp được — với translation 0 và "
+                  "scale 1, riêng v4 giữ rotation, v3/v4 giữ FOV đã lưu."),
+                T("Notes in perspective turns the falling notes into camera-facing quads drawn from that pose, and "
+                  "their travel has its own aiming: a preview arrow is projected over the camera picture with "
+                  "Screen-up and key-depth buttons plus independent Note direction tilt and azimuth controls — "
+                  "none of which move the keyboard transform.",
+                  "Notes in perspective biến nốt rơi thành các quad hướng về camera, vẽ từ chính pose đó, và hướng "
+                  "bay của nốt có cách ngắm riêng: một mũi tên xem trước được chiếu lên ảnh camera, kèm hai nút "
+                  "Screen-up và key-depth cùng hai thanh trượt Note direction tilt / azimuth độc lập — tất cả đều "
+                  "không làm dịch chuyển transform của bàn phím."),
+                T("Quality offers Lite, Standard and Ultra. Learn / Perform, look-ahead, opacity and key tint stay "
+                  "available in AR exactly as they do on the flat stage.",
+                  "Quality có Lite, Standard và Ultra. Learn / Perform, look-ahead, opacity và key tint vẫn dùng "
+                  "được trong AR đúng như trên sân khấu phẳng."),
+            ],
+            media=framed(doc, "design-dock",
+                         T("The dock page the AR OVERLAY card lives on",
+                           "Trang dock chứa thẻ AR OVERLAY"),
+                         T("The AR OVERLAY card sits on Camera & FX, right beside the webcam overlay and hand "
+                           "tracking.",
+                           "Thẻ AR OVERLAY nằm trên trang Camera & FX, ngay cạnh lớp phủ webcam và phần theo dõi "
+                           "bàn tay."),
+                         badge=T("Camera & FX · AR", "Camera & FX · AR")),
+        ),
+
+        split(
+            id="ar-live",
+            eyebrow=T("AR playback", "Trình diễn AR"),
+            title=T("Press bars, a damper strip and a press light that fires once",
+                    "Thanh nhấn, dải damper và một nhịp sáng chỉ bùng một lần"),
+            ticks=[
+                T("Live press bars are an independent toggle and off by default; they do not disable key tint. "
+                  "A chevron-hidden Bar coverage slider (25–300% of the keys' depth) lets a bar's leading edge run "
+                  "onto the keys — 100 stops at the keys, 200 reaches a white key's front edge, Keysight's full "
+                  "coverage — and the flat bars and the 3D route honour it alike.",
+                  "Live press bars là công tắc độc lập và mặc định tắt; bật nó không tắt key tint. Một thanh trượt "
+                  "Bar coverage ẩn sau nút chevron (25–300% chiều sâu phím) cho đầu thanh chạy lên trên phím — 100 "
+                  "là dừng ở phím, 200 chạm mép trước của phím trắng, tức full coverage kiểu Keysight — và cả "
+                  "thanh phẳng lẫn đường 3D đều tuân theo."),
+                T("Bar fade follows lifetime (also off by default) makes a bar's opacity walk with how far it has "
+                  "stretched: Fade at birth and Fade at full length, 60% → 100% by default, so bars brighten as "
+                  "they grow — and the fade walks backwards across the release.",
+                  "Bar fade follows lifetime (cũng mặc định tắt) cho độ đặc của thanh thay đổi theo mức nó đã kéo "
+                  "dài: Fade at birth và Fade at full length, mặc định 60% → 100%, nên thanh càng dài càng sáng — "
+                  "và khi nhả phím, độ mờ đi ngược lại suốt quá trình nhả."),
+                T("Every bar is retinted by the look's velocity colour through the press's true strength, and the "
+                  "press light fires exactly once per press: the finger is the only source, so the falling head of "
+                  "a live bar no longer re-flashes at touchdown on either note direction. The flash blooms in over "
+                  "about 55 ms, brightness and size ride velocity over a wider band, and a long-held key breathes.",
+                  "Mọi thanh được nhuộm lại theo màu velocity của look đúng với lực nhấn thật, và nhịp sáng chỉ "
+                  "bùng đúng một lần cho mỗi lần nhấn: ngón tay là nguồn duy nhất, nên đầu thanh rơi không còn "
+                  "bùng sáng lại khi chạm phím ở cả hai hướng nốt. Nhịp sáng loé lên trong khoảng 55 ms, độ sáng "
+                  "và kích thước theo velocity rộng hơn, và một phím giữ lâu sẽ “thở” nhẹ."),
+                T("From the AR Standard tier up, a glowing damper strip hugs the keys' back edge; the sustain "
+                  "pedal (level 0..1) reaches it out over the fallboard and brightens it in the look's halo colour, "
+                  "with its own on/off toggle and a Follow look / Custom colour switch in the AR PLAYBACK card.",
+                  "Từ tier AR Standard trở lên, một dải damper phát sáng bám mép sau của phím; pedal sustain (mức "
+                  "0..1) đẩy nó vươn ra ngoài thành đàn và làm nó sáng lên theo màu halo của look, kèm công tắc "
+                  "bật/tắt riêng và lựa chọn màu Follow look / Custom trong thẻ AR PLAYBACK."),
+            ],
+            media=framed(doc, "stage-gpu-storm",
+                         T("The notes and the effects, drawn over the camera in AR",
+                           "Nốt và hiệu ứng, được vẽ đè lên camera trong AR"),
+                         T("The same engine, the same effects — the AR overlay only changes where the keyboard "
+                           "is on screen.",
+                           "Cùng engine, cùng hiệu ứng — lớp phủ AR chỉ đổi chỗ bàn phím nằm trên màn hình."),
+                         badge=T("GPU stage · Electric Storm", "Sân khấu GPU · Electric Storm")),
+        ),
+
+        split(
+            id="align",
+            flip=True,
+            eyebrow=T("Staying aligned", "Giữ cho khớp"),
+            title=T("The tools that tell you the tripod moved",
+                    "Những công cụ cho bạn biết tripod đã xê dịch"),
+            ticks=[
+                T("Camera delay is stored per camera — the same key the calibration file uses, in ar-delay.json "
+                  "beside the settings folder. A USB webcam is late by its own amount (roughly 60–150 ms) and a "
+                  "virtual camera or a phone-as-webcam is very different, so each camera brings its own 0–300 ms "
+                  "value back to the slider, and dragging it or accepting a MEASURE DELAY result writes to the "
+                  "camera that is open.",
+                  "Camera delay được lưu theo từng camera — cùng khoá mà tệp calibration dùng, trong ar-delay.json "
+                  "cạnh thư mục cài đặt. Webcam USB có độ trễ riêng (khoảng 60–150 ms) và camera ảo hay điện "
+                  "thoại làm webcam thì rất khác, nên mỗi camera mang giá trị 0–300 ms của nó trở lại thanh "
+                  "trượt, và kéo thanh trượt hay nhận kết quả MEASURE DELAY đều ghi cho camera đang mở."),
+                T("Alignment check redraws the saved key frame with octave lines over the live camera picture — "
+                  "calibrated only, on every tier — so a bumped tripod or a keyboard that shifted shows up the "
+                  "moment the lines drift off the real keys. Five high-contrast frame colours, machine-local, "
+                  "never carried by presets or share codes.",
+                  "Alignment check vẽ lại khung phím đã lưu kèm các đường quãng tám đè lên ảnh camera trực tiếp — "
+                  "chỉ khi đã hiệu chỉnh, ở mọi tier — nên tripod bị đụng hay bàn phím bị xê dịch sẽ lộ ra ngay khi "
+                  "đường kẻ lệch khỏi phím thật. Năm màu khung tương phản cao, chỉ thuộc máy này, không bao giờ đi "
+                  "theo preset hay mã chia sẻ."),
+                T("A drift watch, on by default, samples the key area about every two seconds and compares it with "
+                  "the saved calibration; three straight readings past the threshold put a re-mark nudge on the AR "
+                  "status line. Playing hands and lighting changes stay silent, and it never edits the calibration "
+                  "itself.",
+                  "Drift watch, mặc định bật, lấy mẫu vùng phím khoảng hai giây một lần và so với calibration đã "
+                  "lưu; ba lần liên tiếp vượt ngưỡng sẽ đặt một nhắc nhở “đánh dấu lại” lên dòng trạng thái AR. "
+                  "Bàn tay đang chơi và thay đổi ánh sáng không gây báo, và nó không bao giờ tự sửa calibration."),
+                T("EXPORT CALIBRATION gathers every saved alignment of the camera in use — every view, picture size "
+                  "and keyboard size — into one portable keyflow-ar-calibration JSON, and drops a snapshot PNG of "
+                  "the camera's current frame beside it. IMPORT CALIBRATION restores them under the backup's own "
+                  "camera link, pushing every row through the checks a fresh calibration passes: rows that fail are "
+                  "counted and skipped, and no setting is touched.",
+                  "EXPORT CALIBRATION gom mọi hiệu chỉnh đã lưu của camera đang dùng — mọi góc nhìn, cỡ hình và cỡ "
+                  "bàn phím — vào một tệp JSON keyflow-ar-calibration gọn ghẽ, kèm ảnh PNG chụp khung camera hiện "
+                  "tại bên cạnh. IMPORT CALIBRATION khôi phục chúng theo đúng liên kết camera trong bản sao lưu, "
+                  "và đẩy từng dòng qua đúng các bước kiểm tra của một hiệu chỉnh mới: dòng không đạt bị đếm và bỏ "
+                  "qua, và không cài đặt nào bị thay đổi."),
+            ],
+            media=framed(doc, "shortcuts",
+                         T("The in-app keyboard and shortcuts card", "Thẻ bàn phím và phím tắt trong ứng dụng"),
+                         T("The same F1 card that tells you how to play the stage — the AR tools all live in the "
+                           "dock next to it.",
+                           "Chính thẻ F1 chỉ bạn cách chơi sân khấu — còn các công cụ AR đều nằm trong dock ngay "
+                           "cạnh đó."),
+                         badge=T("Keyboard & shortcuts", "Bàn phím & phím tắt")),
+        ),
+
+        callout(
+            style="tip",
+            icon="info",
+            title=T("Inside Calibrate, and under the hood", "Trong cửa sổ Calibrate, và bên dưới lớp áo"),
+            body=[T("One line of camera tips answers the classic first-time mistakes — hang the camera over your "
+                    "shoulder looking down the keys, avoid a very wide lens, keep your hands out of the picture "
+                    "while marking — and a live Y′CbCr skin-lobe lookout samples the still it shows: a "
+                    "skin-coloured share before the corners are down (anywhere in the picture) or after (only "
+                    "inside the marked keys) quietly asks you to move your hands. It is advice, not a gate.",
+                    "Một dòng gợi ý trong cửa sổ Calibrate trả lời những lỗi quen thuộc của lần đầu: treo camera "
+                    "qua vai nhìn xuống phím, tránh ống kính quá rộng, và để tay ra khỏi khung khi đánh dấu — kèm "
+                    "một bộ dò màu da Y′CbCr lấy mẫu ngay trên ảnh nó đang hiện: nếu có mảng màu da trước khi đặt "
+                    "góc (bất kỳ đâu trong khung) hoặc sau khi đặt (chỉ trong vùng phím đã đánh dấu), dòng ghi chú "
+                    "sẽ nhẹ nhàng nhắc bạn đưa tay ra. Đó là gợi ý, không phải rào chắn."),
+                  T("The look retunes itself per camera view: on the leaned cameras the paper-thin effect lifts stay "
+                    "at the catalogue's heights and the stand-up beams and arcs keep drawing, while the 90° "
+                    "overhead view shrinks the lifts to 0.05 cm / 0.1 cm and leaves the stand-up quads home, because "
+                    "they squash to a noise-thin hairline from straight above. If the GPU runs over budget, "
+                    "ArQualityBudget drops effect families in a fixed order — particles, pulses, note lights, light "
+                    "bars, note style, impact glow — and restores them as the pressure passes; keys, notes and "
+                    "keypresses are never dropped.",
+                    "Diện mạo tự chỉnh theo từng góc nhìn: với camera nghiêng, các hiệu ứng mỏng như giấy vẫn giữ "
+                    "độ cao theo catalogue và các tia sáng dựng đứng vẫn được vẽ; còn góc nhìn 90° từ trên xuống "
+                    "thu các độ nâng về 0,05 cm / 0,1 cm và bỏ luôn các quad dựng đứng, vì nhìn thẳng từ trên chúng "
+                    "bị ép thành một sợi chỉ nhiễu. Nếu GPU vượt ngân sách, ArQualityBudget bỏ dần các nhóm hiệu "
+                    "ứng theo thứ tự cố định — hạt, xung, đèn nốt, thanh sáng, kiểu nốt, sáng va chạm — và trả lại "
+                    "khi áp lực qua đi; phím, nốt và nhịp nhấn không bao giờ bị bỏ.")],
+        ),
+
+        split(
+            id="hands",
             eyebrow=T("Hand tracking", "Theo dõi bàn tay"),
             title=T("Which key is your hand over? The stage knows",
                     "Bàn tay bạn đang ở phím nào? Sân khấu biết"),
@@ -819,21 +1009,22 @@ def build_camera(doc) -> dict:
                   "Skin sensitivity là một thanh trượt, và dòng trạng thái báo số ngón, phím cùng phần trăm khung "
                   "hình mà bàn tay chiếm."),
             ],
-            media=framed(doc, "shortcuts",
-                         T("The keyboard and shortcuts card", "Thẻ bàn phím và phím tắt"),
-                         T("The in-app F1 card: playing the stage with the computer keys, moving around, and the "
-                           "session and capture controls.",
-                           "Thẻ F1 trong ứng dụng: chơi sân khấu bằng phím máy tính, điều hướng, và các điều khiển "
-                           "phiên cùng ghi hình."),
-                         badge=T("Keyboard & shortcuts", "Bàn phím & phím tắt")),
+            media=framed(doc, "play-dialog",
+                         T("The session dialog, where the score and the stage layers meet",
+                           "Hộp thoại phiên, nơi bản nhạc gặp các lớp sân khấu"),
+                         T("Hand tracking draws on the stage itself; the session dialog is where the song and the "
+                           "stage layers are chosen.",
+                           "Theo dõi bàn tay vẽ ngay trên sân khấu; hộp thoại phiên là nơi chọn bài và các lớp "
+                           "sân khấu."),
+                         badge=T("Session", "Phiên")),
         ),
 
         steps(
             id="recipe",
             cols=4,
-            eyebrow=T("A recipe", "Một công thức"),
-            title=T("The “player cut out of the background” look",
-                    "Kiểu cảnh “người chơi tách khỏi nền”"),
+            eyebrow=T("Two recipes", "Hai công thức"),
+            title=T("The “player cut out of the background” look, and the “stage on my piano” look",
+                    "Kiểu cảnh “người chơi tách khỏi nền”, và kiểu “sân khấu trên cây đàn của tôi”"),
             items=[
                 {"t": T("Film against green", "Quay trên nền xanh"),
                  "d": T("Use a green backdrop behind you; the key tolerance removes exactly that green.",
@@ -841,12 +1032,16 @@ def build_camera(doc) -> dict:
                 {"t": T("Or key the stage instead", "Hoặc key chính sân khấu"),
                  "d": T("Choose the Green Screen preset and composite the whole stage over your own footage in OBS.",
                         "Chọn preset Green Screen rồi ghép toàn bộ sân khấu đè lên cảnh quay của bạn trong OBS.")},
-                {"t": T("Place and size it", "Đặt vị trí và kích thước"),
-                 "d": T("Corner, Size and Opacity put the camera window where your composition wants it.",
-                        "Corner, Size và Opacity đặt cửa sổ camera đúng chỗ bố cục của bạn cần.")},
-                {"t": T("Markers without your face", "Có điểm đánh dấu, không cần mặt bạn"),
-                 "d": T("Hide the camera picture and leave hand tracking on for the key markers alone.",
-                        "Ẩn ảnh camera và vẫn bật theo dõi bàn tay để chỉ lấy các điểm đánh dấu trên phím.")},
+                {"t": T("Mark four corners once", "Đánh dấu bốn góc một lần"),
+                 "d": T("Hang the camera over your shoulder, mark the four corners of the key strip, and the AR "
+                        "overlay draws the notes onto your real keys from then on.",
+                        "Treo camera qua vai, đánh dấu bốn góc của dải phím, và từ đó lớp phủ AR vẽ nốt lên chính "
+                        "phím thật của bạn.")},
+                {"t": T("Keep it honest", "Giữ cho khớp"),
+                 "d": T("LEAVE Alignment check on so the frame lines tell you the moment the tripod moves, and "
+                        "export the calibration before you move the camera to another room.",
+                        "Bật Alignment check để khung kẻ cho bạn biết ngay khi tripod xê dịch, và xuất "
+                        "calibration trước khi mang camera sang phòng khác.")},
             ],
         ),
 
@@ -860,10 +1055,28 @@ def build_camera(doc) -> dict:
                  T("Parallax, zoom, frame, saturation, contrast and bloom for the stage itself.",
                    "Parallax, zoom, khung hình, bão hoà, tương phản và bloom cho chính sân khấu.")],
                 [E("WEBCAM OVERLAY"),
-                 T("Camera overlay switch, camera list with REFRESH CAMERAS, USE CAMERA / CHOOSE VIDEO…, Corner, "
-                   "Size, Opacity, Mirror, Key tolerance and a status line.",
-                   "Công tắc Camera overlay, danh sách camera với REFRESH CAMERAS, USE CAMERA / CHOOSE VIDEO…, "
-                   "Corner, Size, Opacity, Mirror, Key tolerance và một dòng trạng thái.")],
+                 T("Camera overlay switch, the machine's own camera list with REFRESH CAMERAS, USE CAMERA / "
+                   "CHOOSE VIDEO…, Corner, Size, Opacity, Mirror, Key tolerance and a status line with the real "
+                   "mode.",
+                   "Công tắc Camera overlay, danh sách camera của chính máy với REFRESH CAMERAS, USE CAMERA / "
+                   "CHOOSE VIDEO…, Corner, Size, Opacity, Mirror, Key tolerance và dòng trạng thái kèm mode thật.")],
+                [E("AR OVERLAY"),
+                 T("AR overlay switch, camera view, Calibrate (four corners, Move/Rotate/Scale gizmo, numeric "
+                   "translation and scale, camera tips and the skin lookout), Notes in perspective, the note-"
+                   "direction controls, Quality (Lite / Standard / Ultra) and Camera delay.",
+                   "Công tắc AR overlay, góc nhìn camera, Calibrate (bốn góc, gizmo Move/Rotate/Scale, thanh số "
+                   "cho tịnh tiến và scale, gợi ý camera và bộ dò màu da), Notes in perspective, các điều khiển "
+                   "hướng nốt, Quality (Lite / Standard / Ultra) và Camera delay.")],
+                [E("AR PLAYBACK"),
+                 T("Live press bars, Bar coverage (25–300%), Bar fade follows lifetime with Fade at birth and "
+                   "Fade at full length, and the damper strip with its colour choice.",
+                   "Live press bars, Bar coverage (25–300%), Bar fade follows lifetime với Fade at birth và Fade "
+                   "at full length, cùng dải damper và lựa chọn màu của nó.")],
+                [E("KEYBOARD ALIGNMENT"),
+                 T("Alignment check with five frame colours, the drift watch, EXPORT CALIBRATION and IMPORT "
+                   "CALIBRATION — all of it machine-local.",
+                   "Alignment check với năm màu khung, drift watch, EXPORT CALIBRATION và IMPORT CALIBRATION — "
+                   "tất cả chỉ thuộc máy này.")],
                 [E("HAND TRACKING"),
                  T("Hand tracking switch, Skin sensitivity, and a status line with the finger count, the key and the "
                    "share of the frame the hand fills.",
@@ -875,7 +1088,8 @@ def build_camera(doc) -> dict:
         callout(
             style="warn",
             icon="alert",
-            title=T("Honest about what classical vision can do", "Nói thẳng về giới hạn của thị giác cổ điển"),
+            title=T("Honest about what classical vision and a webcam can do",
+                    "Nói thẳng về giới hạn của thị giác cổ điển và một chiếc webcam"),
             body=[
                 T("Hand tracking is classical computer vision, not a machine-learning model. With two hands in view, "
                   "or a backdrop close to skin colour, only the biggest hand is followed; the finger count is only "
@@ -884,33 +1098,47 @@ def build_camera(doc) -> dict:
                   "Theo dõi bàn tay là thị giác máy tính cổ điển, không phải mô hình học máy. Khi có hai bàn tay "
                   "trong khung, hoặc nền trùng màu da, chỉ bàn tay lớn nhất được theo; số ngón chỉ đáng tin khi bàn "
                   "tay đủ lớn trong khung; và nó cần một nền đơn giản, đủ sáng."),
-                T("There is no 3D perspective camera either: the stage is a flat piano roll with slight parallax. "
-                  "Nothing is uploaded — frames are read locally, drawn locally and never leave the machine.",
-                  "Cũng chưa có camera phối cảnh 3D: sân khấu là piano roll phẳng với parallax nhẹ. "
-                  "Không có gì được tải lên — khung hình được đọc tại máy, vẽ tại máy và không bao giờ rời khỏi máy."),
+                T("The AR overlay is the newest part of the app and it says so: it has automated regression coverage "
+                  "(the render path is re-projected on WARP on every build), but it has not been tried on a real "
+                  "webcam yet, full setting/value parity with the flat stage is not claimed, and the ambient layers "
+                  "— petals, shooting stars — stay flat screen-space rather than following the perspective. Stage-"
+                  "space falling trails are suppressed over the camera, and the camera is the machine's: applying a "
+                  "preset or pasting a share code never changes the camera you picked.",
+                  "Lớp phủ AR là phần mới nhất của ứng dụng và nó nói thẳng điều đó: đã có kiểm thử hồi quy tự động "
+                  "(đường render được chiếu lại trên WARP mỗi lần build), nhưng chưa từng thử với webcam thật, "
+                  "chưa cam kết đủ mọi cài đặt/giá trị như sân khấu phẳng, và các lớp ambient — cánh hoa, sao băng "
+                  "— vẫn phẳng theo màn hình chứ không theo phối cảnh. Vệt rơi trong không gian sân khấu bị bỏ khi "
+                  "đè lên camera, và camera thuộc về máy này: áp preset hay dán mã chia sẻ không bao giờ đổi camera "
+                  "bạn đã chọn."),
+                T("Nothing is uploaded — frames are read locally, drawn locally and never leave the machine.",
+                  "Không có gì được tải lên — khung hình được đọc tại máy, vẽ tại máy và không bao giờ rời khỏi "
+                  "máy."),
             ],
         ),
 
         pagenav(prev=("features/design.html", "design"), next=("gallery.html", "gallery")),
         cta(
             title=T("One camera, one cable, one stage", "Một chiếc camera, một sợi cáp, một sân khấu"),
-            sub=T("The overlay and hand tracking are in the same free download as everything else.",
-                  "Lớp phủ camera và theo dõi bàn tay nằm trong cùng bản tải miễn phí với mọi thứ khác."),
+            sub=T("The overlay, the AR calibration and hand tracking are in the same free download as everything "
+                  "else.",
+                  "Lớp phủ camera, hiệu chỉnh AR và theo dõi bàn tay nằm trong cùng bản tải miễn phí với mọi thứ "
+                  "khác."),
             actions=[DOWNLOAD,
                      {"label": T("Open the gallery", "Mở thư viện ảnh"), "href": "gallery.html",
                       "kind": "btn-ghost", "icon": "image"}],
         ),
     ]
     return {
-        "title": T("Camera overlay & hand tracking · Keyflow",
-                   "Lớp phủ camera & theo dõi bàn tay · Keyflow"),
+        "title": T("Camera overlay, AR overlay & hand tracking · Keyflow",
+                   "Lớp phủ camera, lớp phủ AR & theo dõi bàn tay · Keyflow"),
         "description": T(
             "Draw a live webcam or a looping video onto the Keyflow stage in any corner, key out a green backdrop, "
-            "and switch on hand tracking that reads your hands from the camera frame with classical computer vision "
-            "— no model to download, nothing uploaded.",
-            "Vẽ webcam trực tiếp hoặc video lặp lên sân khấu Keyflow ở bất kỳ góc nào, key nền xanh lá, và bật theo "
-            "dõi bàn tay đọc tay bạn ngay từ khung camera bằng thị giác máy tính cổ điển — không phải tải mô hình, "
-            "không gì được tải lên."),
+            "switch on hand tracking that reads your hands from the camera frame with classical computer vision, or "
+            "calibrate the AR overlay and watch the notes fall onto your own keyboard — no model to download, "
+            "nothing uploaded.",
+            "Vẽ webcam trực tiếp hoặc video lặp lên sân khấu Keyflow ở bất kỳ góc nào, key nền xanh lá, bật theo "
+            "dõi bàn tay đọc tay bạn ngay từ khung camera bằng thị giác máy tính cổ điển, hoặc hiệu chỉnh lớp phủ "
+            "AR để xem nốt rơi xuống chính cây đàn của bạn — không phải tải mô hình, không gì được tải lên."),
         "og_image": "previews/en/stage-live.png",
         "crumb_trail": TRAIL + [("Camera & hand tracking", "features/camera.html")],
         "body": body,

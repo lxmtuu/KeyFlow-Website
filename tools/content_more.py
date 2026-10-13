@@ -2,8 +2,10 @@
 """The remaining pages: gallery, guide and download."""
 from __future__ import annotations
 
-from sitekit import (ASSETS, CHANGELOG, CHANGELOG_VI, DOTNET, E, FREEPATS, ISSUES, LICENSE,
-                     README_EN, README_VI, RELEASES, RELEASE_PAGE, REPO, T, VORTICE, band,
+from sitekit import (ASSETS, CHANGELOG, CHANGELOG_VI, DOTNET, E, FILE, ISSUES, LICENSE, PIANO_CREDIT,
+                     PIANO_LICENSE, PIANO_NAME, PIANO_SIZE, README_EN, README_VI, RELEASES,
+                     RELEASE_DATE_EN, RELEASE_DATE_ISO, RELEASE_DATE_VI, RELEASE_PAGE, RELEASE_PREV,
+                     RELEASE_TAG, RELEASE_VERSION, REPO, SALAMANDER, SIZE, T, VORTICE, band,
                      callout, carousel, chipcloud, codeblock, cta, dlhero, faq, framed, grid,
                      groups, iconbox, pagehero, picture, pagenav, raw, slider, split, specdl,
                      steps, table)
@@ -28,15 +30,17 @@ def build_gallery(doc) -> dict:
     root = doc.root
 
     presets_k, presets_v = doc.key(T(
-        "A preview of two preset comparisons; open the full image to see all fourteen",
-        "Bản xem trước hai phép so sánh preset; mở ảnh đầy đủ để xem cả mười bốn"))
+        "Concert Gold and Neon Violet, each drawn by both engines; open the full image to see all fourteen",
+        "Concert Gold và Neon Violet, mỗi preset được cả hai engine vẽ; mở ảnh đầy đủ để xem cả mười bốn"))
     presets_note_k, presets_note_v = doc.key(T(
-        "This preview shows two preset comparisons from the CI mosaic: the software renderer and GPU engine draw each look "
-        "side by side. The full image covers all fourteen presets, so you can compare pressed-key colour, the horizon, "
-        "hollow neon tubes and Fire's cracks. Open the full picture.",
-        "Bản xem trước này gồm hai phép so sánh từ ảnh ghép CI: bộ dựng hình phần mềm và engine GPU render mỗi diện "
-        "mạo cạnh nhau. Ảnh đầy đủ có cả mười bốn preset để bạn so sánh màu phím đang nhấn, đường chân trời, ống "
-        "neon rỗng và vết nứt của Fire. Mở ảnh đầy đủ."))
+        "This preview shows the first two comparisons of the CI mosaic: the software renderer and the GPU engine "
+        "draw the same look side by side. The full image covers every built-in preset — from Concert Gold, the look "
+        "the app opens on, to Retro Arcade — so you can compare pressed-key colour, the horizon, hollow neon tubes "
+        "and Fire's cracks. Open the full picture.",
+        "Bản xem trước này gồm hai phép so sánh đầu tiên của ảnh ghép CI: bộ dựng hình phần mềm và engine GPU vẽ "
+        "cùng một diện mạo đặt cạnh nhau. Ảnh đầy đủ có mọi preset dựng sẵn — từ Concert Gold, diện mạo ứng dụng mở "
+        "sẵn, tới Retro Arcade — để bạn so sánh màu phím đang nhấn, đường chân trời, ống neon rỗng và vết nứt của "
+        "Fire. Mở ảnh đầy đủ."))
     presets_html = (
         '<figure class="shot" style="margin:0">'
         '<a href="' + root + 'previews/presets.jpg" target="_blank" rel="noopener">'
@@ -49,8 +53,10 @@ def build_gallery(doc) -> dict:
     )
 
     video_cap_k, video_cap_v = doc.key(T(
-        "The showcase clip at the top of this site: one take of the GPU stage playing a score, recorded by Keyflow.",
-        "Đoạn video giới thiệu ở đầu trang: một lượt sân khấu GPU chơi một bản nhạc, do chính Keyflow ghi lại."))
+        "The showcase clip at the top of this site: one take of the GPU stage playing a score, recorded by "
+        "Keyflow itself — a capture from before the app was named Keyflow, so the header still reads PianoPath.",
+        "Đoạn video giới thiệu ở đầu trang: một lượt sân khấu GPU chơi một bản nhạc, do chính Keyflow ghi lại — "
+        "bản quay từ trước khi ứng dụng mang tên Keyflow, nên phần header vẫn còn chữ PianoPath."))
     video_label_k, video_label_v = doc.key(T(
         "Keyflow showcase video: the GPU stage playing a score",
         "Video giới thiệu Keyflow: sân khấu GPU đang chơi một bản nhạc"))
@@ -110,8 +116,8 @@ def build_gallery(doc) -> dict:
             slides=shot_items(STAGE_SHOTS, [
                 T("Live play: only the notes you play, the glowing hit line, sparks and the transport bar",
                   "Chơi trực tiếp: chỉ những nốt bạn chơi, đường chạm phát sáng, tia lửa và thanh transport"),
-                T("Neon Violet, the default look, with a chord being held",
-                  "Neon Violet, diện mạo mặc định, với một hợp âm đang giữ"),
+                T("Concert Gold, the default look, with a chord being held",
+                  "Concert Gold, diện mạo mặc định, với một hợp âm đang giữ"),
                 T("Galaxy Voyage: rainbow trails over a cosmic layer",
                   "Galaxy Voyage: vệt cầu vồng trên nền vũ trụ"),
                 T("Electric Storm: speed lines and arcs between the keys you hold",
@@ -133,8 +139,8 @@ def build_gallery(doc) -> dict:
                   "Những ảnh chụp này có nhiều chữ nhỏ nên chúng đợi bạn: chọn một trang trong danh sách hoặc dùng "
                   "mũi tên. Bấm phát nếu bạn muốn xem chúng tự chạy."),
             slides=shot_items(UI_SHOTS, [
-                T("The Concert Grand start menu, with the interface-language chips",
-                  "Menu khởi động Concert Grand, kèm chip chọn ngôn ngữ giao diện"),
+                T("The start menu, with the interface-language chips",
+                  "Menu khởi động, kèm chip chọn ngôn ngữ giao diện"),
                 T("The Style page: presets, quick layer switches and the share code",
                   "Trang Style: preset, công tắc bật nhanh từng lớp và mã chia sẻ"),
                 T("The Theme page: three interfaces, the theme studio and the quick looks",
@@ -190,11 +196,9 @@ def build_gallery(doc) -> dict:
                     "engine GPU — rồi xếp kết quả vào một bức ảnh dọc duy nhất. Đó là cách nhanh nhất để so sánh các "
                     "look, và là cách dự án chứng minh sân khấu GPU giữ đúng ý đồ của từng chủ đề.")],
             ticks=[
-                E("Neon Violet, Inferno, Aurora Rainbow, Ice Crystal, Two Hands, Classic Roll and Green Screen"),
-                T("Sakura Nocturne, Concert Gold, Moonlight Sonata, Galaxy Voyage, Electric Storm, Ocean Depths and "
-                  "Retro Arcade",
-                  "Sakura Nocturne, Concert Gold, Moonlight Sonata, Galaxy Voyage, Electric Storm, Ocean Depths "
-                  "và Retro Arcade"),
+                E("Concert Gold, Neon Violet, Inferno, Aurora Rainbow, Ice Crystal, Two Hands, Classic Roll and Green Screen"),
+                T("Sakura Nocturne, Moonlight Sonata, Galaxy Voyage, Electric Storm, Ocean Depths and Retro Arcade",
+                  "Sakura Nocturne, Moonlight Sonata, Galaxy Voyage, Electric Storm, Ocean Depths và Retro Arcade"),
                 T("Plus three community presets embedded in the build, labelled COMMUNITY in the list.",
                   "Cộng thêm ba preset cộng đồng nhúng trong bản dựng, dán nhãn COMMUNITY trong danh sách."),
             ],
@@ -282,9 +286,9 @@ def build_guide(doc) -> dict:
                    "tích hợp, những giới hạn nói thẳng và giấy phép — tất cả trong một trang."),
             chips=[
                 T("7 setup steps", "7 bước thiết lập"),
-                T("16 shortcuts", "16 phím tắt"),
+                T("14 shortcut rows", "14 dòng phím tắt"),
                 T("13 dock pages", "13 trang dock"),
-                T("10 command-line flags", "10 cờ dòng lệnh"),
+                T("13 command-line flags", "13 cờ dòng lệnh"),
             ],
             actions=[DOWNLOAD,
                      {"label": T("Full documentation on GitHub", "Tài liệu đầy đủ trên GitHub"),
@@ -303,17 +307,20 @@ def build_guide(doc) -> dict:
             title=T("Seven things worth knowing before you play", "Bảy điều nên biết trước khi chơi"),
             items=[
                 {"t": T("Audio output", "Đầu ra âm thanh"),
-                 "d": T("Keyflow plays through the default Windows output device (waveOut). Change speakers or "
-                        "headphones in Windows Settings → System → Sound before opening the app.",
-                        "Keyflow phát qua thiết bị đầu ra mặc định của Windows (waveOut). Đổi loa hoặc tai nghe "
-                        "trong Windows Settings → System → Sound trước khi mở ứng dụng.")},
-                {"t": T("The SoundFont loads itself", "SoundFont tự nạp"),
-                 "d": T("The bundled Yamaha grand loads at startup — a few seconds, and the label on the Audio page "
-                        "says when it is ready. For another piano: SETTINGS → Audio → LOAD SOUNDFONT, pick a .sf2, "
-                        "then a bank/program preset. HALL REVERB toggles the room.",
-                        "Grand Yamaha đi kèm được nạp lúc khởi động — vài giây, và nhãn trên trang Audio báo khi "
-                        "xong. Muốn dùng piano khác: SETTINGS → Audio → LOAD SOUNDFONT, chọn tệp .sf2, rồi chọn "
-                        "preset bank/program. Nút HALL REVERB bật/tắt tiếng vang phòng.")},
+                 "d": T("Keyflow plays through the default Windows output device over WASAPI, with an ASIO driver or "
+                        "waveOut to pick instead if you prefer. Change speakers or headphones in Windows "
+                        "Settings → System → Sound before opening the app.",
+                        "Keyflow phát qua thiết bị đầu ra mặc định của Windows bằng WASAPI, và bạn có thể chọn "
+                        "driver ASIO hoặc waveOut nếu muốn. Đổi loa hoặc tai nghe trong Windows Settings → "
+                        "System → Sound trước khi mở ứng dụng.")},
+                {"t": T("Fetch the piano once", "Tải cây đàn một lần"),
+                 "d": T("The samples are not in the package. Open SETTINGS → Audio and press Download piano · "
+                        "748 MB: every file is verified as it arrives, a cancelled download resumes, and the "
+                        "instrument loads by itself afterwards. HALL REVERB and STRING RESONANCE are on the same "
+                        "page, next to the output backend and the latency.",
+                        "Bộ mẫu không nằm trong gói. Mở SETTINGS → Audio và bấm Download piano · 748 MB: từng tệp "
+                        "được xác minh khi về, bản tải bị huỷ sẽ tiếp tục được, và đàn tự nạp sau đó. HALL REVERB "
+                        "và STRING RESONANCE nằm cùng trang, cạnh phần chọn backend đầu ra và độ trễ.")},
                 {"t": T("Your MIDI keyboard", "Đàn MIDI của bạn"),
                  "d": T("Plug it in before launching and Keyflow connects the first input by itself. Plugged in "
                         "later? SETTINGS → MIDI → Refresh devices. The badge above the keyboard reads MIDI IN · C4 "
@@ -328,10 +335,10 @@ def build_guide(doc) -> dict:
                         "màn hình thứ hai và dòng trạng thái engine nằm ở SETTINGS → General → GRAPHICS ENGINE — "
                         "đây là thiết lập của máy nên áp preset không đổi chúng.")},
                 {"t": T("Pick a look", "Chọn diện mạo"),
-                 "d": T("SETTINGS → Style for the preset (Neon Violet by default), SETTINGS → Theme for the concert "
+                 "d": T("SETTINGS → Style for the preset (Concert Gold by default), SETTINGS → Theme for the concert "
                         "interface (Concert Grand by default), then fine-tune on Notes, Particles, Keyboard, "
                         "Background and Camera & FX. Every change applies live and saves itself.",
-                        "SETTINGS → Style để chọn preset (mặc định Neon Violet), SETTINGS → Theme để chọn giao diện "
+                        "SETTINGS → Style để chọn preset (mặc định Concert Gold), SETTINGS → Theme để chọn giao diện "
                         "hoà nhạc (mặc định Concert Grand), rồi tinh chỉnh ở Notes, Particles, Keyboard, Background "
                         "và Camera & FX. Mọi thay đổi áp dụng ngay và tự lưu.")},
                 {"t": T("Where settings live", "Cài đặt nằm ở đâu"),
@@ -357,19 +364,22 @@ def build_guide(doc) -> dict:
             title=T("Five moves from the menu to a playing score", "Năm thao tác từ menu tới một bản nhạc đang chạy"),
             items=[
                 {"t": T("The concert menu", "Menu hoà nhạc"),
-                 "d": T("The app opens on a menu: Perform & Play, Quick Adjustments, Stage Design Studio, Audio & "
-                        "MIDI Hardware Setup, Keyboard & Shortcuts, About, Exit. HOME on the header comes back to it "
-                        "at any time.",
-                        "Ứng dụng khởi động ở menu hoà nhạc: Perform & Play, Quick Adjustments, Stage Design Studio, "
-                        "Audio & MIDI Hardware Setup, Keyboard & Shortcuts, About, Exit. Nút HOME trên header quay "
-                        "lại menu bất cứ lúc nào.")},
+                 "d": T("The app opens on a menu: Perform & Play, Quick Adjustments, Piano & Audio Setup, MIDI "
+                        "Devices, Keyboard & Shortcuts, About and Exit. The first two open their settings pages "
+                        "directly, while Quick Adjustments holds the most-used stage controls and Stage Design "
+                        "Studio opens the full dock. HOME on the header comes back to the menu at any time.",
+                        "Ứng dụng khởi động ở menu hoà nhạc: Perform & Play, Quick Adjustments, Piano & Audio Setup, "
+                        "MIDI Devices, Keyboard & Shortcuts, About và Exit. Hai mục đầu mở thẳng vào trang cài đặt "
+                        "tương ứng, Quick Adjustments giữ các điều khiển hay dùng còn Stage Design Studio mở bàn "
+                        "thiết kế đầy đủ. Nút HOME trên header quay lại menu bất cứ lúc nào.")},
                 {"t": T("Live Play first", "Chơi trực tiếp trước"),
                  "d": T("Press a key on the piano, the computer keyboard or a MIDI instrument and only the notes you "
-                        "play appear. The Yamaha grand is already loaded, so everything sounds immediately; HALL "
-                        "toggles the concert reverb.",
+                        "play appear. Before the piano has been downloaded the stage and MIDI work and only the "
+                        "sound waits; afterwards everything plays through Salamander, and HALL toggles the concert "
+                        "reverb.",
                         "Nhấn một phím trên piano, bàn phím máy tính hoặc đàn MIDI và chỉ những nốt bạn chơi hiện "
-                        "ra. SoundFont grand Yamaha đã nạp sẵn nên mọi thứ phát tiếng ngay; nút HALL bật/tắt reverb "
-                        "phòng hoà nhạc.")},
+                        "ra. Khi chưa tải cây đàn, phần hình và MIDI vẫn chạy và chỉ tiếng là chờ mà thôi; sau đó "
+                        "mọi thứ phát qua Salamander, còn nút HALL bật/tắt reverb phòng hoà nhạc.")},
                 {"t": T("Open the session dialog", "Mở hộp thoại phiên"),
                  "d": T("Play on the header (or Perform & Play) opens it: choose a MIDI file or a MusicXML score, or "
                         "Live Play. The button reads Choose a MIDI file, then Start playback, then Return to "
@@ -535,9 +545,9 @@ def build_guide(doc) -> dict:
                       "href": "index.html?lang=vi", "kind": "btn-ghost", "icon": "globe"}],
             media=framed(doc, "language-dock",
                          T("The General page running in Vietnamese", "Trang General khi chạy bằng tiếng Việt"),
-                         T("Every label, hint and button in Vietnamese; the preset name Neon Violet stays as it is, "
+                         T("Every label, hint and button in Vietnamese; the preset name Concert Gold stays as it is, "
                            "because that is a saved id.",
-                           "Toàn bộ nhãn, chú thích và nút bằng tiếng Việt; tên preset Neon Violet vẫn giữ nguyên vì "
+                           "Toàn bộ nhãn, chú thích và nút bằng tiếng Việt; tên preset Concert Gold vẫn giữ nguyên vì "
                            "đó là id đã lưu."),
                          badge=T("Tiếng Việt", "Tiếng Việt")),
         ),
@@ -577,9 +587,22 @@ def build_guide(doc) -> dict:
                 [{"html": "<code>--verify-log=&lt;path&gt;</code>"},
                  T("Where to write the PASS/FAIL log (default %TEMP%\\keyflow-verification.log).",
                    "Nơi ghi nhật ký PASS/FAIL (mặc định %TEMP%\\keyflow-verification.log).")],
+                [{"html": "<code>--verify-review-out=&lt;folder&gt;</code>"},
+                 T("Write the review pack of the verification run: 48 rendered images plus a manifest and an index "
+                   "page.",
+                   "Ghi bộ ảnh xem lại của lượt kiểm chứng: 48 ảnh render kèm manifest và một trang index.")],
+                [{"html": "<code>--encode-probe</code>"},
+                 T("Write three pictures into an uncompressed AVI through the recorder's own plumbing — the probe "
+                   "that tells a codec problem apart from a file problem.",
+                   "Ghi ba khung hình vào một AVI không nén qua chính đường ghi của ứng dụng — phép thử phân biệt "
+                   "lỗi codec với lỗi ghi tệp.")],
                 [{"html": "<code>--bench</code>"},
                  T("Print a benchmark report, including the version the app reads from its own assembly.",
                    "In báo cáo đo hiệu năng, kèm phiên bản mà ứng dụng tự đọc từ assembly của nó.")],
+                [{"html": "<code>--bench-ar</code>"},
+                 T("Measure the AR overlay's own share of the work, so a slow camera is never mistaken for a slow "
+                   "GPU.",
+                   "Đo phần việc riêng của lớp phủ AR, để không nhầm một camera chậm với một GPU chậm.")],
             ],
         ),
 
@@ -600,10 +623,12 @@ def build_guide(doc) -> dict:
                   "and compound 6/8, 9/8, 12/8), format 2 sequences, SMPTE divisions, drum channel, corrupt files.",
                   "Bộ đọc MIDI: tệp đa track, tempo map, lưới phách, nhóm phách theo ô nhịp (4/4, 3/4, 2/2, 3/8 và "
                   "nhịp ghép 6/8, 9/8, 12/8), chuỗi định dạng 2, độ chia SMPTE, kênh trống, tệp hỏng."),
-                T("SoundFont decoding and generator semantics, polyphony limits, release loops, the audio signal, "
-                  "Note Off and all three pedals.",
-                  "Giải mã SoundFont và ngữ nghĩa generator, giới hạn đa âm, vòng qua giai đoạn release, tín hiệu "
-                  "âm thanh, Note Off và cả ba pedal."),
+                T("SFZ region and sample decoding, opcode inheritance, velocity layers, round-robins, release samples "
+                  "and pedal triggers, looping through the release stage, polyphony limits, the audio signal, Note "
+                  "Off and all three pedals.",
+                  "Giải mã vùng SFZ và mẫu, kế thừa opcode, các lớp velocity, round-robin, mẫu nhả và trigger "
+                  "pedal, vòng lặp qua giai đoạn release, giới hạn đa âm, tín hiệu âm thanh, Note Off và cả ba "
+                  "pedal."),
                 T("Settings save and clamp, presets (save, import, export, delete, corrupt files), preset thumbnails "
                   "and share codes, user themes, the community preset shelf.",
                   "Lưu và kẹp cấu hình, preset (lưu, nhập, xuất, xoá, tệp hỏng), ảnh thu nhỏ của preset và mã chia "
@@ -621,6 +646,16 @@ def build_guide(doc) -> dict:
                   "back for measuring.",
                   "Ghi hình: header WAV 44 byte đúng từng byte, chuỗi PNG có alpha thật, lớp phủ camera đọc lại từ "
                   "chính bản ghi ứng dụng vừa viết, và một khung GPU thật vẽ trên WARP rồi đọc lại để đo."),
+                T("The AR overlay: the quality budget dropping and restoring effect families, the per-view presets, "
+                  "live-bar coverage and the lifetime fade, the calibration archive round-tripping row by row, and "
+                  "the skin lookout inside Calibrate — all re-projected on WARP on every build.",
+                  "Lớp phủ AR: ngân sách chất lượng khi bỏ rồi trả lại các nhóm hiệu ứng, preset theo từng góc "
+                  "nhìn, độ phủ thanh nhấn và độ mờ theo vòng đời, kho calibration đi-về từng dòng, và bộ dò màu "
+                  "da trong cửa sổ Calibrate — tất cả được chiếu lại trên WARP mỗi lần build."),
+                T("The camera delay and its per-camera store, and the hand-tracking maths (skin rule, grid, finger "
+                  "count from the column profile).",
+                  "Độ trễ camera cùng kho lưu theo từng camera, và phần tính toán theo dõi bàn tay (luật màu da, "
+                  "lưới ô, đếm ngón từ profile cột)."),
             ],
             media=_verify_card(doc),
         ),
@@ -649,16 +684,16 @@ def build_guide(doc) -> dict:
         table(
             id="limits",
             eyebrow=T("Honest limits", "Giới hạn nói thẳng"),
-            title=T("What 1.0.0 does not do", "Những gì bản 1.0.0 chưa làm được"),
+            title=T(f"What {RELEASE_VERSION} does not do", f"Những gì bản {RELEASE_VERSION} chưa làm được"),
             head=[T("Area", "Mảng"), T("The limit", "Giới hạn")],
             rows=[
                 [T("Sound", "Âm thanh"),
-                 T("Only uncompressed SoundFont 2; .sf3 is not read, and advanced SF2 parts — modulators, instrument "
-                   "filters, reverb/chorus — are not fully reproduced, so the sound can differ from a dedicated "
-                   "synthesizer depending on the file.",
-                   "Chỉ đọc SoundFont 2 không nén; .sf3 chưa hỗ trợ, và một số phần SF2 nâng cao — modulators, bộ "
-                   "lọc nhạc cụ, reverb/chorus — chưa được tái tạo đầy đủ, nên âm thanh có thể khác một bộ tổng hợp "
-                   "chuyên dụng tùy tệp.")],
+                 T(f"Salamander Grand Piano V3 is the only instrument. There is no SF2 import, no external "
+                   f"instrument picker and no general SFZ loader — the mapping is generated for this one library — "
+                   f"and its {PIANO_SIZE} of samples are a separate, one-time download.",
+                   f"Salamander Grand Piano V3 là nhạc cụ duy nhất. Không nhập SF2, không có chỗ chọn nhạc cụ "
+                   f"ngoài và không có bộ đọc SFZ tổng quát — mapping được sinh riêng cho bộ mẫu này — và "
+                   f"{PIANO_SIZE} mẫu đàn là một lần tải riêng.")],
                 [T("Scores", "Bản nhạc"),
                  T("Advanced MusicXML is still missing: slurs, repeats and several voices joined into one beat. Plain "
                    "MusicXML, including .mxl, reads fine.",
@@ -669,13 +704,16 @@ def build_guide(doc) -> dict:
                    "own H.264 and AAC encoders.",
                    "Chưa ghi trực tiếp WebM/VP9 — chuỗi PNG 32-bit là đường alpha. MP4 phụ thuộc bộ mã hoá H.264 và "
                    "AAC của chính Windows.")],
-                [T("Camera", "Camera"),
+                [T("Camera & AR", "Camera & AR"),
                  T("Hand tracking is classical computer vision: with two hands, or a skin-coloured backdrop, only the "
-                  "biggest hand is followed, and the finger count needs a large enough hand. No 3D perspective "
-                  "camera — the stage is a flat piano roll with slight parallax.",
+                  "biggest hand is followed, and the finger count needs a large enough hand. The AR overlay has not "
+                  "been tried on a real webcam yet, full setting/value parity with the flat stage is not claimed, and "
+                  "ambient layers such as petals and shooting stars stay flat screen-space rather than following the "
+                  "perspective.",
                   "Theo dõi bàn tay là thị giác máy tính cổ điển: có hai bàn tay hoặc nền trùng màu da thì chỉ bàn "
-                  "tay lớn nhất được theo, và số ngón cần bàn tay đủ lớn. Chưa có camera phối cảnh 3D — sân khấu là "
-                  "piano roll phẳng với parallax nhẹ.")],
+                  "tay lớn nhất được theo, và số ngón cần bàn tay đủ lớn. Lớp phủ AR chưa từng thử với webcam thật, "
+                  "chưa cam kết đủ mọi cài đặt/giá trị như sân khấu phẳng, và các lớp ambient như cánh hoa hay sao "
+                  "băng vẫn phẳng theo màn hình chứ không theo phối cảnh.")],
                 [T("Stage", "Sân khấu"),
                  T("No particle compute shader, no depth of field, no velocity-buffer motion blur and no camera "
                    "keyframing yet. The staff, hand marker, camera picture, watermark and counters stay WPF vector "
@@ -704,11 +742,13 @@ def build_guide(doc) -> dict:
                 (T("Application licence", "Giấy phép ứng dụng"),
                  T("MIT — LICENSE.txt travels inside every package; keep it when you pass a copy on.",
                    "MIT — LICENSE.txt nằm trong mỗi gói; hãy giữ lại khi bạn chia sẻ bản sao.")),
-                (T("Bundled SoundFont", "SoundFont đi kèm"),
-                 T("YDP Grand Piano from FreePats, built from a Yamaha Disklavier Pro multisample, under CC BY 3.0; "
-                   "the credit is in Assets\\ATTRIBUTION.txt.",
-                   "YDP Grand Piano của FreePats, dựng từ multisample Yamaha Disklavier Pro, theo CC BY 3.0; phần "
-                   "ghi công nằm trong Assets\\ATTRIBUTION.txt.")),
+                (T("Piano samples", "Mẫu đàn"),
+                 T("Salamander Grand Piano V3 — a Yamaha C5 recorded at 48 kHz/24-bit by Alexander Holm, under "
+                   "CC BY 3.0. The samples are not bundled: the app downloads them on request and writes the "
+                   "attribution beside them in the piano data folder.",
+                   "Salamander Grand Piano V3 — Yamaha C5 thu ở 48 kHz/24-bit bởi Alexander Holm, theo CC BY 3.0. "
+                   "Mẫu đàn không được đóng gói: ứng dụng tải theo yêu cầu và ghi phần ghi công ngay cạnh đó trong "
+                   "thư mục dữ liệu đàn.")),
                 (T("Graphics", "Đồ hoạ"),
                  T("The Direct3D 11 engine is built on Vortice.Windows; the HLSL shaders are compiled at startup "
                    "with the d3dcompiler_47.dll that ships with Windows.",
@@ -753,12 +793,12 @@ def build_guide(doc) -> dict:
                 {"q": T("Why is my MP4 silent, or missing entirely?", "Vì sao MP4 của tôi không có tiếng, hoặc không ghi được?"),
                  "a": T("MP4 is written by Windows' own encoders. Without an H.264 encoder the format cannot be "
                         "written at all and you get a message with the error code; with H.264 but no AAC encoder the "
-                        "take keeps the picture and the dialog says why there is no sound; with no SoundFont loaded "
-                        "the recording is picture only. AVI always writes a WAV beside it instead.",
+                        "take keeps the picture and the dialog says why there is no sound; with no piano loaded the "
+                        "recording is picture only. AVI always writes a WAV beside it instead.",
                         "MP4 được ghi bằng bộ mã hoá của chính Windows. Máy không có bộ mã hoá H.264 thì không ghi "
                         "được định dạng này và bạn nhận thông báo kèm mã lỗi; máy có H.264 nhưng thiếu AAC thì bản "
-                        "ghi vẫn có hình và hộp thoại nói rõ vì sao thiếu tiếng; máy chưa nạp SoundFont thì chỉ ghi "
-                        "hình. Riêng AVI luôn ghi kèm một tệp WAV bên cạnh.")},
+                        "ghi vẫn có hình và hộp thoại nói rõ vì sao thiếu tiếng; máy chưa tải cây đàn thì chỉ ghi hình. "
+                        "Riêng AVI luôn ghi kèm một tệp WAV bên cạnh.")},
                 {"q": T("Can I put my own video or webcam on the stage?",
                         "Tôi đưa video hoặc webcam của mình lên sân khấu được không?"),
                  "a": T("Yes — Camera & FX has a webcam overlay that draws a live camera or a looping video file in "
@@ -768,12 +808,12 @@ def build_guide(doc) -> dict:
                         "ở bất kỳ góc nào, cỡ 15–60% chiều rộng sân khấu, kèm mirror, opacity và key xanh. Phần theo "
                         "dõi bàn tay dùng chính những khung hình đó và không cần mô hình nào.")},
                 {"q": T("Is there a macOS or Linux version?", "Có bản macOS hoặc Linux không?"),
-                 "a": T("Not in 1.0.0. Keyflow is built on WPF and WinMM and records through Windows' Media "
-                        "Foundation, so this version is Windows-only. Windows on ARM has a published package that has "
-                        "not been tested on real ARM hardware yet.",
-                        "Bản 1.0.0 thì chưa. Keyflow dựng trên WPF và WinMM, ghi hình qua Media Foundation của "
-                        "Windows, nên phiên bản này chỉ dành cho Windows. Windows on ARM có gói đã phát hành nhưng "
-                        "chưa được chạy thử trên máy ARM thật.")},
+                 "a": T(f"Not in {RELEASE_VERSION}. Keyflow is built on WPF and WinMM and records through Windows' Media "
+                        "Foundation, so this version is Windows-only. Windows on ARM has a published package that "
+                        "has not been tested on real ARM hardware yet.",
+                        f"Bản {RELEASE_VERSION} thì chưa. Keyflow dựng trên WPF và WinMM, ghi hình qua Media "
+                        "Foundation của Windows, nên phiên bản này chỉ dành cho Windows. Windows on ARM có gói đã "
+                        "phát hành nhưng chưa được chạy thử trên máy ARM thật.")},
                 {"q": T("How do I reset everything?", "Làm sao để đưa mọi thứ về mặc định?"),
                  "a": T("RESET TO DEFAULT in the dock, or delete visual-settings.json in "
                         "%LOCALAPPDATA%\\Keyflow. Presets, themes, the library and the practice history live in their "
@@ -794,8 +834,8 @@ def build_guide(doc) -> dict:
         cta(
             title=T("Everything you just read ships in one file",
                     "Mọi thứ bạn vừa đọc nằm trong một tệp duy nhất"),
-            sub=T("Keyflow 1.0.0 · Windows 10 and 11, 64-bit · MIT licensed · English and Tiếng Việt.",
-                  "Keyflow 1.0.0 · Windows 10 và 11, 64-bit · giấy phép MIT · English và Tiếng Việt."),
+            sub=T(f"Keyflow {RELEASE_VERSION} · Windows 10 and 11, 64-bit · MIT licensed · English and Tiếng Việt.",
+                  f"Keyflow {RELEASE_VERSION} · Windows 10 và 11, 64-bit · giấy phép MIT · English và Tiếng Việt."),
             actions=[DOWNLOAD,
                      {"label": T("Downloads & requirements", "Bản tải & yêu cầu"), "href": "download.html",
                       "kind": "btn-ghost", "icon": "download"}],
@@ -825,7 +865,7 @@ def _verify_card(doc) -> str:
                        "bị sập vẫn để lại dòng cuối nói nó đang làm gì."))
     ck, cv = doc.key(T("Copy", "Sao chép"))
     code = ("PianoPath.exe --verify ^\n"
-            "  --verify-log=%TEMP%\\keyflow-verify.log")
+            "  --verify-log=%TEMP%\\keyflow-verification.log")
     return ('<div class="callout gold" style="align-items:start">' + iconbox("terminal", 20) + "<div>"
             + '<p style="margin:0 0 10px"><b data-i18n="' + tk + '">' + tv + "</b></p>"
             + '<pre class="code" id="card-verify" style="margin:0">' + code + "</pre>"
@@ -845,24 +885,28 @@ def build_download(doc) -> dict:
 
     release_card = (
         '<div class="dl-card">'
-        '<span class="badge" style="position:absolute;top:18px;right:18px">v<span data-release-tag>1.0.0</span></span>'
+        f'<span class="badge" style="position:absolute;top:18px;right:18px">v'
+        f'<span data-release-tag>{RELEASE_VERSION}</span></span>'
         + '<p class="eyebrow" style="margin-bottom:10px">'
         + doc.key(T("Latest release", "Bản phát hành mới nhất"))[1] + "</p>"
         + '<h2 style="font-size:clamp(24px,3vw,34px)" data-i18n="'
-        + doc.key(T("Keyflow 1.0.0 · Concert Grand Edition", "Keyflow 1.0.0 · Concert Grand Edition"))[0] + '">'
-        + doc.key(T("Keyflow 1.0.0 · Concert Grand Edition", "Keyflow 1.0.0 · Concert Grand Edition"))[1] + "</h2>"
+        + doc.key(T(f"Keyflow {RELEASE_VERSION} · Piano Performance & Concert VFX Studio",
+                    f"Keyflow {RELEASE_VERSION} · Piano Performance & Concert VFX Studio"))[0] + '">'
+        + doc.key(T(f"Keyflow {RELEASE_VERSION} · Piano Performance & Concert VFX Studio",
+                    f"Keyflow {RELEASE_VERSION} · Piano Performance & Concert VFX Studio"))[1] + "</h2>"
         + '<p class="muted" style="margin:12px 0 18px;max-width:44ch" data-i18n="'
-        + doc.key(T("Published 2 October 2026. Four packages, one checksum file, and the same application in every "
-                    "one of them.",
-                    "Phát hành ngày 2 tháng 10 năm 2026. Bốn gói, một tệp checksum, và cùng một ứng dụng trong mọi "
-                    "gói."))[0] + '">'
-        + doc.key(T("Published 2 October 2026. Four packages, one checksum file, and the same application in every "
-                    "one of them.",
-                    "Phát hành ngày 2 tháng 10 năm 2026. Bốn gói, một tệp checksum, và cùng một ứng dụng trong mọi "
-                    "gói."))[1] + "</p>"
+        + doc.key(T(f"Published {RELEASE_DATE_EN}. Four packages, one checksum file, and the same application in "
+                    f"every one of them — the {PIANO_SIZE} piano is fetched by the app after you install it.",
+                    f"Phát hành {RELEASE_DATE_VI}. Bốn gói, một tệp checksum, và cùng một ứng dụng trong mọi gói — "
+                    f"cây đàn {PIANO_SIZE} do ứng dụng tải sau khi bạn cài."))[0] + '">'
+        + doc.key(T(f"Published {RELEASE_DATE_EN}. Four packages, one checksum file, and the same application in "
+                    f"every one of them — the {PIANO_SIZE} piano is fetched by the app after you install it.",
+                    f"Phát hành {RELEASE_DATE_VI}. Bốn gói, một tệp checksum, và cùng một ứng dụng trong mọi gói — "
+                    f"cây đàn {PIANO_SIZE} do ứng dụng tải sau khi bạn cài."))[1] + "</p>"
         + '<div class="badge-row">'
         + '<span class="badge">Windows 10 / 11 · x64</span>'
-        + '<span class="badge js-date" data-release-date data-date="2026-10-02T10:10:24Z">2 Oct 2026</span>'
+        + f'<span class="badge"><span data-release-size="setup">{SIZE["setup"]}</span></span>'
+        + f'<span class="badge js-date" data-release-date data-date="{RELEASE_DATE_ISO}">{RELEASE_DATE_EN}</span>'
         + '<span class="badge">MIT</span>'
         + '<span class="badge">EN · VI</span>'
         + "</div></div>"
@@ -874,12 +918,15 @@ def build_download(doc) -> dict:
             crumb=T("Download", "Tải về"),
             eyebrow=T("Download", "Tải về"),
             title=T("One download, every feature", "Một bản tải, mọi tính năng"),
-            lead=T("Keyflow is free and MIT licensed. Take the installer for the shortest path, or a portable ZIP if "
-                   "you would rather not install anything. Every package contains the same application, the same "
-                   "Yamaha grand SoundFont and the same two languages.",
-                   "Keyflow miễn phí và theo giấy phép MIT. Chọn bộ cài cho nhanh, hoặc bản ZIP chạy trực tiếp nếu "
-                   "bạn không muốn cài gì. Mọi gói đều chứa cùng một ứng dụng, cùng SoundFont grand Yamaha và cùng "
-                   "hai ngôn ngữ."),
+            lead=T(f"Keyflow {RELEASE_VERSION} is free and MIT licensed. Take the installer for the shortest path, "
+                   f"or a portable ZIP if you would rather not install anything. Every package contains the same "
+                   f"application, the same two languages and the AR overlay — the concert grand is the one thing "
+                   f"the app fetches for you afterwards, because {PIANO_SIZE} of samples in every download would be "
+                   f"paid for by everybody.",
+                   f"Keyflow {RELEASE_VERSION} miễn phí và theo giấy phép MIT. Chọn bộ cài cho nhanh, hoặc bản ZIP "
+                   f"chạy trực tiếp nếu bạn không muốn cài gì. Mọi gói đều chứa cùng một ứng dụng, cùng hai ngôn "
+                   f"ngữ và lớp phủ AR — chỉ cây grand hoà nhạc là thứ ứng dụng tải giúp bạn sau đó, vì để "
+                   f"{PIANO_SIZE} mẫu đàn trong mọi bản tải thì ai cũng phải trả giá."),
             chips=[
                 T("Free · MIT licensed", "Miễn phí · giấy phép MIT"),
                 T("No account, no sign-in", "Không tài khoản, không đăng nhập"),
@@ -895,21 +942,23 @@ def build_download(doc) -> dict:
             title=T("Pick the one that suits your machine", "Chọn gói hợp với máy của bạn"),
             main={
                 "t": T("Installer for Windows x64", "Bộ cài cho Windows x64"),
-                "file": E("Keyflow-Setup-1.0.0.exe"),
-                "d": T("Start Menu and Desktop shortcuts, an uninstall entry, and a wizard in English and Tiếng "
-                       "Việt. Nothing else to install: the .NET runtime is inside the package.",
-                       "Shortcut ở Start Menu và Desktop, mục gỡ cài đặt, và wizard bằng cả English lẫn Tiếng Việt. "
-                       "Không cần cài gì thêm: runtime .NET nằm sẵn trong gói."),
+                "file": E(FILE["setup"]),
+                "d": T(f"Start Menu and Desktop shortcuts, an uninstall entry, and a wizard in English and Tiếng "
+                       f"Việt — {SIZE['setup']}, with nothing else to install.",
+                       f"Shortcut ở Start Menu và Desktop, mục gỡ cài đặt, và wizard bằng cả English lẫn Tiếng "
+                       f"Việt — {SIZE['setup']}, không cần cài thêm gì."),
                 "label": T("Download the installer", "Tải bộ cài"),
             },
             side=[
                 {"t": T("Portable, self-contained", "Bản di động, self-contained"),
-                 "d": T("Unzip the whole folder and run PianoPath.exe — never separate the .exe from its folder.",
-                        "Giải nén cả thư mục rồi chạy PianoPath.exe — đừng tách tệp .exe ra khỏi thư mục của nó."),
+                 "d": T(f"Unzip the whole folder and run PianoPath.exe — {SIZE['portable']}, and never separate "
+                        f"the .exe from its folder.",
+                        f"Giải nén cả thư mục rồi chạy PianoPath.exe — {SIZE['portable']}, và đừng tách tệp .exe "
+                        f"ra khỏi thư mục của nó."),
                  "label": E("ZIP · x64"), "href": ASSETS["portable"], "asset": "portable"},
                 {"t": T("Framework-dependent", "Bản phụ thuộc framework"),
-                 "d": T("Much smaller, but the target PC needs the .NET 10 Desktop Runtime (x64).",
-                        "Nhẹ hơn nhiều, nhưng máy đích cần .NET 10 Desktop Runtime (x64)."),
+                 "d": T(f"Just {SIZE['fd']}, but the target PC needs the .NET 10 Desktop Runtime (x64).",
+                        f"Chỉ {SIZE['fd']}, nhưng máy đích cần .NET 10 Desktop Runtime (x64)."),
                  "label": T("ZIP · small", "ZIP · nhẹ"), "href": ASSETS["fd"], "asset": "fd"},
                 {"t": T("Checksums", "Tệp checksum"),
                  "d": T("SHA-256 for every file in the release — the only way to be sure nothing changed on the way.",
@@ -926,71 +975,71 @@ def build_download(doc) -> dict:
             head=[T("Download", "Tệp tải"), T("What it is", "Là gì"), T("Target PC needs", "Máy đích cần gì"),
                   T("Size", "Dung lượng")],
             rows=[
-                [link("setup", "Bộ cài (khuyên dùng)", "Installer (recommended)",
-                      "Keyflow-Setup-1.0.0.exe"),
+                [link("setup", "Bộ cài (khuyên dùng)", "Installer (recommended)", FILE["setup"]),
                  T("Windows x64 installer: shortcuts, an uninstall entry, an English/Vietnamese wizard.",
                    "Bộ cài Windows x64: shortcut, mục gỡ cài đặt, wizard Anh/Việt."),
-                 T("Nothing else", "Không cần gì thêm"), size("setup", "83.2 MiB")],
-                [link("portable", "Bản ZIP di động", "Portable ZIP", "Keyflow-1.0.0-win-x64.zip"),
+                 T("Nothing else", "Không cần gì thêm"), size("setup", SIZE["setup"])],
+                [link("portable", "Bản ZIP di động", "Portable ZIP", FILE["portable"]),
                  T("Self-contained: unzip and run PianoPath.exe.",
                    "Self-contained: giải nén là chạy PianoPath.exe."),
-                 T("Nothing else", "Không cần gì thêm"), size("portable", "117.2 MiB")],
-                [link("fd", "Bản phụ thuộc framework", "Framework-dependent ZIP", "Keyflow-1.0.0-win-x64-fd.zip"),
+                 T("Nothing else", "Không cần gì thêm"), size("portable", SIZE["portable"])],
+                [link("fd", "Bản phụ thuộc framework", "Framework-dependent ZIP", FILE["fd"]),
                  T("The same application, far smaller, without the bundled runtime.",
                    "Cùng ứng dụng đó, nhẹ hơn nhiều, không kèm runtime."),
                  {"html": '<a href="' + DOTNET + '" target="_blank" rel="noopener">.NET 10 Desktop Runtime (x64)</a>'},
-                 size("fd", "54.9 MiB")],
-                [link("arm64", "Bản Windows on ARM", "Windows on ARM ZIP", "Keyflow-1.0.0-win-arm64.zip"),
+                 size("fd", SIZE["fd"])],
+                [link("arm64", "Bản Windows on ARM", "Windows on ARM ZIP", FILE["arm64"]),
                  T("Self-contained ARM64 build, published by CI; no ARM machine has run it yet.",
                    "Bản ARM64 self-contained do CI publish; chưa máy ARM nào chạy thử."),
-                 T("Nothing else", "Không cần gì thêm"), size("arm64", "105.2 MiB")],
-                [link("sums", "Checksum", "Checksums", "SHA256SUMS.txt"),
+                 T("Nothing else", "Không cần gì thêm"), size("arm64", SIZE["arm64"])],
+                [link("sums", "Checksum", "Checksums", FILE["sums"]),
                  T("SHA-256 for every file in the release.", "SHA-256 cho mọi tệp của bản phát hành."),
                  E("PowerShell Get-FileHash"),
-                 {"html": '<span class="num">375 B</span>'}],
+                 {"html": f'<span class="num">{SIZE["sums"]}</span>'}],
             ],
             note=T("The download buttons on this site move to the newest release by themselves when GitHub answers; "
-                   "the links above are pinned to v1.0.0 so they work offline too.",
+                   f"the links above are pinned to {RELEASE_TAG} so they work offline too. No package contains the "
+                   f"piano samples — the app downloads those from Settings → Audio, once, on request.",
                    "Các nút tải trên trang này tự chuyển sang bản phát hành mới nhất khi GitHub trả lời; những liên "
-                   "kết ở trên được ghim vào v1.0.0 nên vẫn dùng được khi ngoại tuyến."),
+                   f"kết ở trên được ghim vào {RELEASE_TAG} nên vẫn dùng được khi ngoại tuyến. Không gói nào chứa "
+                   f"mẫu đàn — ứng dụng tải bộ mẫu từ Settings → Audio, một lần, khi bạn yêu cầu."),
             actions=[{"label": T("All releases", "Tất cả bản phát hành"), "href": RELEASES,
                       "kind": "btn-ghost", "icon": "github", "external": True},
-                     {"label": T("What changed in 1.0.0", "Có gì mới trong 1.0.0"), "href": "#whats-new",
-                      "kind": "btn-quiet", "icon": "arrow"}],
+                     {"label": T(f"What changed in {RELEASE_VERSION}", f"Có gì mới trong {RELEASE_VERSION}"),
+                      "href": "#whats-new", "kind": "btn-quiet", "icon": "arrow"}],
         ),
 
         split(
             id="install",
             eyebrow=T("Installing", "Cài đặt"),
-            title=T("Two minutes, and one folder you should not break",
-                    "Hai phút, và một thư mục bạn không nên phá vỡ"),
+            title=T("Two minutes, and one download after it", "Hai phút, và một lần tải ngay sau đó"),
             ticks=[
                 T("Run the installer and follow the wizard — it offers English and Tiếng Việt, creates the shortcuts "
                   "and adds an uninstall entry.",
                   "Chạy bộ cài và làm theo wizard — wizard có cả English và Tiếng Việt, tạo shortcut và thêm mục "
                   "gỡ cài đặt."),
-                T("Using a ZIP instead? Unzip the whole folder and run PianoPath.exe from inside it. The SoundFont "
-                  "has to sit next to the executable, and the licence files travel with it.",
-                  "Dùng bản ZIP? Giải nén cả thư mục rồi chạy PianoPath.exe từ bên trong. SoundFont phải nằm cạnh "
-                  "tệp thực thi, và các tệp giấy phép đi kèm với nó."),
-                T("Keep LICENSE.txt (MIT) and Assets\\ATTRIBUTION.txt (the SoundFont's CC BY 3.0) when you pass a "
-                  "copy on to somebody else.",
-                  "Hãy giữ LICENSE.txt (MIT) và Assets\\ATTRIBUTION.txt (CC BY 3.0 của SoundFont) khi bạn chia sẻ "
-                  "bản sao cho người khác."),
+                T("Using a ZIP instead? Unzip the whole folder and run PianoPath.exe from inside it. The licence "
+                  "file travels with it, and there is nothing else in the folder to keep together.",
+                  "Dùng bản ZIP? Giải nén cả thư mục rồi chạy PianoPath.exe từ bên trong. Tệp giấy phép đi kèm, và "
+                  "trong thư mục không còn gì khác phải giữ cùng nhau."),
+                T("Open the app, then SETTINGS → Audio → Download piano · 748 MB for the one-time sample install. "
+                  "Every file is verified as it arrives, a cancelled download resumes, and the piano loads itself "
+                  "when the last file checks out.",
+                  "Mở ứng dụng, rồi SETTINGS → Audio → Download piano · 748 MB để tải bộ mẫu một lần. Từng tệp "
+                  "được xác minh khi về, bản tải bị huỷ sẽ tiếp tục được, và cây đàn tự nạp khi tệp cuối cùng đạt "
+                  "kiểm tra."),
+                T("Keep LICENSE.txt (MIT) when you pass a copy on to somebody else; the piano's CC BY 3.0 notice is "
+                  "written beside the samples in the piano data folder.",
+                  "Hãy giữ LICENSE.txt (MIT) khi bạn chia sẻ bản sao cho người khác; thông báo CC BY 3.0 của cây "
+                  "đàn được ghi ngay cạnh bộ mẫu trong thư mục dữ liệu đàn."),
             ],
             media=raw(
                 '<div class="code-head"><span>' + doc.key(T("Inside the portable ZIP", "Bên trong bản ZIP"))[1]
-                + '</span></div><pre class="code">Keyflow-1.0.0-win-x64\\\n'
+                + f'</span></div><pre class="code">{FILE["portable"]}\\'
                 '├── PianoPath.exe              <span class="c">← '
-                + doc.key(T("the single executable", "tệp thực thi duy nhất"))[1] + '</span>\n'
-                '├── LICENSE.txt                <span class="c">← '
-                + doc.key(T("MIT, must travel with copies", "MIT, phải đi kèm bản sao"))[1] + '</span>\n'
-                '└── Assets\\\n'
-                '    ├── ConcertGrand.sf2       <span class="c">← '
-                + doc.key(T("the ~113 MiB SoundFont, next to the .exe", "SoundFont ~113 MiB, nằm cạnh .exe"))[1]
-                + '</span>\n'
-                '    └── ATTRIBUTION.txt        <span class="c">← '
-                + doc.key(T("FreePats credit, CC BY 3.0", "Ghi công FreePats, CC BY 3.0"))[1] + "</span></pre>"),
+                + doc.key(T("the single executable", "tệp thực thi duy nhất"))[1] + '</span>\\n'
+                '└── LICENSE.txt                <span class="c">← '
+                + doc.key(T("MIT, must travel with copies", "MIT, phải đi kèm bản sao"))[1] + "</span></pre>"),
         ),
 
         callout(
@@ -999,12 +1048,14 @@ def build_download(doc) -> dict:
             icon="shield",
             title=T("Windows SmartScreen will warn you once", "Windows SmartScreen sẽ cảnh báo một lần"),
             body=[
-                T("The packages are not code-signed, so the first launch shows “Windows protected your PC”. Choose "
-                  "More info, then Run anyway. Signing is on the project's list; until then, the checksum is how you "
-                  "confirm the file you received is the file the pipeline built.",
-                  "Các gói chưa được ký số nên lần chạy đầu Windows hiện “Windows protected your PC”. Chọn More "
-                  "info, rồi Run anyway. Việc ký số nằm trong danh sách việc của dự án; cho tới lúc đó, checksum là "
-                  "cách bạn xác nhận tệp nhận được đúng là tệp quy trình đã dựng."),
+                T("The packages are not code-signed — SignPath Foundation declined the project's application, so "
+                  "2.0.1 ships the builds and the installer unsigned. The first launch shows “Windows protected "
+                  "your PC”: choose More info, then Run anyway. Until SignPath (or another signature) is in place, "
+                  "the checksum is how you confirm the file you received is the file the pipeline built.",
+                  "Các gói chưa được ký số — SignPath Foundation đã từ chối đơn của dự án, nên bản 2.0.1 phát hành "
+                  "các gói và bộ cài ở dạng chưa ký. Lần chạy đầu Windows hiện “Windows protected your PC”: chọn "
+                  "More info, rồi Run anyway. Cho tới khi có chữ ký (SignPath hoặc nguồn khác), checksum là cách "
+                  "bạn xác nhận tệp nhận được đúng là tệp quy trình đã dựng."),
             ],
         ),
 
@@ -1013,9 +1064,9 @@ def build_download(doc) -> dict:
             eyebrow=T("Checking a download", "Kiểm tra tệp tải về"),
             title=T("Compare the hash against SHA256SUMS.txt", "Đối chiếu hash với SHA256SUMS.txt"),
             label=E("PowerShell"),
-            text=('<span class="c"># what you received</span>\n'
-                  'Get-FileHash .\\Keyflow-Setup-1.0.0.exe -Algorithm SHA256\n\n'
-                  '<span class="c"># what the release says it should be</span>\n'
+            text=('<span class="c"># what you received</span>\\n'
+                  f'Get-FileHash .\\{FILE["setup"]} -Algorithm SHA256\\n\\n'
+                  '<span class="c"># what the release says it should be</span>\\n'
                   'Get-Content .\\SHA256SUMS.txt'),
             note=T("The two hashes have to match exactly. A mismatch means the download was altered or truncated — "
                    "delete it and take the file from the release page again.",
@@ -1048,8 +1099,10 @@ def build_download(doc) -> dict:
                    "Keyflow thử card trước, rồi tới WARP — cùng shader nhưng chạy phần mềm — và cuối cùng là bộ "
                    "dựng hình WPF, kèm lý do ở General → GRAPHICS ENGINE.")],
                 [T("Audio", "Âm thanh"),
-                 T("Any sound card Windows recognises (waveOut output)",
-                   "Bất kỳ card âm thanh nào Windows nhận (đầu ra waveOut)"),
+                 T("Any sound card Windows recognises — WASAPI shared or exclusive, an ASIO driver, or waveOut as "
+                   "the fallback",
+                   "Bất kỳ card âm thanh nào Windows nhận — WASAPI shared hoặc exclusive, driver ASIO, hoặc "
+                   "waveOut làm đường dự phòng"),
                  T("With no output device the engine renders the audio itself, so recordings keep their full length.",
                    "Máy không có thiết bị ra âm thanh thì engine tự render phần tiếng, nên bản ghi vẫn đủ độ dài.")],
                 [T("MIDI (optional)", "MIDI (tuỳ chọn)"),
@@ -1057,77 +1110,96 @@ def build_download(doc) -> dict:
                  T("Without one you still play with the computer keyboard or the on-screen piano.",
                    "Không có đàn vẫn chơi được bằng bàn phím máy tính hoặc piano ảo.")],
                 [T("Camera (optional)", "Camera (tuỳ chọn)"),
-                 T("A webcam, or a video file for the overlay", "Một webcam, hoặc tệp video cho lớp phủ"),
-                 T("Frames are read through Media Foundation, which Windows ships.",
-                   "Khung hình được đọc qua Media Foundation, thành phần có sẵn của Windows.")],
+                 T("A webcam, or a video file for the overlay",
+                   "Một webcam, hoặc tệp video cho lớp phủ"),
+                 T("Frames are read through Media Foundation, which Windows ships. The AR overlay wants a camera "
+                   "hung over your shoulder, looking down the keys.",
+                   "Khung hình được đọc qua Media Foundation, thành phần có sẵn của Windows. Lớp phủ AR muốn camera "
+                   "treo qua vai, nhìn xuống phím đàn.")],
                 [T("Disk", "Ổ đĩa"),
-                 T("~300 MB for a self-contained install", "~300 MB cho bản cài self-contained"),
-                 T("Building from source needs about 1.5 GB for the .NET 10 SDK plus 500 MB for sources and output.",
-                   "Build từ mã nguồn cần khoảng 1,5 GB cho .NET 10 SDK cộng 500 MB cho mã nguồn và bản dựng.")],
+                 T(f"~300 MB for a self-contained install, plus ~{PIANO_SIZE} for the piano samples",
+                   f"~300 MB cho bản cài self-contained, cộng ~{PIANO_SIZE} cho mẫu đàn"),
+                 T("The samples are not downloaded until you ask for them, and a valid file already on disk is "
+                   "reused.",
+                   "Bộ mẫu không được tải cho tới khi bạn yêu cầu, và tệp hợp lệ đã có trên đĩa sẽ được dùng lại.")],
                 [T("Building from source", "Build từ mã nguồn"),
-                 T(".NET 10 SDK (10.0.100 or newer), Git and Git LFS",
-                   ".NET 10 SDK (10.0.100 trở lên), Git và Git LFS"),
-                 T("The ~113 MiB SoundFont is stored through Git LFS. Visual Studio 2026 with the .NET desktop "
-                   "workload, or VS Code with the C# Dev Kit.",
-                   "SoundFont ~113 MiB được lưu bằng Git LFS. Dùng Visual Studio 2026 với workload .NET desktop, "
-                   "hoặc VS Code kèm C# Dev Kit.")],
+                 T(".NET 10 SDK (10.0.100 or newer) and Git",
+                   ".NET 10 SDK (10.0.100 trở lên) và Git"),
+                 T("The SDK and Git are enough — the samples are still downloaded by the app when asked. Visual "
+                   "Studio 2026 with the .NET desktop workload, or VS Code with the C# Dev Kit.",
+                   "Chỉ cần SDK và Git — bộ mẫu vẫn do ứng dụng tải khi được yêu cầu. Dùng Visual Studio 2026 với "
+                   "workload .NET desktop, hoặc VS Code kèm C# Dev Kit.")],
             ],
         ),
 
         grid(
             id="whats-new",
-            eyebrow=T("What is in 1.0.0", "Có gì trong bản 1.0.0"),
-            title=T("The first official release", "Bản phát hành chính thức đầu tiên"),
-            sub=T("One entry in the changelog describes the product as released — these are the parts a user meets "
-                  "first.",
-                  "Một mục trong nhật ký thay đổi mô tả sản phẩm ở trạng thái phát hành — đây là những phần người "
-                  "dùng gặp đầu tiên."),
+            eyebrow=T(f"What is in {RELEASE_VERSION}", f"Có gì trong bản {RELEASE_VERSION}"),
+            title=T("Two releases, one big step — and a small polish on top",
+                    "Hai bản phát hành, một bước tiến lớn — và một lần đánh bóng nhỏ"),
+            sub=T(f"{RELEASE_VERSION} is a shorter entry and {RELEASE_PREV} the long one: together they describe "
+                  f"everything a user meets in this build.",
+                  f"{RELEASE_VERSION} là mục ngắn còn {RELEASE_PREV} là mục dài: gộp lại chúng mô tả mọi thứ người "
+                  f"dùng gặp trong bản dựng này."),
             cards=[
-                {"icon": "chip", "t": T("GPU engine by default", "Engine GPU là mặc định"),
-                 "d": T("A Direct3D 11 stage on its own thread with HDR, bloom and a frame-rate target up to 240 FPS; "
-                        "the WPF renderer became the fallback.",
-                        "Sân khấu Direct3D 11 trên luồng riêng với HDR, bloom và mục tiêu khung hình tới 240 FPS; bộ "
-                        "dựng hình WPF trở thành đường dự phòng.")},
-                {"icon": "piano", "t": T("Shading every frame", "Đổ bóng ở mỗi khung hình"),
-                 "d": T("The 88-key keyboard is shaded in HLSL on the GPU stage, with the dock's sliders applied "
-                        "per frame.",
-                        "Bàn phím 88 phím được đổ bóng bằng HLSL trên sân khấu GPU, các thanh trượt của dock áp dụng "
-                        "ở mỗi khung hình.")},
-                {"icon": "rec", "t": T("MP4 with the sound inside", "MP4 có sẵn tiếng"),
-                 "d": T("Media Foundation writes H.264 video and AAC audio into one file, with a bitrate derived from "
-                        "size and frame rate.",
-                        "Media Foundation ghi video H.264 và âm thanh AAC vào một tệp, bitrate tính theo kích thước "
-                        "và tốc độ khung hình.")},
-                {"icon": "book", "t": T("A staff layer on the stage", "Lớp khuông nhạc trên sân khấu"),
-                 "d": T("Key signature inferred from the song, beaming, rests, ties, chords as one column and "
-                        "hand-change curves.",
-                        "Hoá biểu suy ra từ bài, nối đuôi nốt, dấu nghỉ, dấu luyến, hợp âm thành một cột và đường "
-                        "cong đổi tay.")},
-                {"icon": "folder", "t": T("Library, history and ghost", "Thư viện, lịch sử và bóng luyện tập"),
-                 "d": T("A folder library with tags and a watcher, per-run practice history, a fourteen-day chart and "
-                        "your best take drawn as a ghost.",
-                        "Thư viện theo thư mục có thẻ và watcher, lịch sử luyện tập theo lượt, biểu đồ 14 ngày và "
-                        "lượt chơi tốt nhất vẽ thành bóng.")},
-                {"icon": "palette", "t": T("Themes you can build", "Theme bạn tự dựng được"),
-                 "d": T("A theme studio deriving twenty tokens from five colours, a community preset shelf, rendered "
-                        "preset thumbnails and one-line share codes.",
-                        "Xưởng theme suy ra hai mươi token từ năm màu, kệ preset cộng đồng, ảnh thu nhỏ preset do "
-                        "sân khấu render và mã chia sẻ một dòng.")},
-                {"icon": "globe", "t": T("Two languages, checked", "Hai ngôn ngữ, được kiểm tra"),
-                 "d": T("English and Tiếng Việt switch live, the dock search answers in both, and a static check "
-                        "proves the tables carry the same keys.",
-                        "English và Tiếng Việt đổi ngay lúc chạy, ô tìm kiếm của dock trả lời bằng cả hai, và một "
-                        "kiểm tra tĩnh chứng minh hai bảng cùng tập khoá.")},
-                {"icon": "shield", "t": T("Accessibility & verification", "Trợ năng & kiểm chứng"),
-                 "d": T("Named glyph buttons, Tab cycling inside the dock, Windows high contrast support, and a "
-                        "verification suite you can run yourself.",
-                        "Nút glyph có tên, Tab xoay vòng trong dock, hỗ trợ high contrast của Windows, và bộ kiểm "
-                        "chứng bạn tự chạy được.")},
-                {"icon": "download", "t": T("Four packages", "Bốn gói"),
-                 "d": T("An installer, a self-contained ZIP, a framework-dependent ZIP and an ARM64 ZIP, each with "
-                        "SHA-256 checksums.",
-                        "Một bộ cài, một ZIP self-contained, một ZIP framework-dependent và một ZIP ARM64, tất cả "
-                        "kèm checksum SHA-256.")},
+                {"icon": "camera", "t": T("AR overlay on your own keyboard", "Lớp phủ AR trên chính cây đàn của bạn"),
+                 "d": T("Mark the four corners of the key strip and the notes fall onto the real keys, in "
+                        "perspective — with a Unity-style Move/Rotate/Scale gizmo, a quality budget, an alignment "
+                        "check and a drift watch.",
+                        "Đánh dấu bốn góc dải phím và nốt rơi xuống đúng phím thật, theo phối cảnh — kèm gizmo "
+                        "Move/Rotate/Scale kiểu Unity, ngân sách chất lượng, alignment check và drift watch.")},
+                {"icon": "wave", "t": T("Salamander Grand Piano V3, sole instrument",
+                                        "Salamander Grand Piano V3, nhạc cụ duy nhất"),
+                 "d": T(f"A Yamaha C5 recorded at 48 kHz/24-bit by Alexander Holm, rendered through SFZ: 641 FLAC "
+                        f"files, about {PIANO_SIZE}, downloaded once on request — no SF2 import, no instrument "
+                        f"picker, no samples in Git or the packages.",
+                        f"Yamaha C5 thu ở 48 kHz/24-bit bởi Alexander Holm, render qua SFZ: 641 tệp FLAC, khoảng "
+                        f"{PIANO_SIZE}, tải một lần khi bạn yêu cầu — không nhập SF2, không chọn nhạc cụ, không có "
+                        f"mẫu trong Git hay trong gói.")},
+                {"icon": "sliders", "t": T("Your audio path, your room", "Đường tiếng và căn phòng của bạn"),
+                 "d": T("WASAPI shared/exclusive, an ASIO driver or waveOut, with gain, a hall reverb, a "
+                        "convolution reverb (built-in rooms or your own impulse response) and always-on string "
+                        "resonance.",
+                        "WASAPI shared/exclusive, driver ASIO hoặc waveOut, kèm gain, reverb hall, reverb "
+                        "convolution (phòng dựng sẵn hoặc impulse response của bạn) và cộng hưởng dây.")},
+                {"icon": "piano", "t": T("88, 76, 61 or 49 keys", "88, 76, 61 hay 49 phím"),
+                 "d": T("Pick the size that matches the instrument in front of you; the stage, the falling notes, "
+                        "the lit keys and the GPU engine all follow it, and presets leave it alone.",
+                        "Chọn cỡ đúng với cây đàn trước mặt; sân khấu, nốt rơi, phím sáng và engine GPU đều theo đó, "
+                        "còn preset không đổi nó.")},
+                {"icon": "mic", "t": T("A camera list that tells the truth",
+                                       "Danh sách camera nói thật"),
+                 "d": T("One line per camera with its real name, kind, port and VID/PID; the app picks the mode "
+                        "nearest 720p at up to 60 fps, reads at the camera's own pace, and remembers the camera "
+                        "delay per camera.",
+                        "Mỗi camera một dòng với tên thật, loại, cổng và VID/PID; ứng dụng chọn mode gần 720p nhất "
+                        "ở tối đa 60 fps, đọc theo nhịp của camera, và nhớ độ trễ theo từng camera.")},
+                {"icon": "palette", "t": T("Live press bars, and a look that carries its graphs",
+                                           "Thanh nhấn trực tiếp, và một look mang theo cả đồ thị"),
+                 "d": T("Press bars stay independent and off by default, with a 25–300% Bar coverage slider and an "
+                        "optional lifetime fade; share codes are now KEYFLOW-LOOK-2: and carry the AR graphs with "
+                        "the palette, while version-1 codes still open bit for bit.",
+                        "Thanh nhấn vẫn độc lập và mặc định tắt, kèm thanh trượt Bar coverage 25–300% và lựa chọn "
+                        "độ mờ theo vòng đời; mã chia sẻ nay là KEYFLOW-LOOK-2: và mang cả đồ thị AR đi cùng bảng "
+                        "màu, còn mã phiên bản 1 vẫn mở được đúng từng bit.")},
+                {"icon": "sliders", "t": T("An interface of icon buttons", "Giao diện toàn nút icon"),
+                 "d": T("The wall of all-caps labels is gone from the settings dock, the header and the start menu; "
+                        "glyph buttons carry localized tooltips, which are also the names screen readers announce.",
+                        "Bức tường nhãn all-caps đã biến mất khỏi bàn cài đặt, header và menu khởi động; các nút "
+                        "glyph có tooltip đã bản địa hoá, cũng chính là tên mà trình đọc màn hình đọc lên.")},
+                {"icon": "target", "t": T("A start menu that splits the setup", "Menu khởi động tách phần thiết lập"),
+                 "d": T("Piano & Audio Setup and MIDI Devices open their settings pages straight away, Quick "
+                        "Adjustments keeps the most-used stage controls, and Stage Design Studio opens the full "
+                        "dock.",
+                        "Piano & Audio Setup và MIDI Devices mở thẳng trang cài đặt tương ứng, Quick Adjustments "
+                        "giữ các điều khiển hay dùng, còn Stage Design Studio mở bàn thiết kế đầy đủ.")},
+                {"icon": "shield", "t": T("Still MIT, still unsigned", "Vẫn MIT, vẫn chưa ký số"),
+                 "d": T("Four packages and a checksum file, the same verification suite inside the app, and an "
+                        "honest note: SignPath Foundation declined the application, so SmartScreen will warn once "
+                        "until the project is signed.",
+                        "Bốn gói và một tệp checksum, vẫn bộ kiểm chứng tích hợp trong ứng dụng, cùng một ghi chú "
+                        "thẳng thắn: SignPath Foundation đã từ chối đơn của dự án, nên SmartScreen sẽ cảnh báo một "
+                        "lần cho tới khi dự án được ký.")},
             ],
             actions=[{"label": T("Read the changelog", "Đọc nhật ký thay đổi"), "href": CHANGELOG,
                       "kind": "btn-ghost", "icon": "file", "external": True},
@@ -1141,22 +1213,35 @@ def build_download(doc) -> dict:
             title=T("Download questions", "Câu hỏi về bản tải"),
             items=[
                 {"q": T("Which package should I take?", "Tôi nên chọn gói nào?"),
-                 "a": T("The installer for a normal Windows PC — it is self-contained, so no runtime to install. Take "
-                        "the portable ZIP if you prefer to keep it on a stick or in a folder of your own, the "
-                        "framework-dependent ZIP if you already have the .NET 10 Desktop Runtime and want a smaller "
-                        "download, and the ARM64 ZIP on Windows on ARM — knowing it has not been run on real ARM "
-                        "hardware yet.",
-                        "Bộ cài cho một máy Windows bình thường — bản này self-contained nên không phải cài runtime. "
-                        "Chọn ZIP di động nếu bạn muốn giữ nó trong USB hoặc một thư mục riêng, chọn ZIP "
-                        "framework-dependent nếu máy đã có .NET 10 Desktop Runtime và muốn tải nhẹ hơn, còn ARM64 "
-                        "dành cho Windows on ARM — với lưu ý là chưa chạy thử trên máy ARM thật.")},
+                 "a": T(f"The installer for a normal Windows PC — {SIZE['setup']} and self-contained, so no runtime "
+                        f"to install. Take the portable ZIP if you prefer to keep it on a stick or in a folder of "
+                        f"your own, the framework-dependent ZIP ({SIZE['fd']}) if you already have the .NET 10 "
+                        f"Desktop Runtime, and the ARM64 ZIP on Windows on ARM — knowing it has not been run on real "
+                        f"ARM hardware yet.",
+                        f"Bộ cài cho một máy Windows bình thường — {SIZE['setup']} và self-contained nên không phải "
+                        f"cài runtime. Chọn ZIP di động nếu bạn muốn giữ nó trong USB hoặc một thư mục riêng, chọn "
+                        f"ZIP framework-dependent ({SIZE['fd']}) nếu máy đã có .NET 10 Desktop Runtime, còn ARM64 "
+                        f"dành cho Windows on ARM — với lưu ý là chưa chạy thử trên máy ARM thật.")},
+                {"q": T("Why is the download so small, and why does the app ask for 748 MB?",
+                        "Vì sao bản tải nhẹ vậy, và vì sao ứng dụng đòi tải 748 MB?"),
+                 "a": T(f"Since {RELEASE_PREV} the samples are no longer bundled: shipping {PIANO_SIZE} of piano in "
+                        f"Git, in every ZIP and in every installer would be paid for by every download, including "
+                        f"the people who never open the Audio page. The installer is {SIZE['setup']} instead, and "
+                        f"the app fetches the library once, on request, verifying each file and resuming after a "
+                        f"cancel.",
+                        f"Từ {RELEASE_PREV}, bộ mẫu không còn được đóng gói: để {PIANO_SIZE} mẫu đàn trong Git, "
+                        f"trong mọi tệp ZIP và mọi bộ cài nghĩa là mọi lượt tải đều phải trả giá, kể cả những người "
+                        f"không bao giờ mở trang Audio. Thay vào đó bộ cài chỉ còn {SIZE['setup']}, và ứng dụng "
+                        f"tải thư viện một lần theo yêu cầu, xác minh từng tệp và tiếp tục được sau khi huỷ.")},
                 {"q": T("Is it really free? Where is the catch?", "Thật sự miễn phí chứ? Có gì đánh đổi không?"),
-                 "a": T("The code is MIT licensed and the packages cost nothing. There is no account, no sign-in, no "
-                        "telemetry and no upsell inside the app. The bundled piano is FreePats' YDP Grand under "
-                        "CC BY 3.0, credited in every package.",
-                        "Mã nguồn theo giấy phép MIT và các gói hoàn toàn miễn phí. Không tài khoản, không đăng "
-                        "nhập, không telemetry và không bán thêm gì trong ứng dụng. Cây đàn đi kèm là YDP Grand của "
-                        "FreePats theo CC BY 3.0, được ghi công trong mỗi gói.")},
+                 "a": T(f"The code is MIT licensed and the packages cost nothing. There is no account, no sign-in, "
+                        f"no telemetry and no upsell inside the app. The piano is {PIANO_NAME} by {PIANO_CREDIT} "
+                        f"under {PIANO_LICENSE} — its attribution is written beside the samples, and kept even "
+                        f"though the samples are not redistributed with the app.",
+                        f"Mã nguồn theo giấy phép MIT và các gói hoàn toàn miễn phí. Không tài khoản, không đăng "
+                        f"nhập, không telemetry và không bán thêm gì trong ứng dụng. Cây đàn là {PIANO_NAME} của "
+                        f"{PIANO_CREDIT} theo {PIANO_LICENSE} — phần ghi công được ghi ngay cạnh bộ mẫu, và vẫn "
+                        f"giữ dù ứng dụng không phân phối lại bộ mẫu.")},
                 {"q": T("Will my antivirus or Windows complain?", "Antivirus hoặc Windows có phàn nàn không?"),
                  "a": T("SmartScreen warns once because nothing is code-signed: More info → Run anyway. The release "
                         "carries SHA256SUMS.txt so you can verify the file yourself, and PianoPath.exe --verify runs "
@@ -1182,8 +1267,10 @@ def build_download(doc) -> dict:
 
         cta(
             title=T("Download it, plug in, and play", "Tải về, cắm đàn, và chơi"),
-            sub=T("Keyflow 1.0.0 · 83.2 MiB installer · Windows 10 and 11, 64-bit · MIT licensed.",
-                  "Keyflow 1.0.0 · bộ cài 83,2 MiB · Windows 10 và 11, 64-bit · giấy phép MIT."),
+            sub=T(f"Keyflow {RELEASE_VERSION} · {SIZE['setup']} installer · Windows 10 and 11, 64-bit · MIT "
+                  f"licensed · the {PIANO_SIZE} piano is one button away inside the app.",
+                  f"Keyflow {RELEASE_VERSION} · bộ cài {SIZE['setup']} · Windows 10 và 11, 64-bit · giấy phép MIT "
+                  f"· cây đàn {PIANO_SIZE} chỉ cách một nút bấm trong ứng dụng."),
             actions=[{"label": T("Download the installer", "Tải bộ cài"), "href": ASSETS["setup"],
                       "kind": "btn-gold", "icon": "download", "asset": "setup", "external": True},
                      {"label": T("Portable ZIP", "Bản ZIP di động"), "href": ASSETS["portable"],
@@ -1193,14 +1280,17 @@ def build_download(doc) -> dict:
         ),
     ]
     return {
-        "title": T("Download Keyflow 1.0.0 for Windows", "Tải Keyflow 1.0.0 cho Windows"),
+        "title": T(f"Download Keyflow {RELEASE_VERSION} for Windows",
+                   f"Tải Keyflow {RELEASE_VERSION} cho Windows"),
         "description": T(
-            "Download Keyflow 1.0.0 for Windows 10 and 11, 64-bit: an 83.2 MiB installer, a portable self-contained "
-            "ZIP, a smaller framework-dependent ZIP and an ARM64 build — all free, MIT licensed, with SHA-256 "
-            "checksums and setup instructions.",
-            "Tải Keyflow 1.0.0 cho Windows 10 và 11, 64-bit: bộ cài 83,2 MiB, bản ZIP di động self-contained, bản "
-            "ZIP framework-dependent nhẹ hơn và bản ARM64 — tất cả miễn phí, giấy phép MIT, kèm checksum SHA-256 và "
-            "hướng dẫn cài đặt."),
+            f"Download Keyflow {RELEASE_VERSION} for Windows 10 and 11, 64-bit: a {SIZE['setup']} installer, a "
+            f"portable self-contained ZIP, a smaller framework-dependent ZIP and an ARM64 build — all free, MIT "
+            f"licensed, with SHA-256 checksums and setup instructions. The concert grand is a one-time "
+            f"{PIANO_SIZE} download inside the app.",
+            f"Tải Keyflow {RELEASE_VERSION} cho Windows 10 và 11, 64-bit: bộ cài {SIZE['setup']}, bản ZIP di động "
+            f"self-contained, bản ZIP framework-dependent nhẹ hơn và bản ARM64 — tất cả miễn phí, giấy phép MIT, "
+            f"kèm checksum SHA-256 và hướng dẫn cài đặt. Cây grand hoà nhạc là một lần tải {PIANO_SIZE} trong ứng "
+            f"dụng."),
         "og_image": "previews/en/main-menu.png",
         "body": body,
     }
